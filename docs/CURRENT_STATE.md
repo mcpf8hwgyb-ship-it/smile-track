@@ -2,7 +2,7 @@
 
 ## Project Status
 
-Status: F01 IMPLEMENTED — VALIDATION IN PROGRESS; ARCHITECT REVIEW PENDING
+Status: F01 IMPLEMENTED AND CI VERIFIED — ARCHITECT REVIEW PENDING
 
 F01 establishes a minimal static application shell. No product features are implemented.
 
@@ -34,7 +34,7 @@ VERIFIED:
 
 ## In Progress
 
-- F01 validation and Architect review on `f01-app-foundation`.
+- Architect review of F01 on `f01-app-foundation`, PR #1.
 
 ---
 
@@ -70,7 +70,7 @@ These uncertainties must not be silently resolved during normal product developm
 
 ## Current Blockers
 
-None for normal product development.
+Local browser downloads failed in the Builder environment; browser/keyboard checks passed independently in GitHub Actions. Architect approval is required before merging F01 or beginning another task.
 
 Scientific dental-model work has unresolved questions documented in the master project specification.
 

@@ -23,7 +23,7 @@ Priorities may change when implementation, user needs, scientific evidence, priv
 
 F01 — Establish the Approved Smile Track Application Foundation.
 
-Implementation on `f01-app-foundation`; validation and Architect review pending. No subsequent product feature is authorized.
+Implemented and CI verified on `f01-app-foundation` (PR #1); Architect review pending. No subsequent product feature is authorized.
 
 ## Rule
 
