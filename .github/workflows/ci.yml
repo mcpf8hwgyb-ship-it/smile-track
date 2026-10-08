@@ -1,0 +1,47 @@
+name: Foundation CI
+
+on:
+  push:
+    branches: [main, f01-app-foundation]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Pin npm
+        run: npm install --global npm@11.9.0
+      - name: Clean install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Strict type checking
+        run: npm run typecheck
+      - name: Production static export
+        run: npm run build
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile smoke tests
+        run: npm run test:e2e
+      - name: Verify smoke test sensitivity
+        run: npm run test:smoke-sensitivity
+      - name: Dependency audit
+        run: npm audit --audit-level=high
