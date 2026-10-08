@@ -2,11 +2,11 @@
 
 ## Project Status
 
-Status: INITIALIZATION
+Status: F01 IMPLEMENTED AND CI VERIFIED — ARCHITECT REVIEW PENDING
 
-Smile Track is currently being initialized.
+F01 establishes a minimal static application shell. No product features are implemented.
 
-No production application architecture or technology stack has been selected yet.
+The Architect-approved stack is recorded in D-003 in `DECISIONS.md`.
 
 No application features have been implemented yet.
 
@@ -24,13 +24,17 @@ VERIFIED:
 
 ## Implemented
 
-None yet.
+- Static Next.js App Router shell, React, strict TypeScript, CSS Modules.
+- Preview status and non-diagnostic positioning; semantic landmarks and skip navigation.
+- Node/npm pins, lockfile, ESLint, Playwright desktop/mobile smoke tests.
+- Read-only GitHub Actions validation workflow.
+- No accounts, media capture, analytics, health-data inputs, or persistence.
 
 ---
 
 ## In Progress
 
-- Initial repository and project-governance setup.
+- Architect review of F01 on `f01-app-foundation`, PR #1.
 
 ---
 
@@ -42,7 +46,7 @@ None yet.
 
 ## Technical Debt
 
-None identified yet.
+Minimal ESLint baseline does not include Next/React-specific plugin rules. Browser coverage is Chromium only; real-device and assistive-technology review remain future work.
 
 ---
 
@@ -66,7 +70,7 @@ These uncertainties must not be silently resolved during normal product developm
 
 ## Current Blockers
 
-None for normal product development.
+Local browser downloads failed in the Builder environment; browser/keyboard checks passed independently in GitHub Actions. Architect approval is required before merging F01 or beginning another task.
 
 Scientific dental-model work has unresolved questions documented in the master project specification.
 
@@ -74,12 +78,11 @@ Scientific dental-model work has unresolved questions documented in the master p
 
 ## Last Validation
 
-Repository initialization only.
-
-No application build or test suite exists yet.
+See `VALIDATION_LOG.md` for exact commands, results, environment blockers, and CI evidence.
 
 ---
 
 ## Next Decision
 
-The Architect must review the initialized repository and determine the single highest-value first Builder task.
+The Architect must review F01 evidence before merge or authorizing another task.
+

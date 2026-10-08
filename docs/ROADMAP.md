@@ -21,10 +21,11 @@ Priorities may change when implementation, user needs, scientific evidence, priv
 
 ## Active Task
 
-None.
+F01 — Establish the Approved Smile Track Application Foundation.
 
-The Architect must select the first Builder task.
+Implemented and CI verified on `f01-app-foundation` (PR #1); Architect review pending. No subsequent product feature is authorized.
 
 ## Rule
 
 Normally only one major Builder task should be active at a time.
+

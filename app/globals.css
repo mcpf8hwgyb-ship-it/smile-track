@@ -1,0 +1,7 @@
+:root { color-scheme: light; --ink: #183c35; --muted: #4f665f; --paper: #f8faf6; --accent: #216854; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; line-height: 1.6; }
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #97521b; outline-offset: 6px; }
+::selection { background: #d4e8d8; }
