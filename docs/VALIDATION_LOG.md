@@ -47,7 +47,30 @@ Real devices, assistive technology, comprehensive security review and automatic
 revocation of already-hosted static pages remain outside these results. No scientific
 ZIP was opened/imported in E01; no model, backend, health-data or hosting change occurred.
 
-E01 CI will be recorded separately after the PR run; the results above are local.
+### E01 CI evidence
+
+PASS — [Foundation CI 38264947639](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38264947639),
+job `114864646063`, associated with exact implementation head
+`539c5d4491485d19de8c01862c85dfa9f4d88622`. GitHub checked out its PR test merge
+(`b09a3b5…`) against the unchanged approved main base. Run metadata, job steps and
+decoded logs were checked, not merely the PR badge.
+
+Clean installation, lint, strict types, 5 education tests, 4 F02 synthetic tests
+(1 restricted-data skip), static build, both export guards, bundled-browser installation,
+4 desktop/mobile browser checks, safety-copy sensitivity, education export negative
+controls and dependency audit all passed. The logs report 28 export files, zero
+approved lessons, successful deliberate-leak rejection and zero vulnerabilities.
+CI independently reproduces the local results without the local browser fallback.
+
+This evidence update changes documentation only. Its exact final PR head and CI run
+are verified separately in the PR handoff after that run completes, avoiding a
+self-referential commit hash or prematurely claiming a pending run passed.
+After a session interruption the local execution service was unavailable; the already
+committed implementation and prior local results were preserved in GitHub. This
+documentation follow-up uses those verified records and GitHub CI, not a claimed
+new local validation run.
+
+No merge, lesson publication or further feature is authorized.
 
 ---
 

@@ -1,6 +1,6 @@
 # E01 — Evidence-gated education foundation
 
-Date: 2026-10-12 (UTC / America/New_York). Status: implemented and locally validated;
+Date: 2026-10-12 (UTC / America/New_York). Status: implemented, locally validated and CI verified;
 submitted for Architect review before merge. No real educational content is approved.
 
 ## Repository and scope
@@ -9,6 +9,8 @@ submitted for Architect review before merge. No real educational content is appr
 - Branch: `e01-education-foundation`.
 - Verified upstream base: `a95a8ff1831900e6148a00c3681d928518bd8875`.
 - Base tree: `38f0e7909b1df79fd3feb1751ca83cd497af4f05`.
+- Implementation commit: `539c5d4491485d19de8c01862c85dfa9f4d88622`.
+- Review PR: [#3](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/3), open and unmerged.
 - The PR head and CI evidence are recorded in the review handoff and the CI section below.
   A commit cannot contain its own SHA; use the GitHub PR head as the canonical final commit.
 
@@ -200,8 +202,26 @@ Changed/new files:
 
 ## CI and final review state
 
-Local validation above is complete. E01 CI is not yet claimed in this initial report;
-verified run/head details will be added after the review PR triggers CI.
+PASS — [Foundation CI 38264947639](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38264947639),
+job `114864646063`, associated with exact implementation head
+`539c5d4491485d19de8c01862c85dfa9f4d88622`. GitHub checked out its PR test merge
+(`b09a3b5…`) against the unchanged approved main base. Run metadata, job steps and
+decoded logs were checked, not merely the PR badge.
+
+Clean installation, lint, strict types, 5 education tests, 4 F02 synthetic tests
+(1 restricted-data skip), static build, both export guards, bundled-browser installation,
+4 desktop/mobile browser checks, safety-copy sensitivity, education export negative
+controls and dependency audit all passed. The logs report 28 export files, zero
+approved lessons, successful deliberate-leak rejection and zero vulnerabilities.
+CI independently reproduces the local results without the local browser fallback.
+
+This evidence update changes documentation only. Its exact final PR head and CI run
+are verified separately in the PR handoff after that run completes, avoiding a
+self-referential commit hash or prematurely claiming a pending run passed.
+After a session interruption the local execution service was unavailable; the already
+committed implementation and prior local results were preserved in GitHub. This
+documentation follow-up uses those verified records and GitHub CI, not a claimed
+new local validation run.
 
 ## Limitations and Architect decisions
 
