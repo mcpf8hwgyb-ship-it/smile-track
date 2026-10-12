@@ -109,3 +109,4 @@ copy would need an authorized rebuild/redeployment to reflect expiry or withdraw
 Hosting is still unselected. Metadata integrity checks do not verify scientific accuracy,
 reviewer credentials or testimony; human appointments and release decisions require
 review in Git. The Builder cannot grant itself approval.
+G01 temporary branch-protection verification.
