@@ -6,6 +6,12 @@ Architect acceptance, anatomical certification, real-device qualification, or
 public-release approval. Direct original-texture mobile suitability remains
 **INCONCLUSIVE**: no physical mobile hardware or GPU-memory measurement was available.
 
+Implementation commit: `11b43514877a7a85b949e07c193a82c6fcfc6f8d`.
+[Draft review PR #2](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/2).
+[Observed CI PASS](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38213722829)
+includes all required checks; restricted scientific tests remain controlled local evidence.
+See the dated CI entry in VALIDATION_LOG.md for exact tested head/merge/job references.
+
 ## Repository and historical reconciliation
 
 Inspected/rechecked `main`: `2aa706c5ea609dc41b6e0cdca6969b847f75d0af`.

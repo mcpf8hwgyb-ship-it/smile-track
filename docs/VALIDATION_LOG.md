@@ -140,3 +140,28 @@ checkout was identical. No restricted data was needed or copied for this check.
 Changed-file diff, binary/extensions, obvious token/private-key patterns, and
 unchanged app/F01 test/Next config checks pass. These are limited inspections,
 not comprehensive security or scientific certification.
+
+## F02 — 2026-10-12 — observed CI and review handoff
+
+PASS: [Foundation CI 38213722829](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38213722829),
+job `114693490111`, implementation head
+`11b43514877a7a85b949e07c193a82c6fcfc6f8d`, PR test-merge
+`c055be67ca224fc67c80cb4a36d5689018c300ec`. Job steps and decoded logs inspected.
+Ubuntu 24.04.5; Node 24.19.0; npm explicitly pinned to 11.9.0; Playwright's
+Chrome for Testing / Headless Shell 156.0.8078.4 installed successfully in CI.
+
+All required steps succeeded: clean install, lint, strict types, synthetic F02
+checks (4 PASS / 1 controlled-data SKIP), static export, deployment boundary,
+F01 desktop/mobile smoke (2 PASS), intentional missing-safety-copy negative control,
+and dependency audit (0 vulnerabilities). The test-merge is GitHub's temporary CI
+ref; PR #2 remains unmerged and main remains unchanged. No controlled source assets
+were present, downloaded, rendered, or uploaded in CI.
+
+[Draft PR #2](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/2) submits F02
+for Architect review. Implementation tree: `ab0a40e4451ef5d71988c102f21bba9dcfe16280`.
+The GitHub API commit retains the verified main parent; the local reconstruction
+uses separate snapshot history with the same tree, which is not pushed.
+This documentation-only follow-up records observed CI; it changes no executable
+code, dependency, source asset, or scientific classification. Its CI is visible
+in the PR checks. Builder assessment: PASS for further internal integration review;
+original-texture real-mobile suitability remains INCONCLUSIVE. Stop after F02.
