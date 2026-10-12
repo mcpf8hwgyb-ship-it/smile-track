@@ -74,3 +74,94 @@ No assets extracted/imported from the supplied Stage 09C ZIP. Master specificati
 - `git diff` confirms no changes to master specification, content-evidence document, or research README. Existing D-001/D-002 governance remains unchanged.
 - Supplied, unopened Stage 09C ZIP SHA-256: `a473b9850447295136a6f4abce952836728ee19053b83f56df1da001a8e9cafa`. No extraction or import occurred.
 - F01 implementation and automated evidence are ready for Architect review. No merge or next feature is authorized.
+
+## F02 — 2026-10-12 UTC / America/New_York — local evidence
+
+Scope is the Architect-approved internal investigation, not a public explorer.
+Inspected and rechecked main `2aa706c5ea609dc41b6e0cdca6969b847f75d0af`;
+PR #1 merged 2026-10-08 02:54:46 UTC. Feature branch
+`f02-internal-3d-feasibility`. Historical records above remain unchanged.
+Stage 09C closure and the exact four independently verified archive hashes are in
+[F02_REPORT.md](F02_REPORT.md); later Gate B desktop acceptance is owner-attested,
+not an independently repeated Builder result. Fifteen statuses and sixteen flags
+remain unchanged. No scientific model or public application feature was changed.
+
+### Observed commands and outcomes
+
+- `npm ci`: PASS from committed lockfile; Node 24.19.0/npm 11.9.0.
+- `npm run lint`: PASS, no warnings; React Hooks rules-of-hooks and exhaustive-deps added with compatible plugin 7.1.1. Full Next preset remains omitted.
+- `npm run typecheck`: PASS, strict TypeScript includes internal code.
+- `NEXT_TELEMETRY_DISABLED=1 npm run build`: PASS, static `/` and `/_not-found` only.
+- `npm run check:export`: PASS, 4 application files and 23 exported files scanned; no public directory exists. No GLB, restricted manifest, or internal viewer route/import found. Negative-control guard tests reject renamed GLB magic, manifest marker, and internal code reference.
+- `npm run test:f02`: 4 PASS, 1 explicitly SKIPPED controlled scientific test without `F02_DATA_DIR`. This is the non-sensitive CI path.
+- `F02_DATA_DIR=../f02-controlled-runtime npm run test:f02:controlled`: 5 PASS, 0 skipped; wrapper refuses absent/in-repository controlled data. Exact source arrays, 16/32 mapping, frozen matrices, 2,596,056 coordinate evaluations, independent oracle, reflections, deliberate transposition/double-transform negatives. Maximum direct arithmetic difference 0; oracle tolerance absolute 1e-11 + relative 1e-12.
+- `python internal/f02/prepare.py --original '../project_sources/02-SMILE_TRACK_B_STAGE09C_NEW_CHAT_HANDOFF-1-.zip' --scene '../f02-controlled-inputs/SMILE_TRACK_B_STAGE09C_07_SCENE (1).zip' --evidence '../f02-controlled-inputs/SMILE_TRACK_B_STAGE09C_07_EVIDENCE (1).zip' --closure '../f02-controlled-inputs/SMILE_TRACK_B_STAGE09C_CLOSURE_RECORD(1).zip' --out ../f02-controlled-runtime`: PASS, four whole-archive hashes, 271 member checksums/CRC, scene/evidence metadata equality, closure pins, all sources byte-equal originals, full component partitions. Python 3.12.14, NumPy 2.3.5. Source copies rehashed after browser tests: all 16 unchanged.
+- `F02_DATA_DIR=../f02-controlled-runtime F02_CHROMIUM_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/chromium F02_SOFTWARE_GL=1 LD_LIBRARY_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime FONTCONFIG_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/fonts node internal/f02/browser-check.mjs`: PASS, final metrics in `docs/f02/browser-results.json`. Desktop and 4x CPU-throttled mobile emulation; both material modes; all 24 original textures actually loaded; mode/isolation controls, unchanged matrices after camera movement, reflected A/B pixel visibility, 404/malformed third-source failures, WebGL2-unavailable path. No external requests/page or console errors in valid runs; no WebGL errors/context loss. No restricted screenshots/traces saved.
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/chromium LD_LIBRARY_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime FONTCONFIG_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/fonts npm run test:e2e`: 2 PASS locally (Chromium 153.0.8010.0). Existing desktop/mobile identity/safety, Tab/Enter navigation, focus outline, touch target, overflow, no errors/external calls/cookies/storage assertions unchanged.
+- Same three browser environment variables with `npm run test:smoke-sensitivity`: PASS; deliberately removed safety text triggers exact `toBeVisible` failure, output restored in finally. The intentional failure is positive sensitivity evidence.
+- `npm audit --audit-level=high`: PASS, 0 vulnerabilities reported, not comprehensive security certification.
+- `git diff --check`: PASS. No scientific assets, generated manifests/oracles, source coordinates, credential files, dependency directories, or build output staged. Public `app/`, F01 assertions and Next config unchanged.
+
+### Failed attempts and measurement limitations
+
+Standard `npx playwright install chromium` again returned an invalid/truncated ZIP.
+External test-only @sparticuz/chromium 153.0.0 supplied Chromium 153.0.8010.0;
+its default extraction failed on chown, so its own Brotli archives were unpacked
+locally without owner restoration. No package or browser binary is committed.
+SwiftShader is software rendering, not mobile hardware validation.
+
+Initial cleanup assertions incorrectly expected zero renderer texture count;
+tracked assets release, geometry count returns to zero, but one internal texture
+remains counted. The report retains that limitation instead of claiming total
+GPU memory reclamation. Original images are explicitly closed (24 per original run).
+
+The initial original-material comparison was INVALID: CSP blocked embedded blob
+fetching and GLTFLoader fell back to untextured material. Corrected CSP permits
+local blob decoding only; an explicit 24-texture assertion and console-error
+collection prevent that false positive. Those timings are not used as valid
+texture evidence. Two corrected runs are retained; timing variation and shared-host
+interference are disclosed. No optimization or source modification was attempted.
+
+### CI scope
+
+CI executes installation, lint, strict types, synthetic F02 tests, production build,
+export-boundary guard, original desktop/mobile smoke tests, negative control and
+dependency audit. No restricted models/metadata, asset downloads, screenshots or
+traces are uploaded. Local controlled source testing is separate from CI.
+CI results will be recorded in a subsequent dated evidence entry after observation.
+
+### Clean source-only reproduction and final inspection
+
+`git checkout-index --all --prefix=/tmp/smile-track-f02-clean/` produced a source-only
+copy of the staged review tree. In that directory, `npm ci`, `npm run lint`,
+`npm run typecheck`, `npm run test:f02`, `NEXT_TELEMETRY_DISABLED=1 npm run build`,
+and `npm run check:export` all PASS. `cmp package-lock.json` against the working
+checkout was identical. No restricted data was needed or copied for this check.
+Changed-file diff, binary/extensions, obvious token/private-key patterns, and
+unchanged app/F01 test/Next config checks pass. These are limited inspections,
+not comprehensive security or scientific certification.
+
+## F02 — 2026-10-12 — observed CI and review handoff
+
+PASS: [Foundation CI 38213722829](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38213722829),
+job `114693490111`, implementation head
+`11b43514877a7a85b949e07c193a82c6fcfc6f8d`, PR test-merge
+`c055be67ca224fc67c80cb4a36d5689018c300ec`. Job steps and decoded logs inspected.
+Ubuntu 24.04.5; Node 24.19.0; npm explicitly pinned to 11.9.0; Playwright's
+Chrome for Testing / Headless Shell 156.0.8078.4 installed successfully in CI.
+
+All required steps succeeded: clean install, lint, strict types, synthetic F02
+checks (4 PASS / 1 controlled-data SKIP), static export, deployment boundary,
+F01 desktop/mobile smoke (2 PASS), intentional missing-safety-copy negative control,
+and dependency audit (0 vulnerabilities). The test-merge is GitHub's temporary CI
+ref; PR #2 remains unmerged and main remains unchanged. No controlled source assets
+were present, downloaded, rendered, or uploaded in CI.
+
+[Draft PR #2](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/2) submits F02
+for Architect review. Implementation tree: `ab0a40e4451ef5d71988c102f21bba9dcfe16280`.
+The GitHub API commit retains the verified main parent; the local reconstruction
+uses separate snapshot history with the same tree, which is not pushed.
+This documentation-only follow-up records observed CI; it changes no executable
+code, dependency, source asset, or scientific classification. Its CI is visible
+in the PR checks. Builder assessment: PASS for further internal integration review;
+original-texture real-mobile suitability remains INCONCLUSIVE. Stop after F02.

@@ -12,3 +12,9 @@ next-env.d.ts
 *.key
 *.log
 .DS_Store
+
+# Restricted investigation data never belongs in this repository.
+*.glb
+*.gltf
+*.zip
+.f02/
