@@ -1,0 +1,41 @@
+import { expect, test } from "@playwright/test";
+
+test("Learn is an accessible empty education catalog with no unpublished content or data collection", async ({ page, context }, testInfo) => {
+  const errors: string[] = [], external: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  page.on("request", request => {
+    if (new URL(request.url()).origin !== "http://127.0.0.1:4173") external.push(request.url());
+  });
+  const response = await page.goto("/learn/");
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveTitle("Learn | Smile Track");
+  await expect(page.getByRole("heading", { level: 1, name: "Learn", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Learn", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { name: "No lessons published yet" })).toBeVisible();
+  await expect(page.getByText("There are no articles to open right now.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("article")).toHaveCount(0);
+  await expect(page.getByRole("main")).not.toContainText("E01_SYNTHETIC_");
+  await expect(page.getByText("Smile Track is not a diagnostic medical device and does not provide diagnoses or replace professional dental care.", { exact: true })).toBeVisible();
+  await page.keyboard.press("Tab");
+  const skip = page.getByRole("link", { name: "Skip to content" });
+  await expect(skip).toBeFocused();
+  await expect(skip).toBeInViewport();
+  await expect(skip).toHaveCSS("outline-style", "solid");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("main")).toBeFocused();
+  await page.keyboard.press("Tab");
+  const back = page.getByRole("link", { name: "Back to home" });
+  await expect(back).toBeFocused();
+  await expect(back).toHaveCSS("outline-style", "solid");
+  expect((await back.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("learn-empty.png"), fullPage: true });
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL("http://127.0.0.1:4173/");
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Learn", exact: true }).click();
+  await expect(page).toHaveURL(/\/learn\/$/);
+  expect(await context.cookies()).toEqual([]);
+  expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});

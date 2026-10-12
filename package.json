@@ -14,13 +14,15 @@
     "lint": "eslint . --max-warnings=0",
     "preview": "node scripts/preview.mjs",
     "test:e2e": "playwright test",
-    "validate": "npm run lint && npm run typecheck && npm run build && npm run test:e2e",
+    "validate": "npm run lint && npm run typecheck && npm run test:education && npm run test:f02 && npm run build && npm run check:export && npm run test:e2e",
     "test:smoke-sensitivity": "node scripts/check-smoke-sensitivity.mjs",
     "test:f02": "node --experimental-strip-types --test internal/f02/conformance.test.ts internal/f02/boundary.test.mjs",
     "test:f02:controlled": "node internal/f02/require-data.mjs && npm run test:f02",
     "f02:serve": "node internal/f02/server.mjs",
     "f02:browser": "node internal/f02/browser-check.mjs",
-    "check:export": "node scripts/check-export-boundary.mjs"
+    "check:export": "node scripts/check-export-boundary.mjs && node --experimental-strip-types scripts/check-education-export.mjs",
+    "test:education": "node --experimental-strip-types --test education/contract.test.ts",
+    "test:education-sensitivity": "node --experimental-strip-types scripts/check-education-sensitivity.mjs"
   },
   "dependencies": {
     "next": "16.4.0",

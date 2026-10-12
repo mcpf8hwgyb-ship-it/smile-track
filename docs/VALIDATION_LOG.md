@@ -2,6 +2,78 @@
 
 This file records meaningful technical validation.
 
+## E01 — 2026-10-12 — local validation and post-F02 reconciliation
+
+Base/main reverified through GitHub: `a95a8ff1831900e6148a00c3681d928518bd8875`.
+Branch: `e01-education-foundation`. F02 PR #2 is merged; post-merge
+[CI 38215252635](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38215252635)
+passed on that base. Prior entries below remain historical and unchanged.
+
+Exact environment, commands, fixture cases, non-sensitive browser evidence, changed
+files, security boundaries and limitations: [E01_REPORT.md](E01_REPORT.md).
+
+- `npm ci`: PASS, 186 packages, unchanged lockfile; Node 24.19.0 / npm 11.9.0.
+- `npm run lint`: PASS, zero warnings after fixing an initial missing Buffer import.
+- `npm run typecheck`: PASS, strict TypeScript and generated route types.
+- `npm run test:education`: PASS, 5 tests, no skips; approved synthetic positive,
+  citation-only/draft/pending/review-only exclusions, malformed/missing review and
+  provenance rejection, version/digest binding, withdrawal/supersession, expiry,
+  inactive/missing authority and contributor/reviewer approval-conflict controls.
+- `npm run test:f02`: PASS, 4 synthetic tests; 1 restricted frozen-data test explicitly
+  SKIPPED. No scientific model work or new controlled rendering was performed.
+- `NEXT_TELEMETRY_DISABLED=1 npm run build`: PASS; `/`, `/_not-found`, `/learn` static.
+- `npm run check:export`: PASS; app 6 files, out 28 files, 0 approved lessons;
+  no restricted payloads, unpublished bodies or test fixtures in export.
+- `npm run test:e2e` with the exact fallback environment in E01_REPORT: PASS, 4 cases;
+  Home and Learn at 1440x1000 and 390x844. Keyboard skip/main/link focus and navigation,
+  visible outlines, target height, no overflow/errors/external requests/storage writes.
+  Local Chromium 153.0.8010.0; Learn screenshots visually inspected at both sizes.
+- `npm run test:smoke-sensitivity` with the same environment: PASS. Deliberately
+  removing Home safety copy fails its exact text assertion; Learn remains passing;
+  the wrapper exits 0 and restores output. This is intentional negative evidence.
+- `NEXT_TELEMETRY_DISABLED=1 npm run test:education-sensitivity`: PASS. Temporarily
+  installed cited unpublished synthetic records; actual static export excluded them.
+  Deliberately leaked fixture marker caused export validation failure; original
+  catalog bytes restored and production rebuilt. Final `npm run check:export`: PASS.
+- `npm audit --audit-level=high`: PASS, zero reported vulnerabilities at check time.
+- `git diff --check`: PASS. F02 code/evidence, scientific export guard, Next config,
+  lockfile and F01 browser test are byte-unchanged. All seven prior documentation
+  bodies preserved verbatim beneath additive transitions. Candidate source inventory
+  has no restricted/generated/credential files or obvious token/private-key patterns.
+
+No real educational content or human reviewer appointment is approved. The static
+gate checks metadata and version bindings, not medical correctness or human testimony.
+Real devices, assistive technology, comprehensive security review and automatic
+revocation of already-hosted static pages remain outside these results. No scientific
+ZIP was opened/imported in E01; no model, backend, health-data or hosting change occurred.
+
+### E01 CI evidence
+
+PASS — [Foundation CI 38264947639](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38264947639),
+job `114864646063`, associated with exact implementation head
+`539c5d4491485d19de8c01862c85dfa9f4d88622`. GitHub checked out its PR test merge
+(`b09a3b5…`) against the unchanged approved main base. Run metadata, job steps and
+decoded logs were checked, not merely the PR badge.
+
+Clean installation, lint, strict types, 5 education tests, 4 F02 synthetic tests
+(1 restricted-data skip), static build, both export guards, bundled-browser installation,
+4 desktop/mobile browser checks, safety-copy sensitivity, education export negative
+controls and dependency audit all passed. The logs report 28 export files, zero
+approved lessons, successful deliberate-leak rejection and zero vulnerabilities.
+CI independently reproduces the local results without the local browser fallback.
+
+This evidence update changes documentation only. Its exact final PR head and CI run
+are verified separately in the PR handoff after that run completes, avoiding a
+self-referential commit hash or prematurely claiming a pending run passed.
+After a session interruption the local execution service was unavailable; the already
+committed implementation and prior local results were preserved in GitHub. This
+documentation follow-up uses those verified records and GitHub CI, not a claimed
+new local validation run.
+
+No merge, lesson publication or further feature is authorized.
+
+---
+
 Validation may include:
 
 - builds;

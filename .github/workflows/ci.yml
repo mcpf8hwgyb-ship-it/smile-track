@@ -35,6 +35,8 @@ jobs:
         run: npm run lint
       - name: Strict type checking
         run: npm run typecheck
+      - name: Education contract and publication gate
+        run: npm run test:education
       - name: Non-sensitive F02 conformance and boundary negative controls
         run: npm run test:f02
       - name: Production static export
@@ -47,5 +49,7 @@ jobs:
         run: npm run test:e2e
       - name: Verify smoke test sensitivity
         run: npm run test:smoke-sensitivity
+      - name: Education export negative controls
+        run: npm run test:education-sensitivity
       - name: Dependency audit
         run: npm audit --audit-level=high

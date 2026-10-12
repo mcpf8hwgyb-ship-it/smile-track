@@ -6,7 +6,7 @@ export default function Home() {
       <a className={styles.skipLink} href="#main">Skip to content</a>
       <header className={styles.header}>
         <span className={styles.wordmark}>Smile Track<span aria-hidden="true">.</span></span>
-        <span className={styles.badge}>Early preview</span>
+        <nav aria-label="Main navigation"><a className={styles.navLink} href="/learn/">Learn</a></nav>
       </header>
       <main id="main" tabIndex={-1}>
         <section className={styles.hero} aria-labelledby="page-title">

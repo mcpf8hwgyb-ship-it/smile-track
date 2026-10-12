@@ -1,6 +1,6 @@
 # Smile Track
 
-An early foundation for oral-health education and tracking. This preview is not a diagnostic medical device. Education, tracking, capture, accounts, and analysis are not implemented.
+An early foundation for oral-health education and tracking. This preview is not a diagnostic medical device. The Learn foundation has an honest empty state; no dental lessons are approved or published. Tracking, capture, accounts, and analysis are not implemented.
 
 ## Local setup
 
@@ -9,7 +9,7 @@ Use Node.js **24.19.0** (`nvm install && nvm use` where nvm is available) and np
 ```sh
 git clone https://github.com/mcpf8hwgyb-ship-it/smile-track.git
 cd smile-track
-git switch f02-internal-3d-feasibility
+git switch main
 npm ci
 export NEXT_TELEMETRY_DISABLED=1
 npm run dev
@@ -23,14 +23,18 @@ Open http://127.0.0.1:3000. The telemetry environment variable disables Next.js 
 npx playwright install --with-deps chromium
 npm run lint
 npm run typecheck
+npm run test:education
+npm run test:f02
 npm run build
+npm run check:export
 npm run test:e2e
 npm run test:smoke-sensitivity
+npm run test:education-sensitivity
 npm audit --audit-level=high
 npm run preview
 ```
 
-Preview: http://127.0.0.1:4173. `npm run validate` combines lint, typecheck, build, and smoke tests after browser installation. The sensitivity command deliberately removes safety wording from generated HTML, requires the content assertion to fail, and restores the file in a finally block. Run it after a passing smoke test.
+Preview: http://127.0.0.1:4173. `npm run validate` combines lint, typecheck, education/F02 tests, build, export guards, and smoke tests after browser installation. The sensitivity command deliberately removes safety wording from generated HTML, requires the content assertion to fail, and restores the file in a finally block. Run it after a passing smoke test.
 
 `next build` generates `out/`, including index.html and 404.html. Hosting needs only these static files; no Node runtime is required in production. Do not use `next start` for this export. Hosting remains unselected. The loopback-only Node preview script is development tooling, not production infrastructure.
 
@@ -65,7 +69,7 @@ Transitive versions and integrity hashes are recorded in package-lock.json. Type
 
 ## Internal F02 investigation and review status
 
-F01 is merged. F02 is an internal-only investigation awaiting Architect review; no public viewer or F03 is authorized. [Evidence and reproducible controlled commands](docs/F02_REPORT.md) distinguish actual local checks from CI and preserve Stage 09C closure/uncertainty provenance.
+F01 and F02 are merged. F02 is accepted solely as an internal feasibility investigation; no public viewer or further 3D work is authorized. [Evidence and reproducible controlled commands](docs/F02_REPORT.md) distinguish actual local checks from CI and preserve Stage 09C closure/uncertainty provenance.
 
 ```sh
 npm run test:f02       # Synthetic checks; restricted test explicitly skipped without inputs
@@ -77,3 +81,31 @@ npm run check:export   # After build: reject restricted assets/manifest/viewer i
 Additional exact development dependencies: three 0.186.1, @types/three 0.186.0, zod 4.6.6, esbuild 0.28.2, eslint-plugin-react-hooks 7.1.1. No new production dependencies. The controlled preparation script was tested with Python 3.12.14 and numpy 2.3.5; Python is not needed by the application or CI.
 
 When the bundled browser cannot be installed, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects a controlled local Chromium for F01 smoke tests. The fallback version must be reported; CI continues to use Playwright's bundled browser. This option does not change the assertions.
+
+
+## E01 content foundation
+
+`/learn/` lists only lessons returned by the build-time publication gate. Both
+`content/education/records.json` and `authorities.json` are intentionally empty.
+No actual content, appointment, evidence review, or publication approval has occurred.
+See [content review process](docs/CONTENT_EVIDENCE.md) and [E01 evidence](docs/E01_REPORT.md).
+The default setup above tracks main; while E01 is in review, use
+`git switch e01-education-foundation` explicitly to inspect this unmerged change.
+
+`education/contract.ts` defines `education-content-1`; `education/catalog.ts` reads
+version-controlled inputs at build time and returns only eligible public fields.
+Never import raw records, authorities or `education/fixtures.ts` into client code.
+The non-medical fixtures are test-only; no real lessons may be added under E01.
+No new dependency or dependency version was introduced.
+
+The education sensitivity check temporarily replaces the local catalog with
+unpublished synthetic records, builds the actual static site, checks every exported
+file, deliberately injects a test marker to prove rejection, then restores the
+original catalog and rebuilds in `finally`. Run it alone, with no dev server or
+parallel build; it makes no Git commit. Interrupted processes cannot execute cleanup:
+restore `content/education/records.json` from Git and rebuild before continuing.
+Build and export checks gate publication at build time; an already hosted static
+copy would need an authorized rebuild/redeployment to reflect expiry or withdrawal.
+Hosting is still unselected. Metadata integrity checks do not verify scientific accuracy,
+reviewer credentials or testimony; human appointments and release decisions require
+review in Git. The Builder cannot grant itself approval.
