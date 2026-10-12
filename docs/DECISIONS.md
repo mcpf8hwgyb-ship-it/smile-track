@@ -1,5 +1,31 @@
 # SMILE TRACK — DECISION LOG
 
+## E01 transition — 2026-10-12 (supersedes earlier active-task/review status)
+
+F01 is complete and merged. Stage 09C is closed with frozen
+`OUTWARD_PROVISIONAL_V1`, accepted for internal development only.
+F02 received final Architect approval and PR #2 merged at
+`a95a8ff1831900e6148a00c3681d928518bd8875`; post-merge
+[CI 38215252635](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38215252635)
+passed. That commit was reverified as main before E01 branching.
+F02 is an accepted internal feasibility investigation, not production integration.
+Real-mobile texture suitability and complete GPU-memory reclamation remain unresolved.
+The original F02 report, uncertainty records and review chronology remain preserved.
+
+**E01 is the sole selected application task:** establish the evidence-gated content
+contract and minimal Learn interface, submitted for Architect review before merge.
+No dental lesson or content reviewer has been approved/appointed in the repository.
+The production lesson catalog and human authority registry are empty. Test approvals
+are synthetic, non-medical fixtures only. See CONTENT_EVIDENCE.md for the process.
+
+Scientific model development remains paused. All 15 scientific statuses and 16
+review flags remain unchanged; anatomy NOT_CERTIFIED and public educational
+suitability NOT_ESTABLISHED. No public dental-model release, derivatives, hosting,
+backend, accounts or subsequent feature is authorized. The historical entries below
+remain intact; prior F02 review-pending wording describes the pre-merge state.
+
+---
+
 This document records important architectural, product, scientific, privacy, and technical decisions.
 
 Do not record trivial implementation details here.
@@ -87,3 +113,21 @@ outside the limited baseline. No stack replacement, new product feature, geometr
 optimization, or production delivery decision is authorized. Measured limitations
 and potential follow-up budgets in F02_REPORT.md are proposals requiring Architect
 review, with Scientific Lead approval additionally required for scientific derivatives.
+
+## D-005 — E01 evidence-gated static education foundation
+
+Status: Architect-selected E01 scope; implementation submitted for review.
+
+Use the approved static stack and existing Zod dependency for `education-content-1`.
+Build-time filesystem loading keeps unpublished records outside the client graph;
+a single fail-closed gate supplies only eligible fields to `/learn/`. No CMS,
+backend, accounts or reviewer login is introduced. Production records and the
+human appointment registry remain empty. Qualified human review and a separate
+explicit publication decision bind to the exact content version/digest. Builder
+implementation is not content approval. No actual educational lesson is authorized.
+
+Latest-version selection, expiry, withdrawal and inactive appointments exclude content;
+malformed metadata stops the build. Static exports need a later authorized rebuild/
+redeployment to reflect changes. Metadata checks rely on human Git review for the
+truth of appointments and review evidence; they do not certify facts or credentials.
+F02 scientific implementation and all scientific limitations remain unchanged.

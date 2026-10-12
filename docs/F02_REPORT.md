@@ -1,5 +1,15 @@
 # F02 — Internal integration evidence, 2026-10-12
 
+## Additive acceptance record — 2026-10-12
+
+The Architect approved the reviewed F02 head `a93ad3a600c85cc4949da93b44c7ba6a668636c8`.
+PR #2 merged into main at `a95a8ff1831900e6148a00c3681d928518bd8875`; post-merge
+CI `38215252635` passed. Acceptance is solely for internal feasibility investigation.
+The original report below, including its pre-review wording, remains unchanged.
+No scientific or public-release status changed. E01 does not extend the 3D investigation.
+
+---
+
 **Builder determination: PASS — FEASIBLE FOR FURTHER INTERNAL INTEGRATION REVIEW.**
 Transform conformance and controlled rendering are demonstrated. This is not
 Architect acceptance, anatomical certification, real-device qualification, or

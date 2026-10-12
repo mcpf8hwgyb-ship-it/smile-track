@@ -1,5 +1,31 @@
 # SMILE TRACK — MASTER PROJECT PROMPT
 
+## E01 transition — 2026-10-12 (supersedes earlier active-task/review status)
+
+F01 is complete and merged. Stage 09C is closed with frozen
+`OUTWARD_PROVISIONAL_V1`, accepted for internal development only.
+F02 received final Architect approval and PR #2 merged at
+`a95a8ff1831900e6148a00c3681d928518bd8875`; post-merge
+[CI 38215252635](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38215252635)
+passed. That commit was reverified as main before E01 branching.
+F02 is an accepted internal feasibility investigation, not production integration.
+Real-mobile texture suitability and complete GPU-memory reclamation remain unresolved.
+The original F02 report, uncertainty records and review chronology remain preserved.
+
+**E01 is the sole selected application task:** establish the evidence-gated content
+contract and minimal Learn interface, submitted for Architect review before merge.
+No dental lesson or content reviewer has been approved/appointed in the repository.
+The production lesson catalog and human authority registry are empty. Test approvals
+are synthetic, non-medical fixtures only. See CONTENT_EVIDENCE.md for the process.
+
+Scientific model development remains paused. All 15 scientific statuses and 16
+review flags remain unchanged; anatomy NOT_CERTIFIED and public educational
+suitability NOT_ESTABLISHED. No public dental-model release, derivatives, hosting,
+backend, accounts or subsequent feature is authorized. The historical entries below
+remain intact; prior F02 review-pending wording describes the pre-merge state.
+
+---
+
 ## Status transition — 2026-10-12 (supersedes historical state below)
 
 F01 is **merged and complete**: PR #1 merged on 2026-10-08 at 02:54:46 UTC,
