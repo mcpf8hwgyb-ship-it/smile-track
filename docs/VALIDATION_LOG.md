@@ -1,5 +1,78 @@
 # SMILE TRACK — VALIDATION LOG
 
+## G01-DOC — 2026-10-12 — governance closure and documentation validation
+
+Baseline: `53337472c46a8c0dc0cbd83c4157bc8831b05d65` (main, reverified before edits).
+Branch: `g01-doc-governance-closure`. F01 COMPLETE; Stage 09C CLOSED with frozen
+`OUTWARD_PROVISIONAL_V1`; F02 COMPLETE for internal feasibility only; E01 COMPLETE
+as an empty education foundation; G01 COMPLETE for solo-maintainer technical governance.
+Earlier validation and status records below remain historical and unchanged.
+
+### Governance evidence
+
+Public visibility, main ref, active ruleset `G01-main-protection` / `24954073`,
+applicable branch rules and inventory were read from GitHub. Required PR, zero
+approving reviews, strict up-to-date `validate`, conversation resolution, deletion/
+force-push restrictions, empty bypass actors and `current_user_can_bypass: never`
+match the approved configuration. Merge commits remain allowed. No settings changed.
+See [G01_REPORT.md](G01_REPORT.md) for exact fields, references and access limitations.
+
+[PR #4](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/4) is closed unmerged;
+`g01-protection-test` ref is absent; main is unchanged. Verified failed
+[run 38311018467](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38311018467)
+at lint (unused intentional test variable) and successful
+[run 38311416569](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38311416569)
+through metadata, job steps and logs. Merge-button behavior during the earlier Owner
+experiment was not independently replayed. These are technical safeguards, not
+independent GitHub approval or qualified dental-content review.
+
+### Local validation — fresh source checkout
+
+Node 24.19.0 / npm 11.9.0; dependency pins and lockfile unchanged.
+
+| Command / review | Observed result |
+| --- | --- |
+| `git diff --check` | PASS |
+| Markdown/link consistency review | PASS; added headings/tables reviewed, local link targets resolve; historical document bodies preserved verbatim |
+| `npm ci` | PASS; 186 packages installed from lockfile |
+| `npm run lint` | PASS; zero warnings |
+| `npm run typecheck` | PASS; strict compiler and route types |
+| `npm run test:education` | PASS; 5 tests, no skips |
+| `npm run test:f02` | PASS; 4 synthetic tests, 1 restricted-data test explicitly SKIPPED |
+| `NEXT_TELEMETRY_DISABLED=1 npm run build` | PASS; static `/`, `/_not-found`, `/learn` |
+| `npm run check:export` | PASS; app 6 files, out 28 files; zero approved lessons and no restricted/unpublished/test payloads |
+| `npm run test:e2e` with the environment below | PASS; 4 desktop/mobile Home/Learn cases |
+| `npm audit --audit-level=high` | PASS; 0 reported vulnerabilities at check time |
+
+Exact local browser environment:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/chromium LD_LIBRARY_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime FONTCONFIG_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/fonts npm run test:e2e
+```
+
+The existing external fallback reports Chromium 153.0.8010.0; no browser dependency
+was added to the repository. CI uses Playwright's own installed browser. Tested viewports
+are 1440x1000 and 390x844 emulation; identity/safety/empty state, keyboard navigation,
+visible focus, no overflow, no external requests/page errors or storage writes passed.
+Real-device, screen-reader, comprehensive security or scientific revalidation is not
+claimed. The restricted scientific test remains a skip, not a pass.
+
+The npm environment emits an `http-proxy` warning and browser tooling emits a color
+variable warning; neither failed validation. No dependency update was performed.
+Only the seven declared Markdown files changed. Application, E01 gate, catalogs,
+F02 code/evidence, source transforms, research records, lockfile, dependencies,
+workflow and test files are byte-unchanged. Production content/authority arrays stay
+empty. No source ZIP was opened, no license added and no scientific interpretation changed.
+
+### G01-DOC CI evidence
+
+The local results above are separate from CI. The documentation PR will run the
+unchanged `validate` job, including its existing sensitivity controls. The exact
+final commit, PR and observed CI run are recorded in the review handoff after completion;
+no pending result is claimed as passing. Architect review is required before merge.
+
+---
+
 This file records meaningful technical validation.
 
 ## E01 — 2026-10-12 — local validation and post-F02 reconciliation

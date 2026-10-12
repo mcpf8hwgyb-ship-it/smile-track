@@ -1,5 +1,34 @@
 # SMILE TRACK — ROADMAP
 
+## G01 closure — 2026-10-12 (current; supersedes earlier review-pending entries)
+
+| Milestone | Current accepted state |
+| --- | --- |
+| F01 | COMPLETE — application foundation, merged PR #1 |
+| Stage 09C | CLOSED — frozen `OUTWARD_PROVISIONAL_V1`, internal-only |
+| F02 | COMPLETE — internal feasibility investigation only, merged PR #2 |
+| E01 | COMPLETE — empty evidence-gated education foundation, merged PR #3 |
+| G01 | COMPLETE — solo-maintainer technical governance |
+
+Verified baseline: `main` at `53337472c46a8c0dc0cbd83c4157bc8831b05d65`.
+The repository is public; the frozen Dundee source assets remain restricted and
+are not in the public repository or application export. Public visibility does not
+authorize deployment, scientific-asset distribution or publication of dental lessons.
+
+[G01 evidence and limitations](G01_REPORT.md) record the active PR/CI safeguards.
+Zero approving GitHub reviews are required: the Project Owner can self-merge a
+passing, up-to-date PR with resolved conversations. This is not independent human
+review. Existing qualified substantive dental/health review and explicit publication
+approval requirements remain unchanged; both production content/authority registries
+remain empty. Scientific development remains paused and all inherited uncertainties
+remain unchanged.
+
+G01-DOC is documentation reconciliation only, pending Architect review before merge.
+No next application task is selected or authorized. Earlier entries below retain
+their historical wording and evidence; they do not override this dated current state.
+
+---
+
 ## E01 transition — 2026-10-12 (supersedes earlier active-task/review status)
 
 F01 is complete and merged. Stage 09C is closed with frozen

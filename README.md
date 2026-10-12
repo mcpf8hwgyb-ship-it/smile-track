@@ -1,5 +1,26 @@
 # Smile Track
 
+## Current project and governance — 2026-10-12
+
+F01, F02, E01 and G01 are complete; Stage 09C is closed with frozen
+`OUTWARD_PROVISIONAL_V1`. F02 is internal feasibility only. E01 provides an empty
+education foundation, not approved dental lessons. Use `main` for the completed
+foundation; the earlier E01 review-branch instructions below are historical.
+
+This repository is public. Active main-branch protection requires a PR, passing
+up-to-date `validate` checks and resolved conversations, with no bypass actors.
+Zero approving reviews are required: the Project Owner may self-merge passing PRs.
+These are technical safeguards, not independent human review or qualified dental
+content approval. The merge-commit workflow is preserved. See
+[G01 governance evidence and limitations](docs/G01_REPORT.md).
+
+Public visibility does not authorize deployment or distribution of the restricted
+Dundee scientific assets, which are not included here. No open-source license is
+currently recorded in the repository; public visibility alone is not an open-source
+license. This task adds no license, reviewer appointment, lesson or deployment.
+
+---
+
 An early foundation for oral-health education and tracking. This preview is not a diagnostic medical device. The Learn foundation has an honest empty state; no dental lessons are approved or published. Tracking, capture, accounts, and analysis are not implemented.
 
 ## Local setup

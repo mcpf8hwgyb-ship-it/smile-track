@@ -1,5 +1,30 @@
 # SMILE TRACK — CONTENT EVIDENCE
 
+## G01 governance clarification — 2026-10-12
+
+E01 is COMPLETE and merged: [PR #3](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/3),
+`53337472c46a8c0dc0cbd83c4157bc8831b05d65`. F01 is complete, Stage 09C is closed,
+F02 is complete for internal feasibility only, and G01 technical governance is complete.
+**Approved dental lessons: zero. Appointed production reviewers/publishers: zero.**
+
+The repository is now public, with enforced PR and CI requirements but zero required
+approving GitHub reviews. The Project Owner can self-merge passing, up-to-date PRs
+with resolved conversations. This does not establish independent human review,
+qualified subject-matter review, evidence accuracy, or content publication approval.
+[G01_REPORT.md](G01_REPORT.md) documents the technical safeguards and their limits.
+Independent GitHub approval may be enabled when an actual second maintainer is available;
+it would still not substitute for the substantive review required below.
+
+The E01 review/publication process below is unchanged. Dental/health content requires
+separate authorization, qualified human substantive review, recorded authority and an
+explicit publication decision bound to its version/digest. No appointments or content
+approvals are created by this documentation update. The frozen Dundee assets remain
+restricted, internal-only, NOT_CERTIFIED and public educational suitability
+NOT_ESTABLISHED. Public repository visibility does not authorize asset distribution
+or application deployment. Historical transitions below remain preserved.
+
+---
+
 ## E01 transition — 2026-10-12 (supersedes earlier active-task/review status)
 
 F01 is complete and merged. Stage 09C is closed with frozen
