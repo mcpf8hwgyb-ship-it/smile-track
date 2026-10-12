@@ -35,8 +35,12 @@ jobs:
         run: npm run lint
       - name: Strict type checking
         run: npm run typecheck
+      - name: Non-sensitive F02 conformance and boundary negative controls
+        run: npm run test:f02
       - name: Production static export
         run: npm run build
+      - name: Verify restricted data excluded from export
+        run: npm run check:export
       - name: Install test browser
         run: npx playwright install --with-deps chromium
       - name: Desktop and mobile smoke tests

@@ -15,7 +15,12 @@
     "preview": "node scripts/preview.mjs",
     "test:e2e": "playwright test",
     "validate": "npm run lint && npm run typecheck && npm run build && npm run test:e2e",
-    "test:smoke-sensitivity": "node scripts/check-smoke-sensitivity.mjs"
+    "test:smoke-sensitivity": "node scripts/check-smoke-sensitivity.mjs",
+    "test:f02": "node --experimental-strip-types --test internal/f02/conformance.test.ts internal/f02/boundary.test.mjs",
+    "test:f02:controlled": "node internal/f02/require-data.mjs && npm run test:f02",
+    "f02:serve": "node internal/f02/server.mjs",
+    "f02:browser": "node internal/f02/browser-check.mjs",
+    "check:export": "node scripts/check-export-boundary.mjs"
   },
   "dependencies": {
     "next": "16.4.0",
@@ -28,8 +33,13 @@
     "@types/node": "24.19.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "esbuild": "0.28.2",
     "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "three": "0.186.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.1"
+    "typescript-eslint": "8.71.1",
+    "zod": "4.6.6"
   }
 }

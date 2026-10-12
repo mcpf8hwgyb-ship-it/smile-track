@@ -1,0 +1,288 @@
+[
+  {
+    "environment": "desktop Chromium",
+    "viewport": "1440x1000",
+    "browser": "153.0.8010.0",
+    "presentation": "solid",
+    "sourceBytes": 58785460,
+    "uniqueGeometries": 16,
+    "renderedInstances": 32,
+    "geometryDecodeMs": 193.70000000030268,
+    "originalMaterialParseDecodeMs": 0,
+    "firstUsableFrameMs": 670.2999999999302,
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "maxTextureSize": 8192,
+    "contextLost": false,
+    "webglError": 0,
+    "gpuMemoryBytes": "UNAVAILABLE",
+    "browserMemory": {
+      "usedJSHeapSize": 10600000,
+      "totalJSHeapSize": 15200000,
+      "jsHeapSizeLimit": 3760000000,
+      "scope": "Chromium JS heap only; excludes GPU and most decoded images"
+    },
+    "sourceTextureObjects": 0,
+    "rendererInfo": {
+      "geometries": 16,
+      "textures": 1
+    },
+    "triangles": 1712352,
+    "drawCalls": 32,
+    "ready": true,
+    "frameIntervalMedianMs": 16.699999999953434,
+    "frameIntervalP95Ms": 142.30000000004657,
+    "frameSamples": 47,
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 0
+    },
+    "visiblePixelCounts": [
+      {
+        "orientation": "A",
+        "nonBackgroundPixels": 1181
+      },
+      {
+        "orientation": "B",
+        "nonBackgroundPixels": 1104
+      }
+    ],
+    "errors": [],
+    "externalRequests": []
+  },
+  {
+    "environment": "desktop Chromium",
+    "viewport": "1440x1000",
+    "browser": "153.0.8010.0",
+    "presentation": "original",
+    "sourceBytes": 58785460,
+    "uniqueGeometries": 16,
+    "renderedInstances": 32,
+    "geometryDecodeMs": 168.9000000001397,
+    "originalMaterialParseDecodeMs": 2134.1999999999534,
+    "firstUsableFrameMs": 4799.199999999953,
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "maxTextureSize": 8192,
+    "contextLost": false,
+    "webglError": 0,
+    "gpuMemoryBytes": "UNAVAILABLE",
+    "browserMemory": {
+      "usedJSHeapSize": 10600000,
+      "totalJSHeapSize": 15200000,
+      "jsHeapSizeLimit": 3760000000,
+      "scope": "Chromium JS heap only; excludes GPU and most decoded images"
+    },
+    "sourceTextureObjects": 24,
+    "rendererInfo": {
+      "geometries": 16,
+      "textures": 25
+    },
+    "triangles": 1712352,
+    "drawCalls": 32,
+    "ready": true,
+    "frameIntervalMedianMs": 16.70000000006985,
+    "frameIntervalP95Ms": 153.29999999993015,
+    "frameSamples": 34,
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 24
+    },
+    "visiblePixelCounts": [
+      {
+        "orientation": "A",
+        "nonBackgroundPixels": 1181
+      },
+      {
+        "orientation": "B",
+        "nonBackgroundPixels": 1104
+      }
+    ],
+    "errors": [],
+    "externalRequests": []
+  },
+  {
+    "environment": "desktop Chromium mobile emulation + 4x CPU throttling",
+    "viewport": "390x844",
+    "browser": "153.0.8010.0",
+    "presentation": "solid",
+    "sourceBytes": 58785460,
+    "uniqueGeometries": 16,
+    "renderedInstances": 32,
+    "geometryDecodeMs": 603.4000000001397,
+    "originalMaterialParseDecodeMs": 0,
+    "firstUsableFrameMs": 2276.79999999993,
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "maxTextureSize": 8192,
+    "contextLost": false,
+    "webglError": 0,
+    "gpuMemoryBytes": "UNAVAILABLE",
+    "browserMemory": {
+      "usedJSHeapSize": 11200000,
+      "totalJSHeapSize": 14300000,
+      "jsHeapSizeLimit": 3760000000,
+      "scope": "Chromium JS heap only; excludes GPU and most decoded images"
+    },
+    "sourceTextureObjects": 0,
+    "rendererInfo": {
+      "geometries": 16,
+      "textures": 1
+    },
+    "triangles": 1712352,
+    "drawCalls": 32,
+    "ready": true,
+    "frameIntervalMedianMs": 17.099999999976717,
+    "frameIntervalP95Ms": 306.0999999999767,
+    "frameSamples": 39,
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 0
+    },
+    "visiblePixelCounts": [
+      {
+        "orientation": "A",
+        "nonBackgroundPixels": 950
+      },
+      {
+        "orientation": "B",
+        "nonBackgroundPixels": 883
+      }
+    ],
+    "errors": [],
+    "externalRequests": []
+  },
+  {
+    "environment": "desktop Chromium mobile emulation + 4x CPU throttling",
+    "viewport": "390x844",
+    "browser": "153.0.8010.0",
+    "presentation": "original",
+    "sourceBytes": 58785460,
+    "uniqueGeometries": 16,
+    "renderedInstances": 32,
+    "geometryDecodeMs": 540.3999999997905,
+    "originalMaterialParseDecodeMs": 4276.5,
+    "firstUsableFrameMs": 10662.20000000007,
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "maxTextureSize": 8192,
+    "contextLost": false,
+    "webglError": 0,
+    "gpuMemoryBytes": "UNAVAILABLE",
+    "browserMemory": {
+      "usedJSHeapSize": 11200000,
+      "totalJSHeapSize": 14300000,
+      "jsHeapSizeLimit": 3760000000,
+      "scope": "Chromium JS heap only; excludes GPU and most decoded images"
+    },
+    "sourceTextureObjects": 24,
+    "rendererInfo": {
+      "geometries": 16,
+      "textures": 25
+    },
+    "triangles": 1712352,
+    "drawCalls": 32,
+    "ready": true,
+    "frameIntervalMedianMs": 17,
+    "frameIntervalP95Ms": 262.5999999999767,
+    "frameSamples": 33,
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 24
+    },
+    "visiblePixelCounts": [
+      {
+        "orientation": "A",
+        "nonBackgroundPixels": 840
+      },
+      {
+        "orientation": "B",
+        "nonBackgroundPixels": 784
+      }
+    ],
+    "errors": [],
+    "externalRequests": []
+  },
+  {
+    "failureCase": "missing asset",
+    "status": "ASSET_LOAD_FAILED 404",
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 0
+    }
+  },
+  {
+    "failureCase": "malformed/hash mismatch",
+    "status": "ASSET_HASH_MISMATCH",
+    "release": {
+      "afterDisposal": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "rendererMemory": {
+        "geometries": 0,
+        "textures": 1
+      },
+      "actorReferences": 0,
+      "geometryReferences": 0,
+      "materialReferences": 0,
+      "textureReferences": 0,
+      "imagesClosed": 0
+    }
+  },
+  {
+    "failureCase": "WebGL2 unavailable",
+    "status": "WEBGL2_UNAVAILABLE"
+  }
+]

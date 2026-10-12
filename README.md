@@ -9,7 +9,7 @@ Use Node.js **24.19.0** (`nvm install && nvm use` where nvm is available) and np
 ```sh
 git clone https://github.com/mcpf8hwgyb-ship-it/smile-track.git
 cd smile-track
-git switch f01-app-foundation
+git switch f02-internal-3d-feasibility
 npm ci
 export NEXT_TELEMETRY_DISABLED=1
 npm run dev
@@ -63,6 +63,17 @@ No external fonts, imagery, accounts, analytics, cookies, user-data entry, or st
 
 Transitive versions and integrity hashes are recorded in package-lock.json. TypeScript 6.0.3 is selected for parser compatibility. See D-003 for lint preset selection and limitations.
 
-## Review status
+## Internal F02 investigation and review status
 
-F01 requires Architect review before merge. See `docs/VALIDATION_LOG.md` for observed local and CI results; configured checks are not evidence that they passed. Stage 09C and its scientific uncertainties are unchanged.
+F01 is merged. F02 is an internal-only investigation awaiting Architect review; no public viewer or F03 is authorized. [Evidence and reproducible controlled commands](docs/F02_REPORT.md) distinguish actual local checks from CI and preserve Stage 09C closure/uncertainty provenance.
+
+```sh
+npm run test:f02       # Synthetic checks; restricted test explicitly skipped without inputs
+npm run check:export   # After build: reject restricted assets/manifest/viewer in app/public/out
+```
+
+`internal/f02/` is excluded from the application import graph. Do not copy its data into this repository, public/, out/, CI, or any deployment. Full scientific conformance requires the pinned controlled archives and `F02_DATA_DIR` outside the repo. See the report before running `npm run f02:serve` or `npm run f02:browser`.
+
+Additional exact development dependencies: three 0.186.1, @types/three 0.186.0, zod 4.6.6, esbuild 0.28.2, eslint-plugin-react-hooks 7.1.1. No new production dependencies. The controlled preparation script was tested with Python 3.12.14 and numpy 2.3.5; Python is not needed by the application or CI.
+
+When the bundled browser cannot be installed, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects a controlled local Chromium for F01 smoke tests. The fallback version must be reported; CI continues to use Playwright's bundled browser. This option does not change the assertions.

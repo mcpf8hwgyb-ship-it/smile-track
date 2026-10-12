@@ -1,0 +1,174 @@
+{
+  "archives": {
+    "original": {
+      "filename": "02-SMILE_TRACK_B_STAGE09C_NEW_CHAT_HANDOFF-1-.zip",
+      "sha256": "a473b9850447295136a6f4abce952836728ee19053b83f56df1da001a8e9cafa",
+      "bytes": 400015984,
+      "manifestEntries": 156,
+      "crc": "PASS"
+    },
+    "scene": {
+      "filename": "SMILE_TRACK_B_STAGE09C_07_SCENE (1).zip",
+      "sha256": "5276e4be6ce01bcbcf92996192dd76339e768026dec49f024548f4a9ac1231c0",
+      "bytes": 44258312,
+      "manifestEntries": 33,
+      "crc": "PASS"
+    },
+    "evidence": {
+      "filename": "SMILE_TRACK_B_STAGE09C_07_EVIDENCE (1).zip",
+      "sha256": "f1f187092a1ca23697abc4ba77f3adfe912665bfe1a571161f166ad40e736252",
+      "bytes": 3883551,
+      "manifestEntries": 79,
+      "crc": "PASS"
+    },
+    "closure": {
+      "filename": "SMILE_TRACK_B_STAGE09C_CLOSURE_RECORD(1).zip",
+      "sha256": "418f9978a5abc32e9fca6e1df918ce2b7029464a62250bfb464e602f774ebb10",
+      "bytes": 8700,
+      "manifestEntries": 3,
+      "crc": "PASS"
+    }
+  },
+  "sourceCount": 16,
+  "instanceCount": 32,
+  "sourceBytes": 58785460,
+  "verticesUnique": 432676,
+  "trianglesUnique": 856176,
+  "imageCount": 24,
+  "estimatedRGBABytes": 1610612736,
+  "estimatedRGBAWithMipmapsBytes": 2147483648.0,
+  "sourceIdentityAndHash": [
+    {
+      "id": "maxillary_central_incisor",
+      "filename": "maxillary_left_central_incisor(1).glb",
+      "sha256Before": "f2228381354e29d1d207df2f1ce33d2a781ccc67b018aa05c98d5d0319ac8db9",
+      "sha256After": "f2228381354e29d1d207df2f1ce33d2a781ccc67b018aa05c98d5d0319ac8db9"
+    },
+    {
+      "id": "maxillary_lateral_incisor",
+      "filename": "maxillary_lateral_incisor(2).glb",
+      "sha256Before": "ba580fa83a1ed4cd3ce81eba564d24ffd2c6bcf6a10e7ee457c1ebd6c42f2962",
+      "sha256After": "ba580fa83a1ed4cd3ce81eba564d24ffd2c6bcf6a10e7ee457c1ebd6c42f2962"
+    },
+    {
+      "id": "maxillary_canine",
+      "filename": "maxillary_canine(2).glb",
+      "sha256Before": "ed392a07ff63737e8c4e29ce2aecd42fbba89f6e27d746ccd6c1b4c902ae5336",
+      "sha256After": "ed392a07ff63737e8c4e29ce2aecd42fbba89f6e27d746ccd6c1b4c902ae5336"
+    },
+    {
+      "id": "maxillary_first_premolar",
+      "filename": "maxillary_first_premolar.glb",
+      "sha256Before": "9b1f6fb6808f4cd1c49568ccaa8077d28e719edcb752f9ebe256ff726ec9a583",
+      "sha256After": "9b1f6fb6808f4cd1c49568ccaa8077d28e719edcb752f9ebe256ff726ec9a583"
+    },
+    {
+      "id": "maxillary_second_premolar",
+      "filename": "maxillary_second_premolar.glb",
+      "sha256Before": "06e1b569f1ee8b58749e340ad0f8bcb4877ce875f7c9c132e185d13fb1c2b4b6",
+      "sha256After": "06e1b569f1ee8b58749e340ad0f8bcb4877ce875f7c9c132e185d13fb1c2b4b6"
+    },
+    {
+      "id": "maxillary_first_molar",
+      "filename": "maxillary_first_molar.glb",
+      "sha256Before": "fa9dd4ce00a6bad08c7ff6311f1966aad91eedee81b34c31966f5225284ea7d3",
+      "sha256After": "fa9dd4ce00a6bad08c7ff6311f1966aad91eedee81b34c31966f5225284ea7d3"
+    },
+    {
+      "id": "maxillary_second_molar",
+      "filename": "maxillary_second_molar.glb",
+      "sha256Before": "708ed5ee854af6a81526202e5c7f9703a88d67bcf4593ff379beecfbae12841e",
+      "sha256After": "708ed5ee854af6a81526202e5c7f9703a88d67bcf4593ff379beecfbae12841e"
+    },
+    {
+      "id": "maxillary_third_molar",
+      "filename": "maxillary_third_molar.glb",
+      "sha256Before": "30f1bcb5a7fe412d586b24da7834411a54f0d44244e6d6521b63a18cd9d950e2",
+      "sha256After": "30f1bcb5a7fe412d586b24da7834411a54f0d44244e6d6521b63a18cd9d950e2"
+    },
+    {
+      "id": "mandibular_central_incisor",
+      "filename": "mandibular_left_central_incisor(2).glb",
+      "sha256Before": "090164b042cada566c558da6a6caa05ca0d6d1962a04b876a3c4e5a6e690cd67",
+      "sha256After": "090164b042cada566c558da6a6caa05ca0d6d1962a04b876a3c4e5a6e690cd67"
+    },
+    {
+      "id": "mandibular_lateral_incisor",
+      "filename": "mandibular_left_lateral_incisor(2).glb",
+      "sha256Before": "941563a672c364e7edbe4ba4db2362382b76d74a02f9cbba655083013a1a61b0",
+      "sha256After": "941563a672c364e7edbe4ba4db2362382b76d74a02f9cbba655083013a1a61b0"
+    },
+    {
+      "id": "mandibular_canine",
+      "filename": "mandibular_left_canine(2).glb",
+      "sha256Before": "5ea2839a41122b4fb32a12dc2fb05c0fe69c1b1ad3dfa33f8c0fa239e2742bcb",
+      "sha256After": "5ea2839a41122b4fb32a12dc2fb05c0fe69c1b1ad3dfa33f8c0fa239e2742bcb"
+    },
+    {
+      "id": "mandibular_first_premolar",
+      "filename": "mandibular_first_premolar.glb",
+      "sha256Before": "debf625167af597f5c9bba60185c8621ae6a49d6925357749f4926c74ab761db",
+      "sha256After": "debf625167af597f5c9bba60185c8621ae6a49d6925357749f4926c74ab761db"
+    },
+    {
+      "id": "mandibular_second_premolar",
+      "filename": "mandibular_left_second_premolar.glb",
+      "sha256Before": "ae42399fee979e9b283c277a97256643ed278c5292f4ea6797c9afaaa7e5fd8d",
+      "sha256After": "ae42399fee979e9b283c277a97256643ed278c5292f4ea6797c9afaaa7e5fd8d"
+    },
+    {
+      "id": "mandibular_first_molar",
+      "filename": "mandibular_first_molar (1).glb",
+      "sha256Before": "e507faf796b154f88aea7b175dc1d2401efcb1933a2b469bf1989f001ad15b00",
+      "sha256After": "e507faf796b154f88aea7b175dc1d2401efcb1933a2b469bf1989f001ad15b00"
+    },
+    {
+      "id": "mandibular_second_molar",
+      "filename": "mandibular_second_molar.glb",
+      "sha256Before": "caf2c380c2403b40873e1963a0450a1b7e497cee3666f43e3de0b268e154d926",
+      "sha256After": "caf2c380c2403b40873e1963a0450a1b7e497cee3666f43e3de0b268e154d926"
+    },
+    {
+      "id": "mandibular_third_molar",
+      "filename": "mandibular_third_molar.glb",
+      "sha256Before": "bbf9cf56c9de286225423561770d1b856eb101871119aab8fb9f06640b6aa7d0",
+      "sha256After": "bbf9cf56c9de286225423561770d1b856eb101871119aab8fb9f06640b6aa7d0"
+    }
+  ],
+  "instanceIds": [
+    "maxillary_central_incisor_orientation_A",
+    "maxillary_lateral_incisor_orientation_A",
+    "maxillary_canine_orientation_A",
+    "maxillary_first_premolar_orientation_A",
+    "maxillary_second_premolar_orientation_A",
+    "maxillary_first_molar_orientation_A",
+    "maxillary_second_molar_orientation_A",
+    "maxillary_third_molar_orientation_A",
+    "maxillary_central_incisor_orientation_B",
+    "maxillary_lateral_incisor_orientation_B",
+    "maxillary_canine_orientation_B",
+    "maxillary_first_premolar_orientation_B",
+    "maxillary_second_premolar_orientation_B",
+    "maxillary_first_molar_orientation_B",
+    "maxillary_second_molar_orientation_B",
+    "maxillary_third_molar_orientation_B",
+    "mandibular_central_incisor_orientation_A",
+    "mandibular_lateral_incisor_orientation_A",
+    "mandibular_canine_orientation_A",
+    "mandibular_first_premolar_orientation_A",
+    "mandibular_second_premolar_orientation_A",
+    "mandibular_first_molar_orientation_A",
+    "mandibular_second_molar_orientation_A",
+    "mandibular_third_molar_orientation_A",
+    "mandibular_central_incisor_orientation_B",
+    "mandibular_lateral_incisor_orientation_B",
+    "mandibular_canine_orientation_B",
+    "mandibular_first_premolar_orientation_B",
+    "mandibular_second_premolar_orientation_B",
+    "mandibular_first_molar_orientation_B",
+    "mandibular_second_molar_orientation_B",
+    "mandibular_third_molar_orientation_B"
+  ],
+  "status": "PASS",
+  "scope": "Four archives independently verified; historical ten-archive review is closure-record evidence, not reexecuted here."
+}

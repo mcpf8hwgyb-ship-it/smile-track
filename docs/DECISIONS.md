@@ -60,3 +60,30 @@ Implementation details: components render at build time; only exported files are
 Lint baseline uses ESLint and typescript-eslint recommended rules. TypeScript 6.0.3 is within the parser's declared <6.1 support range; latest TypeScript 7 is not. The optional Next.js lint preset was excluded after an audit found an unpatched braces advisory and its plugins declared incompatible ESLint 10 peers. ESLint 9 was rejected because npm marked it unsupported. No forced peer resolution or audit suppression remains. Next/React-specific lint rules are a known coverage limitation to revisit before interactive components. This does not change the approved stack.
 
 Consequences: runtime authentication, protected data, server actions, and dynamic APIs are unavailable. Web selection does not establish future smartphone scanning performance. Tests and dependency audits do not establish comprehensive security, accessibility, medical, or regulatory compliance.
+
+
+## D-004 — F02 controlled integration investigation (2026-10-12)
+
+Status: ACCEPTED SCOPE — Architect-approved F02 handoff; implementation acceptance pending review.
+
+Evaluate Three.js/WebGL2 with the existing Next.js/React/strict TypeScript foundation.
+Use separate Mesh objects sharing raw source-local immutable arrays; apply accepted
+row-major, column-vector scientific matrices once, with explicit storage conversion.
+Preserve negative determinant B transforms and use reversible DoubleSide presentation.
+A/B are computational labels, never certified dental numbering or laterality.
+
+The source GLBs and frozen scientific metadata remain authoritative. Generated
+`f02-manifest-1` metadata is a traceable application-facing representation, not a
+new scientific baseline. Camera, visibility, and solid material overrides are runtime
+presentation state. User-facing scientific claims remain separately reviewed.
+
+The harness is a loopback-only development process outside Next routes. Restricted
+assets, matrices, and oracle fixtures are generated outside the repository; no
+public assets, exported viewer, hosted service, CI asset downloads, or CI artifact
+uploads. CI runs only synthetic conformance and deployment-boundary negative controls.
+
+Compatible React Hooks rules are added to ESLint 10; the full Next preset remains
+outside the limited baseline. No stack replacement, new product feature, geometry
+optimization, or production delivery decision is authorized. Measured limitations
+and potential follow-up budgets in F02_REPORT.md are proposals requiring Architect
+review, with Scientific Lead approval additionally required for scientific derivatives.
