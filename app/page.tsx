@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-
+const g01IntentionalTypeFailure: string = 123;
 export default function Home() {
   return (
     <div className={styles.shell}>
