@@ -1,5 +1,61 @@
 # SMILE TRACK — VALIDATION LOG
 
+## R01 — 2026-10-13 — local validation and review submission
+
+Base `9dbda414f7d9f6b97ef5508a61ad6d5314c8def0` verified against GitHub and a fresh
+clone before branching to `r01-private-daily-check-in`. Node 24.19.0 / npm 11.9.0;
+all package pins/lockfile remain unchanged. [R01_REPORT.md](R01_REPORT.md) records
+the data model, behavior, limits and changed files. This is not a merge approval.
+
+| Exact command | Local result |
+| --- | --- |
+| `npm ci` | PASS, clean installation from existing lockfile |
+| `npm run lint` | PASS, zero lint warnings |
+| `npm run typecheck` | PASS, strict TypeScript |
+| `npm run test:education` | PASS, 5 tests |
+| `npm run test:f02` | 4 PASS, 1 restricted-data SKIP, zero failures |
+| `NEXT_TELEMETRY_DISABLED=1 npm run build` | PASS, static Home, Learn, Routine and not-found routes |
+| `npm run check:export` | PASS, no restricted scientific assets or unpublished bodies/fixtures; zero approved lessons |
+| `npm run test:e2e` with browser environment below | PASS, 28 tests: 14 desktop and 14 mobile, including 12 R01 scenarios per viewport |
+| `npm run test:smoke-sensitivity` with browser environment below | PASS: removal of required safety copy causes the expected visibility assertion failure; output restored |
+| `NEXT_TELEMETRY_DISABLED=1 npm run test:education-sensitivity` | PASS: unpublished fixtures excluded, deliberate exported marker rejected, production catalog restored and rebuilt |
+| `npm audit --audit-level=high` | PASS, zero reported vulnerabilities |
+| `git diff --check` | PASS |
+
+Local browser invocation (apply the same three variables to both browser commands):
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/chromium \
+LD_LIBRARY_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime \
+FONTCONFIG_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/fonts \
+npm run test:e2e
+```
+
+Initial local launch failed before application execution: the retained test-only
+Chromium was truncated and segfaulted. `npx playwright install chromium` failed on
+an invalid/truncated download. Re-extracting the existing test-only Brotli browser
+outside the repo restored Chromium **153.0.8010.0**; all browser checks then passed.
+No package or configuration was added for this workaround. CI independently uses
+Playwright's bundled browser. npm emits the inherited environment `http-proxy`
+configuration warning; lint itself emits zero warnings.
+
+Synthetic screenshot inspection: responsive desktop/mobile, wrapped navigation,
+visible focus and readable controls. Automated checks cover consent before writes,
+local-day expiry, storage failures, erasure, cross-tab behavior, no external
+requests or entry transmission, and no console/runtime/hydration errors. Coverage
+is Chromium/emulation only, not real-device or assistive-technology certification.
+
+History, science, dependency/workflow and empty registry comparisons against base,
+relative Markdown links and diff whitespace were reviewed. No real records, secrets,
+restricted scientific inputs, generated artifacts or browser binaries are included.
+Audit/browser checks do not establish comprehensive security or medical compliance.
+
+GitHub CI is separate evidence: final-head run/result will be supplied in the PR
+handoff after observing completion. No local pass is represented as a CI pass.
+Architect review is required before merge; no subsequent task is authorized.
+
+---
+
 ## G01-DOC — 2026-10-12 — governance closure and documentation validation
 
 Baseline: `53337472c46a8c0dc0cbd83c4157bc8831b05d65` (main, reverified before edits).

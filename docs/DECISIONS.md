@@ -1,5 +1,25 @@
 # SMILE TRACK — DECISION LOG
 
+## D-007 — R01 private current-day check-in (2026-10-13)
+
+Status: ARCHITECT-AUTHORIZED SCOPE; implementation pending Architect review.
+
+Use the existing static Next.js/React/strict TypeScript/CSS Modules stack without
+new dependencies. The client stores only version 1, local date and two booleans in
+one browser-local key after explicit opt-in. No separate consent identifier or
+history is stored. Record presence is same-day consent; expiry resets selections
+and consent. Default entries stay in page memory. Erase resets the page and disables
+saving; failed storage operations are reported rather than claimed successful.
+
+Read-back verification, malformed-record rejection, local-day timers/lifecycle
+checks and cross-tab erasure handling support this boundary. Browser suspension,
+shared profiles, backups/sync, storage denial and last-write-wins tabs remain limits;
+see [R01_REPORT.md](R01_REPORT.md). No clinical interpretation or professional-review
+claim is introduced. C01 is Owner-blocked at this stage, not completed. E01 publication
+authority, scientific semantics and G01 protections remain unchanged.
+
+---
+
 ## D-006 — G01 solo-maintainer technical governance (2026-10-12)
 
 Status: ACCEPTED — G01 complete; this documentation reconciliation awaits Architect review.

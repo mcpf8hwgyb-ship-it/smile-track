@@ -1,3 +1,4 @@
+import Navigation from "../navigation";
 import type { Metadata } from "next";
 import { getPublishedLessons } from "../../education/catalog.ts";
 import styles from "./page.module.css";
@@ -15,10 +16,7 @@ export default function Learn() {
       <a className={shell.skipLink} href="#main">Skip to content</a>
       <header className={shell.header}>
         <span className={shell.wordmark}>Smile Track<span aria-hidden="true">.</span></span>
-        <nav aria-label="Main navigation" className={styles.nav}>
-          <a href="/">Home</a>
-          <a href="/learn/" aria-current="page">Learn</a>
-        </nav>
+        <Navigation current="Learn" />
       </header>
       <main id="main" tabIndex={-1} className={styles.main}>
         <p className={shell.eyebrow}>Oral-health education</p>

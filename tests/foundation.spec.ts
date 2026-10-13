@@ -13,9 +13,9 @@ test("static landing page communicates identity, limits, and supports keyboard n
   await expect(page).toHaveTitle("Smile Track | Oral health, understood");
   await expect(page.getByRole("banner")).toContainText("Smile Track");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Oral health,understood.");
-  await expect(page.getByText("This is an early preview. Education, tracking, and capture features are not available yet.", { exact: true })).toBeVisible();
+  await expect(page.getByText("This is an early preview. A private daily routine check-in is available. Educational lessons and capture features are not available yet.", { exact: true })).toBeVisible();
   await expect(page.getByText("Smile Track is not a diagnostic medical device and does not provide diagnoses or replace professional dental care.", { exact: true })).toBeVisible();
-  await expect(page.getByText("This preview has no accounts, photo uploads, or health-data entry.", { exact: true })).toBeVisible();
+  await expect(page.getByText("This preview has no accounts or photo uploads. Routine entries stay in your browser, with saving off by default.", { exact: true })).toBeVisible();
 
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Skip to content" });

@@ -1,5 +1,31 @@
 # Smile Track
 
+## R01 review branch — 2026-10-13
+
+R01 is implemented on `r01-private-daily-check-in` from main
+`9dbda414f7d9f6b97ef5508a61ad6d5314c8def0`, pending Architect review before merge.
+After cloning, use `git switch r01-private-daily-check-in` to review `/routine/`.
+F01, F02, E01, G01 and G01-DOC remain complete; Stage 09C remains closed/frozen.
+The earlier dated governance entry below retains its historical context.
+
+**My daily routine** records only whether you report brushing or cleaning between
+teeth today. It does not assess health, technique or medically appropriate frequency.
+Entries default to page memory and disappear on leaving/reloading. Explicit opt-in
+saves one current-day record in this browser/device profile; the erase control
+clears it and disables saving. A new local day expires the record and consent when
+the page runs or next opens. No history or network transmission of entries is added.
+
+Other people using the browser profile may see saved entries. Browser backups,
+synchronization and suspended/closed-browser deletion timing are outside the app's
+control. Storage failure is reported; if erasure cannot be verified, use browser
+site-data controls. See [R01 storage design and evidence](docs/R01_REPORT.md).
+
+The Owner has blocked proposed C01 professional review at this stage; it is not
+completed. Educational publication remains blocked under unchanged E01 requirements.
+No qualified review, reviewer appointment, lesson, scientific release or deployment
+is authorized by this task.
+
+
 ## Current project and governance — 2026-10-12
 
 F01, F02, E01 and G01 are complete; Stage 09C is closed with frozen
@@ -21,7 +47,7 @@ license. This task adds no license, reviewer appointment, lesson or deployment.
 
 ---
 
-An early foundation for oral-health education and tracking. This preview is not a diagnostic medical device. The Learn foundation has an honest empty state; no dental lessons are approved or published. Tracking, capture, accounts, and analysis are not implemented.
+An early foundation for oral-health education and tracking. This preview is not a diagnostic medical device. The Learn foundation has an honest empty state; no dental lessons are approved or published. The R01 review branch adds only the daily routine check-in; capture, accounts and analysis are not implemented.
 
 ## Local setup
 
@@ -68,7 +94,7 @@ Preview: http://127.0.0.1:4173. `npm run validate` combines lint, typecheck, edu
 - `docs/`: current state, accepted decisions, roadmap, and validation evidence.
 - `research/`: reserved scientific context, excluded from the app.
 
-No external fonts, imagery, accounts, analytics, cookies, user-data entry, or storage APIs are used. Do not add secrets or health data to fixtures, logs, or the repository. `.gitignore` excludes credentials, dependency directories, generated output, and test traces. Dependency audits and smoke tests are limited checks, not compliance certification.
+No external fonts, imagery, accounts, analytics or application cookies are used. R01 adds only two user-entered activity values and optional current-day localStorage; no entries are transmitted. Do not add secrets or health data to fixtures, logs, or the repository. `.gitignore` excludes credentials, dependency directories, generated output, and test traces. Dependency audits and smoke tests are limited checks, not compliance certification.
 
 ## Pinned direct dependencies
 
@@ -110,8 +136,7 @@ When the bundled browser cannot be installed, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PA
 `content/education/records.json` and `authorities.json` are intentionally empty.
 No actual content, appointment, evidence review, or publication approval has occurred.
 See [content review process](docs/CONTENT_EVIDENCE.md) and [E01 evidence](docs/E01_REPORT.md).
-The default setup above tracks main; while E01 is in review, use
-`git switch e01-education-foundation` explicitly to inspect this unmerged change.
+E01 is merged; the default setup tracks main. R01 branch instructions are above.
 
 `education/contract.ts` defines `education-content-1`; `education/catalog.ts` reads
 version-controlled inputs at build time and returns only eligible public fields.
