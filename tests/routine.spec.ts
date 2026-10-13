@@ -55,7 +55,7 @@ test("memory default, independent undo, explicit saving, restoration and erase",
   await expect(consent(page)).toBeChecked();
   await between(page).check();
   expect(JSON.parse((await stored(page))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
-  await page.getByRole("button", { name: "Erase check-in and turn off saving" }).click();
+  await page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" }).click();
   await expect(brush(page)).not.toBeChecked();
   await expect(between(page)).not.toBeChecked();
   await expect(consent(page)).not.toBeChecked();
@@ -113,12 +113,12 @@ for (const failure of ["get", "set", "silent-set", "remove"] as const) {
       if (failure === "silent-set") Storage.prototype.setItem = () => {};
       if (failure === "remove") Storage.prototype.removeItem = () => { throw new Error("synthetic denied"); };
     }, failure);
-    if (failure === "remove") await page.getByRole("button", { name: "Erase check-in and turn off saving" }).click();
+    if (failure === "remove") await page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" }).click();
     else { await brush(page).check(); await consent(page).click(); }
     await expect(consent(page)).not.toBeChecked();
-    await expect(page.getByRole("status")).toContainText("Browser storage could not be verified");
-    await expect(page.getByRole("status")).not.toContainText("Saved in this browser for today.");
-    await expect(page.getByRole("status")).not.toContainText("Check-in erased.");
+    await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Browser storage could not be verified");
+    await expect(page.getByRole("status", { name: "Today-only status" })).not.toContainText("Saved in this browser for today.");
+    await expect(page.getByRole("status", { name: "Today-only status" })).not.toContainText("Check-in erased.");
     await between(page).check();
     await expect(between(page)).toBeChecked();
     expect(errors).toEqual([]);
@@ -130,7 +130,7 @@ test("storage unavailable at startup stays usable", async ({ page }) => {
   await page.goto("/routine/");
   await brush(page).check();
   await expect(brush(page)).toBeChecked();
-  await expect(page.getByRole("status")).toContainText("Browser storage could not be verified");
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Browser storage could not be verified");
   await expect(consent(page)).not.toBeChecked();
 });
 
@@ -153,7 +153,7 @@ test("erasure in another tab disables saving here", async ({ page, context }) =>
   await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
   await other.goto("/routine/");
   await expect(consent(other)).toBeChecked();
-  await other.getByRole("button", { name: "Erase check-in and turn off saving" }).click();
+  await other.getByRole("button", { name: "Erase today-only record and turn off today-only saving" }).click();
   await expect(consent(page)).not.toBeChecked();
   await expect(brush(page)).not.toBeChecked();
   await brush(page).check();
@@ -175,7 +175,7 @@ test("keyboard, visible focus, responsive controls and three-way navigation", as
     await expect(control).toBeChecked();
     await page.keyboard.press("Tab");
   }
-  const erase = page.getByRole("button", { name: "Erase check-in and turn off saving" });
+  const erase = page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" });
   await expect(erase).toBeFocused();
   await expect(erase).toHaveCSS("outline-style", "solid");
   await page.keyboard.press("Tab");

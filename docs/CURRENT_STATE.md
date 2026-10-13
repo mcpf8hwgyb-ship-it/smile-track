@@ -1,5 +1,29 @@
 # SMILE TRACK — CURRENT STATE
 
+## R02 — 2026-10-13 (current; supersedes earlier review-pending states)
+
+Verified baseline: `main` at `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.
+R01 is COMPLETE and merged in [PR #6](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/6);
+[post-merge CI 38335984236](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38335984236)
+passed. F01, F02, E01, G01 and G01-DOC remain COMPLETE. F02 is internal-only;
+Stage 09C remains CLOSED/frozen `OUTWARD_PROVISIONAL_V1`, with unchanged scientific
+uncertainties. E01's publication gate and empty production registries are unchanged.
+
+R02 is the sole authorized task: opt-in seven-local-day history, implemented on
+`r02-seven-day-history`, pending Architect review before merge. Today-only saving
+and history have separate consent and erasure. History starts empty, and an explicit
+record action saves a snapshot of today's selections; there is no backfill. Missing
+entries and unchecked values are distinct and carry no health or behavioral judgment.
+See [R02 design, evidence and limitations](R02_REPORT.md).
+
+C01 remains **Owner-blocked and incomplete**. No professional appointment, lesson,
+clinical claim, restricted asset release, deployment or subsequent task is authorized.
+The repository is public; restricted Dundee source assets are not. Earlier entries
+below remain verbatim historical evidence and do not override this dated state.
+
+---
+
+
 ## R01 — 2026-10-13 (current; supersedes historical review states below)
 
 Verified main base: `9dbda414f7d9f6b97ef5508a61ad6d5314c8def0`, the merged

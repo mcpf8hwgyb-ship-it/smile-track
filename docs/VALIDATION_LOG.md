@@ -1,5 +1,80 @@
 # SMILE TRACK — VALIDATION LOG
 
+## R02 — 2026-10-13 — local validation and review submission
+
+Verified base: `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`; branch
+`r02-seven-day-history`. R01 is complete and merged; earlier R01 review-pending
+entries remain historical. Node 24.19.0 / npm 11.9.0 and all dependencies unchanged.
+See [R02_REPORT.md](R02_REPORT.md) for consent, schema, deletion, inventory and limits.
+
+| Exact command / check | Observed local result |
+| --- | --- |
+| `npm ci` | PASS, clean lockfile install, 186 packages |
+| `npm run lint` | PASS, zero lint warnings |
+| `npm run typecheck` | PASS, strict TypeScript |
+| `npm run test:education` | PASS, 5 tests |
+| `npm run test:f02` | 4 PASS, 1 restricted-data SKIP; not a scientific-data pass |
+| `NEXT_TELEMETRY_DISABLED=1 npm run build` | PASS, static Home/Learn/Routine/not-found |
+| `npm run check:export` | PASS, 14 application files; final 35 exported files, zero approved lessons, no restricted data or unpublished fixtures |
+| `npm run test:e2e` with environment below | PASS, 70 tests: 35 desktop / 35 mobile; 42 R02 and all 28 inherited scenarios |
+| `npm run test:smoke-sensitivity` with environment below | PASS; 34 desktop tests pass and deliberate removal of required safety wording makes the foundation visibility assertion fail; output restored |
+| `NEXT_TELEMETRY_DISABLED=1 npm run test:education-sensitivity` | PASS; unpublished fixtures excluded, deliberate leaked fixture rejected, production inputs restored and static app rebuilt |
+| `npm audit --audit-level=high` | PASS, zero reported vulnerabilities |
+| `git diff --check` | PASS |
+| Relative Markdown links / historical-body comparison | PASS; old README/state/roadmap/decisions/validation content preserved additively |
+| Protected source comparison against base | PASS; R01 storage module, E01 gate/schema/empty registries, F02/scientific files, dependency pins and workflow unchanged |
+
+Browser commands use these existing external test-tool paths:
+
+```sh
+export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/chromium
+export LD_LIBRARY_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime
+export FONTCONFIG_PATH=/workspace/scratch/91c1429b212c/f02-browser-tools/runtime/fonts
+npm run test:e2e
+npm run test:smoke-sensitivity
+```
+
+Local Chromium **153.0.8010.0** was restored by re-extracting the existing test-only
+Brotli binary outside the repo after the retained binary again proved truncated and
+segfaulted. An overlapping initial test attempt also invalidated some trace artifacts;
+those runs are not used as passing evidence. Subsequent runs were serial. Initial
+history tests incorrectly expected asynchronous consent to update synchronously;
+they now click then wait for verified state. Live timezone testing now owns its CDP
+override rather than conflicting with Playwright's pre-existing timezone override.
+
+One incremental static build failed with `ENOTEMPTY` while replacing generated
+`out/`. Moving only generated `.next`/`out` aside produced a passing clean build;
+later production and sensitivity builds also pass. No repository config or dependency
+was changed to work around environment issues. npm's inherited `http-proxy` warning
+is separate from lint, which has zero warnings.
+
+Observed browser evidence includes separate opt-in and no pre-consent history writes,
+no R01 migration or automatic snapshots, marked/unmarked/no-record distinction,
+rolling window and stale pruning on Home/Learn, New York midnight, spring/fall DST,
+live New York-to-Los Angeles timezone change, strict malformed/duplicate/future-date
+rejection, all deletion scopes and read-back, denied and silent storage failures,
+queued cross-tab erasure, queued midnight record refusal, and fresh empty re-enable
+after failed removal. R01's original behavior tests remain passing.
+
+Desktop 1440x1000 and mobile 390x844 synthetic screenshots were visually inspected.
+Keyboard Tab/Space/Enter, visible focus, >=44px targets, live status regions and no
+horizontal overflow pass. The full interaction flow asserts no console/page errors
+(including hydration), external requests, entry-bearing URLs/bodies, application
+cookies or sessionStorage. Coverage is Chromium and mobile emulation, not other
+browser, hardware or assistive-technology certification. No real entries or restricted
+scientific images are used. Obvious credential-pattern and changed-file reviews are
+limited checks, not comprehensive privacy/security/clinical certification.
+
+G01 ruleset `24954073` was read and remains active, with required PR/strict validate,
+conversation resolution, blocked force pushes/deletion, empty bypass actors and
+`current_user_can_bypass: never`. No settings were changed. C01 remains Owner-blocked
+and incomplete, and production lesson/authority registries remain empty.
+
+Final-head GitHub CI will be reported separately in the PR handoff after observation;
+local passes are not represented as CI passes. No merge or next task is authorized.
+
+---
+
 ## R01 — 2026-10-13 — local validation and review submission
 
 Base `9dbda414f7d9f6b97ef5508a61ad6d5314c8def0` verified against GitHub and a fresh

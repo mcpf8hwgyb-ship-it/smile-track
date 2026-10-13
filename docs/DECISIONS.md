@@ -1,5 +1,35 @@
 # SMILE TRACK — DECISION LOG
 
+## D-008 — R02 explicit seven-local-day history (2026-10-13)
+
+Status: ARCHITECT-AUTHORIZED SCOPE; implementation pending Architect review.
+R01 is now complete/merged at `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.
+
+Retain the R01 today-only key/consent unchanged. Use one additional versioned local
+record with explicit enabled state and at most seven dated activity pairs. No IDs,
+clinical fields or new dependencies. Enabling history writes an empty record, never
+migrates R01, and requires an explicit record action to save today's selections.
+Separate snapshot and current-editor states are labeled; differences are announced.
+This preserves R01 while avoiding implicit multi-day retention of its updates.
+
+Reject invalid schemas, duplicate/future dates and unsupported versions. Prune past
+entries outside the current and preceding six local calendar dates on application
+entry/resume and routine timer/interaction. No elapsed-24-hour DST arithmetic.
+History opt-out erases its key. Erase all removes both keys and verifies read-back;
+failed deletion is explicitly reported with browser site-data instructions.
+
+Serialize history mutations and deletion with a constant browser Web Lock, checking
+stored consent inside the lock before every record. Do not recreate history from a
+stale tab. If coordination is unavailable, history fails closed; R01 remains usable.
+No persisted lock token or identifier. Same-day explicit records are last-write-wins,
+not merged; external scripts/extensions do not participate in this coordination.
+
+See [R02_REPORT.md](R02_REPORT.md) for precise storage, browser limitations and
+validation. These checks are not clinical, privacy or accessibility certification.
+C01 stays Owner-blocked/incomplete; E01 publication authority and science are unchanged.
+
+---
+
 ## D-007 — R01 private current-day check-in (2026-10-13)
 
 Status: ARCHITECT-AUTHORIZED SCOPE; implementation pending Architect review.
