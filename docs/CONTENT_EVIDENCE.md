@@ -1,5 +1,19 @@
 # SMILE TRACK — CONTENT EVIDENCE
 
+## R01 / C01 boundary — 2026-10-13
+
+The Project Owner has **BLOCKED the proposed C01 professional-review activity at
+this stage**. It has not been completed; no professional review or appointment is
+implied. R01 records self-reported actions without clinical interpretation or
+educational lessons. E01's schema, publication gate, review requirements and empty
+production registries are unchanged. Dental/health publication remains blocked
+until separately authorized qualified substantive review and explicit publication
+approval satisfy the existing contract. Technical PR approval does not satisfy it.
+
+Historical records and scientific uncertainties below remain unchanged.
+
+---
+
 ## G01 governance clarification — 2026-10-12
 
 E01 is COMPLETE and merged: [PR #3](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/3),

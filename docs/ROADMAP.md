@@ -1,5 +1,30 @@
 # SMILE TRACK — ROADMAP
 
+## R01 — 2026-10-13 (current; supersedes historical review states below)
+
+Verified main base: `9dbda414f7d9f6b97ef5508a61ad6d5314c8def0`, the merged
+G01-DOC PR #5. F01 COMPLETE; F02 COMPLETE, internal feasibility only; E01 COMPLETE,
+empty education foundation; G01 COMPLETE, solo-maintainer technical governance.
+Stage 09C remains CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; scientific work is paused.
+
+R01 implements only a private daily check-in at `/routine/` on
+`r01-private-daily-check-in`, awaiting Architect review before merge. Entries default
+to memory; explicit saving retains one current-day record in this browser profile.
+There is no clinical interpretation, history, account, transmission or deployment.
+See [R01 design, validation and limitations](R01_REPORT.md).
+
+The Project Owner has **BLOCKED the proposed C01 professional-review activity at
+this stage**. C01 was not completed. No reviewer, review or educational publication
+is authorized by R01; the unchanged E01 gate and empty production registries keep
+publication blocked. No scientific interpretation or restricted asset boundary changed.
+Public repository visibility is not permission to distribute Dundee assets or deploy.
+
+No subsequent task is authorized. Architect review is required before merging R01.
+Earlier records below remain unchanged as historical evidence.
+
+---
+
+
 ## G01 closure — 2026-10-12 (current; supersedes earlier review-pending entries)
 
 | Milestone | Current accepted state |

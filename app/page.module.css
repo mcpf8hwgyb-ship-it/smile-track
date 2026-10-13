@@ -30,3 +30,7 @@
   .about { grid-template-columns: 1fr; gap: 28px; padding: 32px 0 40px; }
   .footer { flex-direction: column; gap: 4px; }
 }
+
+.header { flex-wrap: wrap; }
+.nav { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+.nav [aria-current] { text-decoration-thickness: 3px; }
