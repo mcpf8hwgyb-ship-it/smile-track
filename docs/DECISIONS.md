@@ -1,5 +1,36 @@
 # SMILE TRACK — DECISION LOG
 
+## D-006 — G01 solo-maintainer technical governance (2026-10-12)
+
+Status: ACCEPTED — G01 complete; this documentation reconciliation awaits Architect review.
+
+F01 and F02 implementations and E01 are complete and merged. Stage 09C is closed
+with frozen `OUTWARD_PROVISIONAL_V1`; F02 remains internal feasibility only and E01
+remains an education foundation with no published lessons. Earlier decision entries
+retain pre-acceptance wording as historical records.
+
+The public repository uses active `G01-main-protection` ruleset `24954073`:
+required PR, zero required approving reviews, required `validate` with strict
+up-to-date checks, conversation resolution, blocked deletion/force pushes, and no
+bypass actors. The API reports `current_user_can_bypass: never`. See
+[G01_REPORT.md](G01_REPORT.md) for configuration fields, experiment evidence and limits.
+
+PR/CI requirements are technical safeguards. Independent GitHub approval is not
+currently required; the Project Owner may self-merge a passing, up-to-date PR with
+resolved conversations. This is not independent human review and does not replace
+the Architect/Builder task and review process. The Builder still needs explicit
+merge authorization. Independent GitHub approval may be enabled in a separately
+authorized governance change when an actual second maintainer becomes available.
+
+The merge-commit workflow remains available and is the project convention; the
+ruleset also allows squash and rebase. No administration is changed by G01-DOC.
+Qualified substantive dental/health review and separately authorized publication
+remain required under [CONTENT_EVIDENCE.md](CONTENT_EVIDENCE.md). Public source-code
+visibility authorizes neither deployment nor distribution of restricted Dundee assets.
+No open-source license has been added or approved by this task.
+
+---
+
 ## E01 transition — 2026-10-12 (supersedes earlier active-task/review status)
 
 F01 is complete and merged. Stage 09C is closed with frozen
