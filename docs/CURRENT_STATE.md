@@ -1,5 +1,54 @@
 # SMILE TRACK — CURRENT STATE
 
+## R02 final closure — 2026-10-14 (current accepted state)
+
+R02 is **COMPLETE**, accepted and merged through [PR #7](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/7).
+
+- Merge / verified main: `56a576a81c21d8e79c68403d720f47319fcf8d6e`.
+- Approved corrected head: `0e6e9b868e9ef79aa076daa172418eb001468af3`.
+- Merged tree: `139e0c3e9a5627c3368aba7115e28ec16555d4f4`.
+- Merge parents: prior main `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6` and the approved corrected head.
+- Exact-main post-merge CI: [run 38516699902](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38516699902), [validate job 115697006589](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/38516699902/job/115697006589) — **PASS**.
+
+History enable is idempotent under the existing Web Lock: it preserves valid enabled
+history and eligible entries already stored, including valid bytes remaining after
+failed deletion. First-time enabling without valid history starts empty. It never
+copies R01 data. Today-only saving and seven-day history require independent consent;
+only explicit recording saves a history snapshot, with no retrospective reconstruction.
+
+History requires Web Locks and fails closed when coordination is unavailable; R01
+remains usable. Browser-local storage is not encrypted private storage. Shared profiles
+can expose records; browser backups, extensions and synchronization are outside the
+app's control. Device dates/timezones may be wrong. Only the current and preceding
+six local calendar days are eligible; expiry runs when the app next executes, not
+while closed or suspended. Deletion is verified by reading back owned keys where
+possible; failed verification is reported and browser site-data controls may be needed.
+No guaranteed deletion is claimed when storage is unavailable.
+
+F01, F02, E01, G01, G01-DOC, R01 and R02 are **COMPLETE**. F02 remains internal
+feasibility only. Stage 09C remains **CLOSED/frozen `OUTWARD_PROVISIONAL_V1`**.
+E01's publication gate is unchanged; production lesson and authority registries remain
+empty. Scientific uncertainties, provenance and restricted Dundee asset boundaries
+remain unchanged. Public repository visibility does not authorize deployment or
+restricted-asset distribution.
+
+The separate **C01 professional-review activity remains Owner-blocked and incomplete**.
+It is not the R02 correction identifier C01, whose stale-enable fix was accepted.
+No professional recruitment, reviewer appointment or substantive lesson is authorized.
+No subsequent product task has been selected; the next task must be selected by
+**00 — ARCHITECT — CTO / Next Step**. R02-DOC is documentation reconciliation only.
+
+G01 ruleset `24954073` remains active with required PR, `validate`, strict up-to-date
+checks, conversation resolution, blocked force pushes/deletion and no bypass actors.
+See [R02 report](R02_REPORT.md) and [validation evidence](VALIDATION_LOG.md).
+
+## Historical records — superseded status
+
+The records below are preserved verbatim. Their draft/unmerged/awaiting-review and
+“current” labels describe earlier checkpoints, not the current accepted state.
+Blanket statements that enabling always starts empty are superseded by the accepted
+idempotent behavior recorded above.
+
 ## R02 correction C01 — 2026-10-14 (current)
 
 The Architect requested correction of PR #7's stale-enable overwrite at reviewed
