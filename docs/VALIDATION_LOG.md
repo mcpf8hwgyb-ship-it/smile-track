@@ -1,5 +1,68 @@
 # SMILE TRACK — VALIDATION LOG
 
+## R02 correction C01 — 2026-10-14 — stale-enable overwrite
+
+Reviewed head: `4b7532368c03dab05d25bf90783fd0e6a8669ab8`; unchanged main/base:
+`5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`. PR #7 remains draft and unmerged.
+The Architect identified that an unconditional enable reset could erase another
+tab's valid history. Enable now preserves valid eligible history inside the Web Lock;
+only absent/invalid history leads to a new empty record. No R01 migration or fallback.
+Historical entries below describe the previous implementation, not this correction.
+
+Deterministic regression: `npm run test:e2e -- --grep stale-enable` passed in both
+desktop and mobile projects (2 PASS). Tab A's capture-phase refresh-event blockers
+and paused timers retain disabled UI while B enables/records. B holds the real lock;
+A's stale Enable is observed pending in `navigator.locks.query()` before release.
+Exact stored entries, synchronized enabled UI, and R01 controls/bytes are asserted.
+
+Sensitivity experiment: temporarily changed only `if (action === "enable" && !history)`
+back to the reviewed `if (action === "enable")`, built the static application with
+`NEXT_TELEMETRY_DISABLED=1 npm run build`, and reran the same focused command.
+Both projects FAILED at the exact history equality assertion: expected the synthetic
+2026-10-12 entry, received `entries: []`. Exit 1 was expected evidence, not a pass.
+Restored the corrected source and rebuilt before all final browser checks. Generated
+negative-control output was kept outside version control.
+
+The failed-deletion regression remains: it still checks failure reporting, disabled
+local consent, retained bytes and R01 usability. Its re-enable expectation now follows
+the authorized idempotent semantics, and it additionally verifies that successful
+erase followed by enable starts empty. No R01/R02 scenario was removed.
+
+Environment: Node 24.19.0 / npm 11.9.0; unchanged dependency lockfile. Browser commands
+use the same external Chromium path/environment documented in the preceding R02
+submission below. Git HTTPS fetch returned 502; the reviewed files were recovered
+through GitHub's read API, and their staged tree was verified exactly equal to
+`55111a22906c82aac48d723c4d501817d72ec8ad` before correction. No scientific archive
+was opened. Exact corrected head/tree and fresh CI run/job evidence are recorded in
+the PR handoff after publication; earlier passing CI does not validate this correction.
+
+| Correction validation command / check | Observed local result |
+| --- | --- |
+| `npm ci` | PASS, 186 packages; lockfile unchanged |
+| `npm run lint` | PASS, zero warnings |
+| `npm run typecheck` | PASS, strict types |
+| `npm run test:education` | 5 PASS |
+| `npm run test:f02` | 4 PASS / 1 restricted-data SKIP, not a scientific-data pass |
+| `NEXT_TELEMETRY_DISABLED=1 npm run build` | PASS, corrected production static export |
+| `npm run check:export` | PASS, 14 app files / 35 clean-build exported files (38 after sensitivity rebuild), zero approved lessons |
+| `npm run test:e2e -- --grep stale-enable` | 2 PASS corrected; 2 expected FAIL with old reset temporarily restored |
+| `npm run test:e2e` | 72 PASS (36 desktop / 36 mobile), including all prior scenarios |
+| `npm run test:smoke-sensitivity` | PASS, deliberate removal of safety text rejected |
+| `NEXT_TELEMETRY_DISABLED=1 npm run test:education-sensitivity` | PASS on clean-cache retry, including restored production rebuild; deliberate leak rejected |
+| `npm audit --audit-level=high` | PASS, zero vulnerabilities |
+| `git diff --check`; relative Markdown links | PASS |
+| Protected source comparison | R01 storage, education gate/empty registries, F02, scientific files, dependencies and workflow unchanged |
+
+One initial education-sensitivity attempt passed fixture exclusion and leak rejection
+but failed its final restored rebuild with a truncated Turbopack cache `.sst` block.
+Moved only generated `.next` aside and reran the unchanged command successfully;
+then rechecked export and exact restoration of the empty production registries.
+No source/configuration/dependency workaround was introduced. Initial restored-workspace
+output contained 58 files; the clean corrected rebuild produced 35, and the final
+post-sensitivity export check covered 38 files with no prohibited content. Generated build,
+negative-control and browser artifacts are not committed. These checks are engineering
+evidence, not clinical, privacy, security or accessibility certification.
+
 ## R02 — 2026-10-13 — local validation and review submission
 
 Verified base: `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`; branch

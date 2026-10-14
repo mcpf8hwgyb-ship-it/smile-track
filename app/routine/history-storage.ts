@@ -61,7 +61,9 @@ export async function historyOperation(action: HistoryAction, record?: RecordTod
         const raw = localStorage.getItem(HISTORY_KEY);
         let history = raw === null ? null : parseHistory(raw);
         if (raw !== null && history === null && !removeHistory()) return failure();
-        if (action === "enable") history = { version: 1, enabled: true, entries: [] };
+        // A stale tab can request enable after another tab has already recorded.
+        // Preserve the latest valid, pruned history read under this same lock.
+        if (action === "enable" && !history) history = { version: 1, enabled: true, entries: [] };
         if (!history) return { history: null, notice: raw === null ? "History is off." : "Invalid history removed. History is off.", error: false };
         if (action === "record") {
           if (!record || record.date !== localDate()) return { history, notice: "The local date changed. Review today’s check-in before recording it.", error: false };

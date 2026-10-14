@@ -1,5 +1,15 @@
 # SMILE TRACK — DECISION LOG
 
+## D-008 correction — idempotent enable (2026-10-14)
+
+Architect-authorized R02 correction C01; implementation pending review. Enable must
+preserve an existing valid enabled history and its eligible entries, as read under
+the existing Web Lock. Create an empty record only if no valid enabled history exists.
+This also preserves valid bytes remaining after failed deletion; only successful
+erasure removes them. No R01 migration, new fields, dependencies or lock-free fallback.
+This supersedes D-008's blanket statement that enabling writes an empty record.
+Earlier decision text remains as historical evidence.
+
 ## D-008 — R02 explicit seven-local-day history (2026-10-13)
 
 Status: ARCHITECT-AUTHORIZED SCOPE; implementation pending Architect review.

@@ -343,7 +343,7 @@ test("erase-all reports a failed today-only deletion even when history was erase
   expect(await page.evaluate(k => localStorage.getItem(k), todayKey)).not.toBeNull();
 });
 
-test("explicit re-enable starts empty after an earlier failed deletion", async ({ page }) => {
+test("explicit re-enable preserves valid history after an earlier failed deletion", async ({ page }) => {
   await page.goto("/routine/");
   await enable(page);
   await brush(page).check();
@@ -357,8 +357,74 @@ test("explicit re-enable starts empty after an earlier failed deletion", async (
   await page.getByRole("button", { name: "Erase history and turn it off" }).click();
   await expect(consent(page)).not.toBeChecked();
   await expect(status(page)).toContainText("could not be verified");
+  expect(JSON.parse((await stored(page))!)).toEqual(history([entry("2026-10-12", true)]));
   await page.evaluate(() => (window as unknown as { restoreRemove: () => void }).restoreRemove());
   await enable(page);
-  expect(JSON.parse((await stored(page))!)).toEqual(history([]));
+  expect(JSON.parse((await stored(page))!)).toEqual(history([entry("2026-10-12", true)]));
   await expect(brush(page)).toBeChecked();
+  // Once erasure actually succeeds, a new enable still starts empty.
+  await page.getByRole("button", { name: "Erase history and turn it off" }).click();
+  await expect(consent(page)).not.toBeChecked();
+  expect(await stored(page)).toBeNull();
+  await enable(page);
+  expect(JSON.parse((await stored(page))!)).toEqual(history([]));
+});
+
+test("stale-enable preserves another tab's recorded history under the Web Lock", async ({ page, context }) => {
+  // Capture refresh events before application listeners; pause timers too, so A
+  // deterministically retains its disabled UI after B writes shared storage.
+  await page.addInitScript(() => {
+    const hold = (event: Event) => event.stopImmediatePropagation();
+    for (const name of ["storage", "focus", "pageshow", "visibilitychange"]) window.addEventListener(name, hold, true);
+    (window as unknown as { resumeHistoryEvents: () => void }).resumeHistoryEvents = () => {
+      for (const name of ["storage", "focus", "pageshow", "visibilitychange"]) window.removeEventListener(name, hold, true);
+    };
+  });
+  await page.goto("/routine/");
+  await expect(consent(page)).toBeEnabled();
+  await expect(consent(page)).not.toBeChecked();
+  await page.clock.pauseAt(new Date("2026-10-12T16:01:00Z"));
+  await brush(page).check();
+  await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  const todayBefore = await page.evaluate(k => localStorage.getItem(k), todayKey);
+  const other = await context.newPage();
+  await other.clock.install({ time: new Date("2026-10-12T16:01:00Z") });
+  await other.goto("/routine/");
+  await expect(brush(other)).toBeChecked();
+  await enable(other);
+  await record(other).click();
+  await expect(status(other)).toContainText("Today’s check-in recorded");
+  const expected = history([entry("2026-10-12", true)]);
+  expect(JSON.parse((await stored(other))!)).toEqual(expected);
+  await expect(consent(page)).not.toBeChecked();
+  await expect(record(page)).toBeDisabled();
+
+  // B holds the real lock. A's stale Enable must queue, not write around it.
+  await other.evaluate(lock => {
+    void navigator.locks.request(lock, () => new Promise<void>(resolve => {
+      (window as unknown as { releaseHistory: () => void }).releaseHistory = resolve;
+    }));
+  }, lock);
+  await expect.poll(() => other.evaluate(() => typeof (window as unknown as { releaseHistory?: unknown }).releaseHistory)).toBe("function");
+  await consent(page).click();
+  await expect.poll(() => other.evaluate(async lock => (await navigator.locks.query()).pending?.filter(item => item.name === lock).length, lock)).toBeGreaterThanOrEqual(1);
+  await expect(consent(page)).toBeDisabled();
+  expect(JSON.parse((await stored(other))!)).toEqual(expected);
+  await other.evaluate(() => (window as unknown as { releaseHistory: () => void }).releaseHistory());
+  await expect(consent(page)).toBeChecked();
+  await expect(record(page)).toBeEnabled();
+  expect(JSON.parse((await stored(page))!)).toEqual(expected);
+  await page.evaluate(() => {
+    (window as unknown as { resumeHistoryEvents: () => void }).resumeHistoryEvents();
+    window.dispatchEvent(new Event("focus"));
+  });
+  await other.evaluate(() => window.dispatchEvent(new Event("focus")));
+  for (const tab of [page, other]) {
+    await expect(consent(tab)).toBeChecked();
+    await expect(tab.getByRole("listitem", { name: "2026-10-12", exact: true })).toContainText("Brushed teeth: Marked");
+    expect(JSON.parse((await stored(tab))!)).toEqual(expected);
+    await expect(brush(tab)).toBeChecked();
+    await expect(tab.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).toBeChecked();
+    expect(await tab.evaluate(k => localStorage.getItem(k), todayKey)).toBe(todayBefore);
+  }
 });

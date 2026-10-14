@@ -1,5 +1,17 @@
 # SMILE TRACK — CURRENT STATE
 
+## R02 correction C01 — 2026-10-14 (current)
+
+The Architect requested correction of PR #7's stale-enable overwrite at reviewed
+head `4b7532368c03dab05d25bf90783fd0e6a8669ab8`. Enable now preserves valid history
+read under the Web Lock, pruning only ineligible dates. A new empty record is created
+only when no valid enabled history exists. R01 is not copied or changed. This
+supersedes earlier blanket empty-on-enable wording; prior records remain historical.
+PR #7 remains draft and unmerged; main remains `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.
+See [validation evidence](VALIDATION_LOG.md). No subsequent task is authorized.
+This R02 correction identifier is unrelated to the Owner-blocked professional-review
+C01 activity, which remains incomplete. All scientific/publication boundaries persist.
+
 ## R02 — 2026-10-13 (current; supersedes earlier review-pending states)
 
 Verified baseline: `main` at `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.

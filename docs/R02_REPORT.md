@@ -1,5 +1,29 @@
 # R02 — opt-in seven-day routine history
 
+## R02 correction C01 — 2026-10-14
+
+Architect review identified a stale-enable overwrite in head
+`4b7532368c03dab05d25bf90783fd0e6a8669ab8`: serialization alone did not stop enable
+from replacing another tab's valid entries with an empty array. Enable now preserves
+the validated, pruned record read inside the lock, creating an empty record only if
+none exists. Failed deletion can leave valid bytes; explicit re-enable preserves
+those bytes instead of silently deleting them. Successful erase followed by enable
+still starts empty. No R01 copying, schema change or lock-free fallback is introduced.
+
+A deterministic two-tab regression suppresses Tab A's refresh events and pauses its
+timers, while Tab B enables and records a synthetic entry. B then holds the real Web
+Lock; A's stale Enable is verified to queue behind it. The test checks the entry
+before and after release, both tabs' enabled/display states after synchronization,
+and unchanged R01 stored bytes/controls. The old unconditional reset must fail this
+test. The existing failed-deletion test is retained with the authorized preservation
+expectation and an added successful erase/re-enable check. See [validation log](VALIDATION_LOG.md).
+
+This correction supersedes the original empty-on-enable and no-known-defect statements
+below; the original report is retained as historical evidence. Correction-specific
+files: `app/routine/history-storage.ts`, `tests/history.spec.ts`, `README.md`,
+`docs/CURRENT_STATE.md`, `docs/DECISIONS.md`, `docs/R02_REPORT.md`, `docs/VALIDATION_LOG.md`.
+PR #7 remains subject to Architect review; no merge or subsequent task is authorized.
+
 Verification date: 2026-10-13. Architect-authorized scope; implementation submitted
 for review before merge. No subsequent product task is authorized.
 

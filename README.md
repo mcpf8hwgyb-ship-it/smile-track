@@ -1,5 +1,13 @@
 # Smile Track
 
+## R02 correction — 2026-10-14
+
+PR #7 remains draft and unmerged pending Architect review. Enable is now idempotent:
+it preserves valid, eligible history already stored by another tab (or remaining
+after a failed deletion). It starts empty only when no valid enabled history exists.
+No R01 data is imported. This supersedes the blanket empty-on-enable wording below.
+See [correction evidence](docs/VALIDATION_LOG.md) and [R02 report](docs/R02_REPORT.md).
+
 ## R02 review branch — 2026-10-13 (current)
 
 R01 is complete and merged at `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.
