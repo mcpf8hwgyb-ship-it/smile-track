@@ -1,5 +1,49 @@
 # Smile Track
 
+## R02 correction — 2026-10-14
+
+PR #7 remains draft and unmerged pending Architect review. Enable is now idempotent:
+it preserves valid, eligible history already stored by another tab (or remaining
+after a failed deletion). It starts empty only when no valid enabled history exists.
+No R01 data is imported. This supersedes the blanket empty-on-enable wording below.
+See [correction evidence](docs/VALIDATION_LOG.md) and [R02 report](docs/R02_REPORT.md).
+
+## R02 review branch — 2026-10-13 (current)
+
+R01 is complete and merged at `5c12d3c468582b3e86ceaa40dd96eba4b20fffc6`.
+R02 extends `/routine/` on `r02-seven-day-history`, pending Architect review.
+After cloning, use `git switch r02-seven-day-history` to inspect this change; the
+setup/validation commands below are unchanged. Earlier dated review entries below
+are historical, including their older branch and current-day-only descriptions.
+
+History is OFF by default and needs separate opt-in; saving today does not enable
+it. Enabling history starts empty. Choose **Record today’s check-in in history**
+to save a snapshot of today's two checkboxes. Editing checkboxes or today-only saving
+does not update history; record again to replace today's snapshot. The UI announces
+when current selections differ. Nothing reconstructs previous days.
+
+The view shows seven local calendar dates, newest first, distinguishing **No recorded
+check-in** from **Not marked**. Neither means oral care was not performed. No scores,
+streaks, targets, reminders, clinical monitoring or recommendations are added.
+
+Today-only erase, history erase/opt-out and erase-all have explicit scopes. History
+entries older than six preceding local days are removed when the app next executes;
+a closed/suspended browser cannot guarantee immediate expiry. Consent persists until
+opt-out, even if all entries age out. Deletion failures are reported, never claimed
+successful. Browser site-data controls may be needed to remove inaccessible records.
+
+Browser-local storage is not encrypted private storage. Shared-profile users may
+see it; backups, extensions and synchronization are outside the app's control.
+Dates/timezones come from the device and may be wrong. History requires browser
+Web Locks (normally HTTPS or localhost) to coordinate tabs; unavailable coordination
+leaves history off and R01 usable. No entries are transmitted, and no dependencies,
+backend, accounts, analytics, service worker or deployment are added.
+
+See [R02 report](docs/R02_REPORT.md) for the exact schema, independent consent,
+retention, deletion, browser evidence and limitations. C01 remains Owner-blocked and
+incomplete; education publication stays blocked under unchanged E01 requirements.
+
+
 ## R01 review branch — 2026-10-13
 
 R01 is implemented on `r01-private-daily-check-in` from main

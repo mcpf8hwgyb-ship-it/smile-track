@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { erase, fresh, localDate, parseRecord, save, STORAGE_KEY, type RecordToday } from "./storage";
+import History, { type HistoryControl } from "./history";
 import styles from "./routine.module.css";
 
 type State = { record: RecordToday; saving: boolean; warning: string };
@@ -10,6 +11,8 @@ const storageWarning = "Browser storage could not be verified. Saving is off. A 
 export default function CheckIn() {
   const [state, setState] = useState<State | null>(null);
   const current = useRef<State | null>(null);
+  const history = useRef<HistoryControl>(null);
+  const [erasingAll, setErasingAll] = useState(false);
   function publish(next: State) { current.current = next; setState(next); }
   function rollover(): State | null {
     let next = current.current;
@@ -93,24 +96,33 @@ export default function CheckIn() {
   function reset() {
     publish({ record: fresh(), saving: false, warning: erase() ? "Check-in erased. Saving is off." : storageWarning });
   }
+  async function resetAll() {
+    setErasingAll(true);
+    const historyRemoved = await history.current?.erase();
+    const todayRemoved = erase();
+    publish({ record: fresh(), saving: false, warning: todayRemoved && historyRemoved ? "All routine data erased. Both saving options are off." : "Erasure of all routine data could not be verified. Saving is off here. Use your browser’s site-data controls to remove remaining records." });
+    setErasingAll(false);
+  }
   return (
     <section className={styles.card} aria-label="Today's check-in">
       <p className={styles.date}>{state ? `Today · ${state.record.date}` : "Loading your local date…"}</p>
-      <fieldset disabled={!state} className={styles.activities}>
+      <fieldset disabled={!state || erasingAll} className={styles.activities}>
         <legend>What did you do today?</legend>
         <label><input type="checkbox" checked={state?.record.brushedTeeth ?? false} onChange={() => select("brushedTeeth")} />Brushed teeth</label>
         <label><input type="checkbox" checked={state?.record.cleanedBetweenTeeth ?? false} onChange={() => select("cleanedBetweenTeeth")} />Cleaned between teeth</label>
       </fieldset>
       <p>Select again to undo. These are your own records, not an assessment of your health, technique or how often you should act.</p>
-      <button type="button" disabled={!state} onClick={reset}>Erase check-in and turn off saving</button>
+      <button type="button" disabled={!state || erasingAll} onClick={reset}>Erase today-only record and turn off today-only saving</button>
+      <p>This erase control resets the checkboxes and removes only today-only saving. It does not change separately recorded history.</p>
       <div className={styles.privacy} id="saving-details">
         <h2>Your choice to save</h2>
-        <p>By default, entries stay in this page’s memory and disappear when you leave or reload it.</p>
+        <p>By default, selections stay in this page’s memory and disappear when you leave or reload it. History below has its own consent and explicit recording action.</p>
         <p>Optional saving keeps only today’s check-in in this browser/device profile. Other people using this profile may see it. Browser backups or synchronization are outside Smile Track’s control.</p>
-        <p>A new local day clears the check-in and turns saving off while this page is running or when you next open it. A closed browser cannot actively erase a record. No history is kept, and entries are not sent anywhere.</p>
+        <p>A new local day clears the check-in and turns saving off while this page is running or when you next open it. A closed browser cannot actively erase a record. This option does not keep history, and entries are not sent anywhere.</p>
       </div>
-      <label className={styles.consent}><input type="checkbox" disabled={!state} checked={state?.saving ?? false} onChange={toggleSaving} aria-describedby="saving-details" />Save today’s check-in in this browser</label>
-      <p role="status" className={styles.status}>{state ? state.saving ? "Saved in this browser for today." : "Saving is off. Current selections are in memory only." : "Saving is off."} {state?.warning}</p>
+      <label className={styles.consent}><input type="checkbox" disabled={!state || erasingAll} checked={state?.saving ?? false} onChange={toggleSaving} aria-describedby="saving-details" />Save today’s check-in in this browser</label>
+      <p role="status" aria-label="Today-only status" className={styles.status}>{state ? state.saving ? "Saved in this browser for today." : "Today-only saving is off. Current selections are in page memory; separately recorded history is shown below." : "Saving is off."} {state?.warning}</p>
+      <History ref={history} record={state?.record ?? null} onEraseAll={() => void resetAll()} erasingAll={erasingAll} />
       <noscript>This check-in needs JavaScript. Entries cannot be changed here while it is disabled.</noscript>
     </section>
   );
