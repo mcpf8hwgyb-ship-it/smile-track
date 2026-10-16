@@ -1,5 +1,32 @@
 # SMILE TRACK — ROADMAP
 
+## V01 continuation — current status — 2026-10-16 America/New_York
+
+The original V01 preflight was accepted as **BLOCKED / INCONCLUSIVE**. Its bounded
+continuation was subsequently authorized and executed from
+`7120770f430663c548ec592397e5d63e36cbfff7`.
+
+The continuation also ended **BLOCKED / INCONCLUSIVE**: no engine reached Smile
+Track application navigation in the continuation host. Chromium remained
+provisioning/download-blocked; Firefox 157.0 launched but page creation crashed
+before application navigation; WebKit remained blocked by missing host dependencies.
+No browser-specific Smile Track product defect was demonstrated.
+
+Existing Chromium GitHub CI remains regression evidence only. It does **not**
+establish Firefox/WebKit or cross-browser compatibility, and V01 is not completed
+cross-browser validation. See the [continuation evidence](V01_CONTINUATION_REPORT.md).
+
+Older preflight statements below saying continuation was not yet authorized are
+historical and explicitly superseded by this authoritative status section. All
+pre-existing sections, including their historical current-state labels, remain
+verbatim below and do not override this newer disposition.
+
+V01 is now **PARKED**. Further execution requires a materially different host
+capable of supported browser installation, dependency installation, page creation
+and navigation under normal security controls, with Architect authorization.
+No sandbox weakening, production compatibility fix, V02, R03, deployment or other
+product task is authorized.
+
 ## V01 — 2026-10-14 — BLOCKED / INCONCLUSIVE (current investigation)
 
 Verified base: `0812357cabb40b43a409e1235acfe78e84742145`; G01 remains active.
@@ -232,3 +259,23 @@ Implemented and CI verified on `f01-app-foundation` (PR #1); Architect review pe
 
 Normally only one major Builder task should be active at a time.
 
+
+
+## V01 continuation — bounded investigation status — 2026-10-15 America/New_York
+
+Architect-authorized continuation from `7120770f430663c548ec592397e5d63e36cbfff7`
+on `v01-continuation` remains **BLOCKED / INCONCLUSIVE**. Serial supported
+provisioning did not produce an application-capable engine: Chromium downloads
+failed; Firefox 157.0 launches but blank-page creation crashes (2/2, sandbox EPERM);
+WebKit lacks native dependencies and the standard installer is permission-blocked.
+No cross-browser product validation or defect is claimed. The original V01 evidence
+is historical and unchanged. New validation-only tooling reuses existing assertions;
+production, existing tests, dependencies and CI are unchanged. Local non-browser
+checks pass; local browser/smoke-sensitivity execution is BLOCKED. Exact-head CI
+will be supplied separately in the draft PR handoff.
+
+See [continuation evidence and scenario matrix](V01_CONTINUATION_REPORT.md).
+F01/F02/E01/G01/G01-DOC/R01/R02/R02-DOC remain complete; F02 internal-only;
+Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; E01 gate and empty registries
+unchanged; C01 professional review Owner-blocked/incomplete. No V02/R03 or
+compatibility fix is authorized. Return to Architect; do not merge this draft.

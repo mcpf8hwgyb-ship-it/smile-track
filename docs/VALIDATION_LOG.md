@@ -604,3 +604,23 @@ This documentation-only follow-up records observed CI; it changes no executable
 code, dependency, source asset, or scientific classification. Its CI is visible
 in the PR checks. Builder assessment: PASS for further internal integration review;
 original-texture real-mobile suitability remains INCONCLUSIVE. Stop after F02.
+
+
+## V01 continuation — validation evidence — 2026-10-15 America/New_York
+
+Architect-authorized continuation from `7120770f430663c548ec592397e5d63e36cbfff7`
+on `v01-continuation` remains **BLOCKED / INCONCLUSIVE**. Serial supported
+provisioning did not produce an application-capable engine: Chromium downloads
+failed; Firefox 157.0 launches but blank-page creation crashes (2/2, sandbox EPERM);
+WebKit lacks native dependencies and the standard installer is permission-blocked.
+No cross-browser product validation or defect is claimed. The original V01 evidence
+is historical and unchanged. New validation-only tooling reuses existing assertions;
+production, existing tests, dependencies and CI are unchanged. Local non-browser
+checks pass; local browser/smoke-sensitivity execution is BLOCKED. Exact-head CI
+will be supplied separately in the draft PR handoff.
+
+See [continuation evidence and scenario matrix](V01_CONTINUATION_REPORT.md).
+F01/F02/E01/G01/G01-DOC/R01/R02/R02-DOC remain complete; F02 internal-only;
+Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; E01 gate and empty registries
+unchanged; C01 professional review Owner-blocked/incomplete. No V02/R03 or
+compatibility fix is authorized. Return to Architect; do not merge this draft.
