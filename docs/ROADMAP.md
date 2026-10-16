@@ -1,5 +1,25 @@
 # SMILE TRACK — ROADMAP
 
+## V01 — 2026-10-14 — BLOCKED / INCONCLUSIVE (current investigation)
+
+Verified base: `0812357cabb40b43a409e1235acfe78e84742145`; G01 remains active.
+V01 reached its engine-execution stop condition during preflight. Firefox 157.0
+launched once; WebKit could not launch because native libraries are missing, and
+standard dependency installation failed with OS permission errors. Chromium's pinned
+headless executable was unavailable; an isolated retry produced invalid ZIP errors.
+No application privacy/consent scenario was validated. These are environment/setup
+findings, not product validation passes or demonstrated application defects.
+
+See [V01 evidence, reproduction and classifications](V01_REPORT.md). Investigation
+implementation stopped; this submission records evidence only. Architect disposition
+is required before continuation in a provisioned environment. No V02, R03 or other
+product task is selected or authorized. R02 and R02-DOC remain COMPLETE. All accepted
+scientific, publication, privacy and governance boundaries remain unchanged; C01
+professional review remains Owner-blocked and incomplete.
+
+Earlier entries below are preserved verbatim as historical checkpoints. Their
+current-state labels do not override this dated investigation disposition.
+
 ## R02 final closure — 2026-10-14 (current accepted state)
 
 R02 is **COMPLETE**, accepted and merged through [PR #7](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/7).
