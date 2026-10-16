@@ -175,3 +175,13 @@ lesson/authority registries remain unchanged. C01 professional review remains
 Owner-blocked and incomplete. No deployment, professional recruitment, lessons, V02,
 R03 or other feature is authorized. Automated results are not scientific, medical,
 privacy, security, screen-reader or accessibility certification.
+
+
+## Historical-record note — 2026-10-15 America/New_York
+
+The preflight record above remains **BLOCKED / INCONCLUSIVE**, preserved verbatim.
+After Architect acceptance of PR #9 post-merge evidence, a bounded continuation
+was activated from `7120770f430663c548ec592397e5d63e36cbfff7`. Its separate
+[continuation report](V01_CONTINUATION_REPORT.md) records renewed supported
+provisioning, Firefox blank-page failures and unexecuted application scenarios.
+It does not retroactively validate this preflight or establish cross-browser compatibility.
