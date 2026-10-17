@@ -1,51 +1,113 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { erase, fresh, localDate, parseRecord, save, STORAGE_KEY, type RecordToday } from "./storage";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { fresh, localDate, routineOperation, STORAGE_KEY, type RecordToday, type RoutineRequest } from "./storage";
 import History, { type HistoryControl } from "./history";
 import styles from "./routine.module.css";
 
-type State = { record: RecordToday; saving: boolean; warning: string };
-const storageWarning = "Browser storage could not be verified. Saving is off. A previous saved record may remain; use your browser’s site-data controls to remove it.";
+type Action = RoutineRequest["action"];
+type State = { record: RecordToday; saving: boolean; observed: string | null; warning: string; pending: Action | null };
+const detachedNotice = "A saved current-day record exists but is not attached here. Choose saving to restore it without replacing it.";
+const freshState = (): State => ({ record: fresh(), saving: false, observed: null, warning: "", pending: null });
 
 export default function CheckIn() {
   const [state, setState] = useState<State | null>(null);
   const current = useRef<State | null>(null);
   const history = useRef<HistoryControl>(null);
+  const pending = useRef<AbortController | null>(null);
+  const detached = useRef(false);
+  const blocked = useRef(false);
+  const alive = useRef(false);
+  const allBusy = useRef(false);
   const [erasingAll, setErasingAll] = useState(false);
-  function publish(next: State) { current.current = next; setState(next); }
-  function rollover(): State | null {
-    let next = current.current;
-    if (next && next.record.date !== localDate()) {
-      const removed = erase();
-      next = { record: fresh(), saving: false, warning: removed ? "A new day has started. Saving is off for this fresh check-in." : storageWarning };
-      publish(next);
-    }
-    return next;
+  const publish = useCallback((next: State) => { current.current = next; setState(next); }, []);
+  const abortPending = useCallback(() => { pending.current?.abort(); pending.current = null; }, []);
+  function continueInMemory() {
+    abortPending();
+    detached.current = true;
+    const next = current.current;
+    if (next) publish({ ...next, saving: false, observed: null, pending: null, warning: "Pending work cancelled here. A write already completed cannot be undone by cancellation. Saved records may remain; use the erase control or your browser’s site-data controls to remove them." });
   }
-  useEffect(() => {
-    function restore() {
-      try {
-        const raw = window.localStorage.getItem(STORAGE_KEY);
-        const record = parseRecord(raw);
-        const removed = raw === null || record !== null || erase();
-        publish({ record: record ?? fresh(), saving: record !== null, warning: removed ? "" : storageWarning });
-      } catch { publish({ record: fresh(), saving: false, warning: storageWarning }); }
+  const run = useCallback(async (action: Action, record = current.current?.record, observed = current.current?.observed) => {
+    abortPending();
+    const controller = new AbortController();
+    pending.current = controller;
+    const requestedDate = record?.date ?? localDate();
+    const start = current.current ?? freshState();
+    publish({ ...start, pending: action });
+    const answer = await routineOperation({ action, record, observed, date: requestedDate, signal: controller.signal });
+    // Abort prevents queued mutation; this identity check separately prevents old UI results.
+    if (!alive.current || pending.current !== controller || controller.signal.aborted) return false;
+    pending.current = null;
+    const next = current.current ?? freshState();
+    if (answer.outcome === "cancelled") { publish({ ...next, pending: null, saving: false }); return false; }
+    if (answer.outcome === "error") {
+      blocked.current = true;
+      detached.current = true;
+      publish({ ...next, pending: null, saving: false, observed: null, warning: answer.notice });
+      return false;
     }
-    restore();
+    if (answer.outcome === "date" || next.record.date !== localDate()) {
+      detached.current = true;
+      publish({ ...freshState(), warning: answer.record?.date === localDate() ? detachedNotice : "The local date changed. Review today’s fresh check-in before saving." });
+      return false;
+    }
+    if (action === "erase") {
+      blocked.current = false;
+      detached.current = true;
+      publish({ ...next, pending: null, saving: false, observed: null, warning: "Check-in erased. Saving is off." });
+    } else if (action === "read" && (detached.current || blocked.current)) {
+      publish({ ...next, pending: null, saving: false, observed: null, warning: answer.record ? detachedNotice : next.warning });
+    } else {
+      if (action === "enable") { detached.current = false; blocked.current = false; }
+      if (answer.outcome === "conflict" && !answer.record) detached.current = true;
+      publish({ record: answer.record ?? (action === "edit" ? next.record : fresh()), saving: answer.record !== null,
+        observed: answer.raw, pending: null, warning: answer.notice });
+    }
+    return answer.outcome === "ok";
+  }, [abortPending, publish]);
+  const rollover = useCallback((): State | null => {
+    const next = current.current;
+    if (next && next.record.date !== localDate()) {
+      abortPending();
+      detached.current = true;
+      publish({ ...freshState(), warning: blocked.current ? next.warning : "A new day has started. Saving is off for this fresh check-in." });
+      if (!blocked.current) void run("read");
+    }
+    return current.current;
+  }, [abortPending, publish, run]);
+  useEffect(() => {
+    alive.current = true;
+    publish(freshState());
+    void run("read");
     function refresh() {
-      const next = current.current;
-      if (!next) return;
-      if (next.record.date !== localDate()) {
-        const removed = erase();
-        publish({ record: fresh(), saving: false, warning: removed ? "A new day has started. Saving is off for this fresh check-in." : storageWarning });
-      }
+      if (allBusy.current) return;
+      const old = current.current?.record.date !== localDate();
+      rollover();
+      if (!old && !pending.current && !blocked.current && current.current?.saving) void run("read");
     }
     function storageChanged(event: StorageEvent) {
-      if (event.key === STORAGE_KEY || event.key === null) restore();
+      if ((event.key === STORAGE_KEY || event.key === null) && !allBusy.current) {
+        const hadIntent = current.current?.pending && current.current.pending !== "read";
+        abortPending();
+        rollover();
+        if (hadIntent) {
+          detached.current = true;
+          const next = current.current;
+          if (next) publish({ ...next, saving: false, observed: null, pending: null, warning: "Saved data changed while work was pending. Review it before choosing saving again." });
+        }
+        if (!blocked.current) void run("read");
+      }
     }
-    function hide() { publish({ record: fresh(), saving: false, warning: "" }); }
-    function show(event: PageTransitionEvent) { if (event.persisted) restore(); else refresh(); }
+    function hide() {
+      abortPending();
+      if (current.current?.record.date !== localDate()) detached.current = true;
+      publish(freshState());
+    }
+    function show(event: PageTransitionEvent) {
+      if (event.persisted) { rollover(); if (!blocked.current) void run("read"); }
+      else refresh();
+    }
     let timer: ReturnType<typeof setTimeout>;
     function tick() {
       refresh();
@@ -60,6 +122,8 @@ export default function CheckIn() {
     document.addEventListener("visibilitychange", refresh);
     window.addEventListener("storage", storageChanged);
     return () => {
+      alive.current = false;
+      abortPending();
       clearTimeout(timer);
       window.removeEventListener("focus", refresh);
       window.removeEventListener("pageshow", show);
@@ -67,40 +131,49 @@ export default function CheckIn() {
       document.removeEventListener("visibilitychange", refresh);
       window.removeEventListener("storage", storageChanged);
     };
-  }, []);
+  }, [abortPending, publish, rollover, run]);
 
   function select(activity: "brushedTeeth" | "cleanedBetweenTeeth") {
-    const next = rollover();
+    const rolled = current.current?.record.date !== localDate();
+    rollover();
+    const next = current.current;
     if (!next) return;
-    const record = { ...next.record, [activity]: !next.record[activity] };
-    let saving = next.saving;
-    let warning = next.warning === storageWarning ? storageWarning : "";
-    if (saving) {
-      // Do not resurrect consent removed by another tab before its event arrives.
-      try { saving = parseRecord(window.localStorage.getItem(STORAGE_KEY)) !== null; }
-      catch { saving = false; warning = storageWarning; }
-      if (saving && !save(record)) { saving = false; warning = storageWarning; }
-    }
-    publish({ record, saving, warning });
+    if (pending.current && next.pending !== "read") continueInMemory();
+    else if (pending.current && !rolled) abortPending();
+    const latest = current.current ?? next;
+    const record = { ...latest.record, [activity]: !latest.record[activity] };
+    publish({ ...latest, record, pending: rolled ? latest.pending : null });
+    if (latest.saving && !rolled) void run("edit", record, latest.observed);
   }
-  function toggleSaving() {
+  function toggleSaving(wanted: boolean) {
+    // Capture enable/disable intent before rollover; never invert post-wait state.
     const next = rollover();
     if (!next) return;
-    if (next.saving) {
-      publish({ ...next, saving: false, warning: erase() ? "" : storageWarning });
-    } else {
-      const saved = save(next.record);
-      publish({ ...next, saving: saved, warning: saved ? "" : storageWarning });
-    }
+    if (!wanted) {
+      abortPending(); detached.current = true;
+      publish({ ...next, saving: false, observed: null, pending: null });
+      void run("erase");
+    } else void run("enable", next.record);
   }
   function reset() {
-    publish({ record: fresh(), saving: false, warning: erase() ? "Check-in erased. Saving is off." : storageWarning });
+    abortPending(); detached.current = true;
+    publish(freshState());
+    void run("erase");
   }
   async function resetAll() {
+    abortPending(); detached.current = true; allBusy.current = true;
     setErasingAll(true);
+    publish(freshState());
+    // H has fully released before R is requested. This is not a two-key transaction.
     const historyRemoved = await history.current?.erase();
-    const todayRemoved = erase();
-    publish({ record: fresh(), saving: false, warning: todayRemoved && historyRemoved ? "All routine data erased. Both saving options are off." : "Erasure of all routine data could not be verified. Saving is off here. Use your browser’s site-data controls to remove remaining records." });
+    if (!alive.current) return;
+    const todayRemoved = await run("erase");
+    if (!alive.current) return;
+    const next = current.current ?? freshState();
+    publish({ ...next, saving: false, warning: todayRemoved && historyRemoved
+      ? "All routine data erased in separately verified operations. Today-only saving is off here. Another tab may enable saving again between or after these operations; history shows its latest state below."
+      : `Erasure of all routine data could not be verified. History erasure: ${historyRemoved ? "verified" : "unverified"}; today-only erasure: ${todayRemoved ? "verified" : "unverified"}. Today-only saving is off here. Use your browser’s site-data controls to remove remaining records.` });
+    allBusy.current = false;
     setErasingAll(false);
   }
   return (
@@ -118,10 +191,11 @@ export default function CheckIn() {
         <h2>Your choice to save</h2>
         <p>By default, selections stay in this page’s memory and disappear when you leave or reload it. History below has its own consent and explicit recording action.</p>
         <p>Optional saving keeps only today’s check-in in this browser/device profile. Other people using this profile may see it. Browser backups or synchronization are outside Smile Track’s control.</p>
-        <p>A new local day clears the check-in and turns saving off while this page is running or when you next open it. A closed browser cannot actively erase a record. This option does not keep history, and entries are not sent anywhere.</p>
+        <p>A new local day resets this tab’s old selections and turns saving off here. A current-day record saved in another tab is preserved; choose saving to restore it. Expired records are removed when coordinated storage is available. A closed browser or unavailable coordination cannot actively erase a record. Saving and in-app deletion require browser tab coordination. If it is unavailable, use this check-in in memory and browser site-data controls to remove saved records. This option does not keep history, and entries are not sent anywhere.</p>
       </div>
-      <label className={styles.consent}><input type="checkbox" disabled={!state || erasingAll} checked={state?.saving ?? false} onChange={toggleSaving} aria-describedby="saving-details" />Save today’s check-in in this browser</label>
-      <p role="status" aria-label="Today-only status" className={styles.status}>{state ? state.saving ? "Saved in this browser for today." : "Today-only saving is off. Current selections are in page memory; separately recorded history is shown below." : "Saving is off."} {state?.warning}</p>
+      <label className={styles.consent}><input type="checkbox" disabled={!state || erasingAll} aria-disabled={state?.pending !== null} checked={state?.pending === "enable" || (state?.saving ?? false)} onChange={event => { if (!current.current?.pending) toggleSaving(event.target.checked); }} aria-describedby="saving-details" />Save today’s check-in in this browser</label>
+      <p role="status" aria-label="Today-only status" className={styles.status}>{state?.pending ? "Waiting for coordinated browser storage. Saving or erasure is not yet confirmed." : state ? state.saving ? "Saved in this browser for today." : "Today-only saving is off. Current selections are in page memory; separately recorded history is shown below." : "Saving is off."} {state?.warning}</p>
+      {state?.pending && !erasingAll && <button type="button" onClick={continueInMemory}>Cancel pending work and continue in memory</button>}
       <History ref={history} record={state?.record ?? null} onEraseAll={() => void resetAll()} erasingAll={erasingAll} />
       <noscript>This check-in needs JavaScript. Entries cannot be changed here while it is disabled.</noscript>
     </section>
