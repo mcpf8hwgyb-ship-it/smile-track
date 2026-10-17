@@ -1,5 +1,24 @@
 # SMILE TRACK — CURRENT STATE
 
+## P01 — current review status — 2026-10-17 UTC
+
+P01 is a bounded source-based privacy/data-lifecycle review of baseline
+`afd9e2dc388adff10db9bb3187dae1e9edd4902b`, submitted for Architect disposition.
+See [P01_REPORT.md](P01_REPORT.md) for the two-key inventory, consent/deletion traces,
+user-facing accuracy review and findings P01-01 through P01-08. P01-01 establishes a
+conditional stale-tab R01 rollover deletion defect; other findings distinguish known
+limitations, unresolved risks and unreviewed behavior. No production fix is authorized
+or implemented. Existing Chromium CI is regression evidence, not independent privacy
+or cross-browser certification.
+
+V01 remains **BLOCKED / INCONCLUSIVE and PARKED**. F01, F02 (internal-only), E01,
+G01/G01-DOC, R01 and R02/R02-DOC remain preserved. Stage 09C remains CLOSED/frozen
+`OUTWARD_PROVISIONAL_V1`; E01 controls and empty registries are unchanged. C01
+professional review remains Owner-blocked and incomplete. No next product task,
+V02, R03, deployment, professional recruitment or compatibility fix is authorized.
+All pre-existing historical text follows verbatim; this new P01 status does not
+reactivate or relabel V01.
+
 ## V01 continuation — current status — 2026-10-16 America/New_York
 
 The original V01 preflight was accepted as **BLOCKED / INCONCLUSIVE**. Its bounded

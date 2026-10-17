@@ -624,3 +624,44 @@ F01/F02/E01/G01/G01-DOC/R01/R02/R02-DOC remain complete; F02 internal-only;
 Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; E01 gate and empty registries
 unchanged; C01 professional review Owner-blocked/incomplete. No V02/R03 or
 compatibility fix is authorized. Return to Architect; do not merge this draft.
+
+
+## P01 — source review submission — 2026-10-17 UTC
+
+Baseline/main: `afd9e2dc388adff10db9bb3187dae1e9edd4902b`; G01 ruleset `24954073`
+verified active before review; no open PRs or other product task recorded in the
+current repository status. Review: [P01_REPORT.md](P01_REPORT.md).
+
+P01-01's extracted-source conditional exercise with synthetic dates demonstrated
+that stale-date refresh deletes a valid new-day shared record. This is not a natural
+browser scheduling test. No production fix or new committed test was made.
+The required validation suite is run unchanged; exact submitted-head CI evidence
+is recorded in the draft PR/handoff. Local and CI results are distinguished there.
+Four authorized Markdown files only; historical bodies remain verbatim. V01 stays
+BLOCKED / INCONCLUSIVE and PARKED. No certification or subsequent task is implied.
+
+### P01 local validation results — 2026-10-17 UTC
+
+Environment: Ubuntu 24.04.3 LTS x86_64, Node v24.19.0, npm 11.9.0,
+committed Playwright 1.64.0. Commands used the pinned lockfile, unchanged scripts,
+`NEXT_TELEMETRY_DISABLED=1` and no browser installation/provisioning.
+
+| Command | Local result |
+| --- | --- |
+| `npm ci --fetch-retries=0 --fetch-timeout=20000` | PASS; 186 packages installed. |
+| `npm run lint` | PASS, zero warnings required. |
+| `npm run typecheck` | PASS, strict TypeScript. |
+| `npm run test:education` | PASS, 5 tests. |
+| `npm run test:f02` | 4 PASS; 1 restricted-data SKIP, not a pass. |
+| `npm run build` | PASS, static export. |
+| `npm run check:export` | PASS; app 14 files, export 35 files; zero approved lessons. |
+| `npm run test:e2e -- --workers=2` | BLOCKED locally: runner reports 72 failures at launch because its pinned Chromium executable is absent. No application assertions ran successfully. |
+| `npm run test:smoke-sensitivity` | BLOCKED locally, exit 1: negative control did not fail at the required safety-content assertion because Chromium could not launch. This is not a sensitivity pass. |
+| `npm run test:education-sensitivity` | PASS, deliberately leaked fixture rejected; normal export rebuilt. |
+| `npm audit --audit-level=high` | PASS; 0 vulnerabilities reported. |
+
+Exact browser error: `browserType.launch: Executable doesn't exist at
+/root/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell`.
+No attempt was made to provision it. Fresh required GitHub CI runs the existing
+suite on its normal provisioned runner; its exact-head results belong to the PR
+handoff and do not turn this local limitation into a local pass or reactivate V01.
