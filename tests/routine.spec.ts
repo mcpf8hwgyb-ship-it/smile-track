@@ -48,6 +48,8 @@ test("memory default, independent undo, explicit saving, restoration and erase",
   await expect(brush(page)).not.toBeChecked();
   await brush(page).check();
   await consent(page).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect.poll(async () => JSON.parse((await stored(page)) ?? "null")).toEqual(sample);
   expect(JSON.parse((await stored(page))!)).toEqual(sample);
   await page.reload();
   await expect(brush(page)).toBeChecked();
@@ -138,7 +140,11 @@ test("turning saving off removes the record but keeps memory selections", async 
   await page.goto("/routine/");
   await brush(page).check();
   await consent(page).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect.poll(async () => JSON.parse((await stored(page)) ?? "null")).toEqual(sample);
   await consent(page).uncheck();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Check-in erased. Saving is off.");
+  await expect.poll(() => stored(page)).toBeNull();
   expect(await stored(page)).toBeNull();
   await expect(brush(page)).toBeChecked();
   await between(page).check();
