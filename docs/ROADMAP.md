@@ -404,3 +404,52 @@ dependencies/lockfile, workflows, registries, governance and scientific assets r
 unchanged from the rejected head. P01-02 and all previous exclusions remain unresolved.
 PR #13 remains draft/unmerged; no deployment or unrelated work. Return evidence to
 00 — ARCHITECT — CTO / Next Step; stop without broadening the correction.
+
+
+## Second R01 completion-synchronization correction — 2026-10-17 America/New_York
+
+Architect authorized only two R01 test-completion points and additive evidence.
+Starting head `b7de1b49934be26eefa910e575677d754124a6ee`; correction commit
+`bddbcb568079dd5bfb9a75fbde80c66b79cc7afd`. No production or history-test change.
+
+Six inserted lines in `tests/routine.spec.ts` establish observable completion:
+
+- Before the original exact `toEqual(sample)`, wait for Today-only status to contain
+  `Saved in this browser for today.`, then poll parsed storage for full sample equality.
+- Before disabling saving in the deletion test, establish those same two conditions.
+  This prevents a false deletion pass caused by saving never having completed.
+- After unchecking consent, wait for `Check-in erased. Saving is off.`, then poll raw
+  storage to be exactly null before the original `toBeNull()` assertion.
+
+All original assertions, memory checks and later null assertion remain verbatim.
+Removing the six inserted lines reproduces the starting routine test exactly. No
+arbitrary sleeps, test retry loops, skips or weakened expected values were introduced.
+The accepted history synchronization and all 46 coordination expectations are unchanged.
+
+**Overall acceptance remains BLOCKED / INCONCLUSIVE.** Exact correction run
+[39074533031](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39074533031),
+validate job `117518841953`: **FAILURE; 117 passed / 1 failed**.
+Both new save checkpoints and the verified deletion checks completed on desktop/mobile.
+The full default-flow test passed desktop but failed mobile later, at current line 59
+(starting line 57): immediately after `between(page).check()`, the unchanged exact
+assertion expected `{ ...sample, cleanedBetweenTeeth: true }`, but received the same
+record with `cleanedBetweenTeeth: false`. Date, version and brushedTeeth matched.
+No authorized completion wait timed out. The observed later-edit assertion is outside
+this authorization; it is not changed. The run does not establish whether the edit
+completed later, and no permanent storage-failure or corrected-behavior claim is made.
+The deletion test passed both desktop/mobile in full.
+
+Counts: existing R01 23 passed / 1 failed; R02 44/44; coordination 46/46; foundation/
+Learn 4/4. Lint, strict types, education 5, F02 4 with 1 expected restricted-data skip,
+build and export passed. Smoke sensitivity, education sensitivity and dependency audit
+were SKIPPED after browser failure, not passes. Original negative-control evidence is
+unchanged. No additional functional correction is attempted. This additive evidence
+commit will receive exact-head CI, recorded in PR #13; a later scheduling-dependent
+pass must not erase the reproduced failure above.
+
+The complete PR remains confined to eight authorized paths. Starting-head delta is
+only routine-test insertions and four additive documents. Main remains the baseline;
+PR #13 stays draft/unmerged. R01/R02 production, history tests, schemas, dependencies,
+lockfile, workflows, registries, governance and scientific assets are unchanged from
+the starting head. P01-02 remains unresolved; prior compatibility/scientific limits
+remain intact. Return reproduction evidence to Architect; do not broaden scope or merge.
