@@ -1,5 +1,28 @@
 # SMILE TRACK — CURRENT STATE
 
+## P01-01 coordination design — current status — 2026-10-17 America/New_York
+
+P01 evidence is accepted and merged in PR #11 at
+`71ffae276131190d66e4809830cc6a060e7cc146`. P01-01 remains a source-verified,
+unfixed defect. The Architect accepted P01-01-CORR as BLOCKED / INCONCLUSIVE
+and rejected read-before-delete as an adequate correction.
+
+[P01_01_COORDINATION_DESIGN.md](P01_01_COORDINATION_DESIGN.md) submits the newly
+authorized architecture investigation only. It proposes a dedicated R01 lock,
+fail-closed persistence with memory-only use, and sequential independent R02/R01
+erasure. These are recommendations requiring Architect decisions, not implemented
+behavior. Availability/cleanup, rollover consent display, stale-edit conflicts,
+consent-epoch ambiguity and P01-02 erase-all boundaries are explicitly unresolved
+approval points. No production remediation or new test was made.
+
+V01 remains **BLOCKED / INCONCLUSIVE and PARKED**. E01 gates/empty registries,
+C01 Owner-blocked status, F02 internal-only scope and Stage 09C CLOSED/frozen
+`OUTWARD_PROVISIONAL_V1` remain preserved. No V02, R03, deployment or model
+integration began. Return the draft design PR for Architect review; do not merge.
+This section supersedes older current-status wording; all historical text below
+is preserved verbatim.
+
+
 ## P01 — current review status — 2026-10-17 UTC
 
 P01 is a bounded source-based privacy/data-lifecycle review of baseline
