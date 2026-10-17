@@ -421,3 +421,55 @@ unchanged. E01 publication controls/empty registries remain; C01 Owner-blocked a
 incomplete; F02 internal-only; Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`;
 V01 BLOCKED / INCONCLUSIVE and PARKED. No V02, R03, model integration or deployment.
 Return evidence to Architect for independent review; do not merge or start another task.
+
+
+## Authorized history-test synchronization correction — 2026-10-17 America/New_York
+
+Architect authorized a narrow exception for `tests/history.spec.ts` only, plus
+these additive documentation records. Starting rejected head:
+`85274a710a147dd45e8b37ac6a970e268254cf30`; main remains
+`8c7693438285fe74168e66b2fdde4e9f706cac74`.
+Correction commit: `b24c8150a354184df9168363150e95fef7156150`.
+
+Exactly eight lines were inserted in history tests: two `expect.poll` waits read
+`smile-track:routine:1`, return null while absent, otherwise parse and require
+`brushedTeeth === true`. One precedes the original failure-handling field assertion;
+the other precedes capturing actual `todayBefore` bytes in the stale-enable fixture.
+The original field assertion and final exact-byte equality remain verbatim. Removing
+only the two inserted waits reproduces the starting history test byte-for-byte.
+No arbitrary sleep, test retry, skipped case or weakened assertion was introduced.
+No production source or coordination-test expectation changed.
+
+**Correction verified; overall acceptance BLOCKED / INCONCLUSIVE.**
+[Run 39069960202](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39069960202),
+validate job `117505334082`, exact correction commit above: **FAILURE**.
+Chromium: **116 passed / 2 failed**. All nine previously failing cases passed:
+desktop write, silent-write, silent-remove, stale-enable; mobile write, silent-write,
+remove, silent-remove, stale-enable. Entire R02 suite: **44/44 passed**.
+New coordination cases: **46/46 passed**. Existing R01: **22 passed / 2 failed**;
+foundation/education-browser cases: **4/4 passed**.
+
+The two failures are unchanged mobile R01 assertions: `routine.spec.ts:51` expected
+the complete saved sample immediately after consent `.check()` but received null;
+`routine.spec.ts:142` expected null immediately after `.uncheck()` but received
+`{"version":1,"date":"2026-10-12","brushedTeeth":true,"cleanedBetweenTeeth":false}`.
+These match the synchronous-completion hazards already documented in the rejected
+handoff. Neither authorized history completion wait timed out or returned a wrong
+final value. This run does not establish a permanent persistence/deletion failure,
+but it fails the required all-green acceptance condition. No additional test/source
+fix is made; Architect disposition is required for any further change.
+
+Lint, strict types, education (5), F02 (4 passed / 1 restricted-data skip), build and
+export boundaries passed. Smoke sensitivity, education sensitivity and dependency
+audit were **SKIPPED** after browser failure, not counted as passes. Original
+negative-control evidence remains unchanged. This documentation-only follow-up will
+also receive exact-head CI; its outcome is recorded in PR #13, without erasing this
+failed run or treating a scheduling-dependent later pass as resolution of these tests.
+
+Scope after this exception is exactly eight PR paths: the prior seven plus
+`tests/history.spec.ts`. Rejected-head delta is only that test and four additive
+documentation files. R01/R02 production, `tests/routine.spec.ts`, schemas,
+dependencies/lockfile, workflows, registries, governance and scientific assets remain
+unchanged from the rejected head. P01-02 and all previous exclusions remain unresolved.
+PR #13 remains draft/unmerged; no deployment or unrelated work. Return evidence to
+00 — ARCHITECT — CTO / Next Step; stop without broadening the correction.
