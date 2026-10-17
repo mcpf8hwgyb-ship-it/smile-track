@@ -209,3 +209,29 @@ test("leaving and returning does not retain an unsaved check-in", async ({ page 
   await expect(consent(page)).not.toBeChecked();
   expect(await stored(page)).toBeNull();
 });
+
+// P01-01 negative control: these same assertions must fail on the original source.
+for (const pathway of ["refresh", "interaction"] as const) {
+  test(`P01-01 preserves new-day bytes before delayed storage event: ${pathway}`, async ({ page, context }) => {
+    await page.addInitScript(() => window.addEventListener("storage", e => e.stopImmediatePropagation(), true));
+    await page.goto("/routine/");
+    await brush(page).check();
+    await consent(page).check();
+    await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
+    const other = await context.newPage();
+    await other.clock.install({ time: new Date("2026-10-13T16:00:00Z") });
+    await other.goto("/routine/");
+    await between(other).check();
+    await consent(other).check();
+    const expected = JSON.stringify({ ...sample, date: "2026-10-13", brushedTeeth: false, cleanedBetweenTeeth: true });
+    await expect.poll(() => stored(other)).toBe(expected);
+    // Programmatic dispatch avoids an incidental focus event selecting the other path.
+    if (pathway === "refresh") await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    else await brush(page).evaluate(element => (element as HTMLInputElement).click());
+    await expect(page.getByText("Today · 2026-10-13", { exact: true })).toBeVisible();
+    await expect(consent(page)).not.toBeChecked();
+    expect(await stored(other)).toBe(expected);
+    await expect(between(page)).not.toBeChecked();
+    await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("saved current-day record");
+  });
+}
