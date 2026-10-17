@@ -235,3 +235,183 @@ for (const pathway of ["refresh", "interaction"] as const) {
     await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("saved current-day record");
   });
 }
+
+const routineLock = "smile-track:routine";
+const todayStatus = (page: Page) => page.getByRole("status", { name: "Today-only status" });
+const eraseToday = (page: Page) => page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" });
+async function hold(page: Page, lock = routineLock) {
+  await page.evaluate(lock => {
+    const state = window as unknown as { releaseTestLock?: () => void };
+    delete state.releaseTestLock;
+    void navigator.locks.request(lock, () => new Promise<void>(resolve => { state.releaseTestLock = resolve; }));
+  }, lock);
+  await expect.poll(() => page.evaluate(() => typeof (window as unknown as { releaseTestLock?: unknown }).releaseTestLock)).toBe("function");
+}
+async function release(page: Page) {
+  await page.evaluate(() => (window as unknown as { releaseTestLock: () => void }).releaseTestLock());
+}
+async function waitQueued(page: Page, count = 1, lock = routineLock) {
+  await expect.poll(() => page.evaluate(async lock => (await navigator.locks.query()).pending?.filter(item => item.name === lock).length ?? 0, lock)).toBeGreaterThanOrEqual(count);
+}
+async function suppressStorageEvents(page: Page) {
+  await page.addInitScript(() => window.addEventListener("storage", event => event.stopImmediatePropagation(), true));
+}
+async function settle(page: Page) {
+  await expect(page.getByRole("button", { name: "Cancel pending work and continue in memory" })).toHaveCount(0);
+  await expect(consent(page)).toBeEnabled();
+}
+
+test("P01-01 stale observation queued behind new-day enable preserves record and requires reattachment", async ({ page, context }) => {
+  await suppressStorageEvents(page);
+  await page.goto("/routine/");
+  await brush(page).check(); await consent(page).check(); await settle(page);
+  const other = await context.newPage();
+  await other.clock.install({ time: new Date("2026-10-13T16:00:00Z") });
+  await other.goto("/routine/"); await settle(other);
+  const holder = await context.newPage(); await holder.goto("/");
+  await hold(holder);
+  await between(other).check(); await consent(other).check(); await waitQueued(holder);
+  await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
+  await page.evaluate(() => window.dispatchEvent(new Event("focus"))); await waitQueued(holder, 2);
+  await release(holder); await settle(other); await settle(page);
+  const expected = { ...sample, date: "2026-10-13", brushedTeeth: false, cleanedBetweenTeeth: true };
+  expect(JSON.parse((await stored(page))!)).toEqual(expected);
+  await expect(consent(page)).not.toBeChecked(); await expect(brush(page)).not.toBeChecked();
+  await expect(todayStatus(page)).toContainText("saved current-day record");
+  await consent(page).check(); await settle(page);
+  await expect(between(page)).toBeChecked();
+  expect(JSON.parse((await stored(page))!)).toEqual(expected);
+});
+
+test("P01-01 all storage reads mutations and failed-write recovery occur under R01 lock", async ({ page }) => {
+  await page.addInitScript(({ key, lockName }) => {
+    const state = window as unknown as { held: boolean; outside: string[] };
+    state.held = false; state.outside = [];
+    const request = navigator.locks.request.bind(navigator.locks);
+    Object.defineProperty(navigator.locks, "request", { value: (name: string, options: LockOptions | LockGrantedCallback<unknown>, callback?: LockGrantedCallback<unknown>) => {
+      const cb = typeof options === "function" ? options : callback!;
+      return request(name, typeof options === "function" ? {} : options, lock => {
+        if (name === lockName) state.held = true;
+        try { return cb(lock); } finally { if (name === lockName) state.held = false; }
+      });
+    } });
+    const get = Storage.prototype.getItem, set = Storage.prototype.setItem, remove = Storage.prototype.removeItem;
+    Storage.prototype.getItem = function(k) { if (k === key && !state.held) state.outside.push("read"); return get.call(this, k); };
+    Storage.prototype.setItem = function(k, value) { if (k === key) { if (!state.held) state.outside.push("write"); throw new Error("synthetic write failure"); } return set.call(this, k, value); };
+    Storage.prototype.removeItem = function(k) { if (k === key && !state.held) state.outside.push("remove"); return remove.call(this, k); };
+  }, { key, lockName: routineLock });
+  await page.goto("/routine/"); await settle(page);
+  await brush(page).check(); await consent(page).click();
+  await expect(todayStatus(page)).toContainText("could not be verified");
+  await eraseToday(page).click(); await settle(page);
+  expect(await page.evaluate(() => (window as unknown as { outside: string[] }).outside)).toEqual([]);
+});
+
+for (const change of ["newer values", "revocation"] as const) {
+  test(`P01-01 queued stale edit rejects ${change} before delayed notification`, async ({ page, context }) => {
+    await suppressStorageEvents(page);
+    await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
+    const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+    await other.goto("/routine/"); await settle(other);
+    const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+    if (change === "revocation") await eraseToday(other).click();
+    else await between(other).check();
+    await waitQueued(holder);
+    await brush(page).evaluate(e => (e as HTMLInputElement).click()); await waitQueued(holder, 2);
+    // Neither queued operation has changed X while the holder owns the lock.
+    expect(JSON.parse((await stored(holder))!)).toEqual(sample);
+    await release(holder); await settle(page); await settle(other);
+    if (change === "revocation") {
+      expect(await stored(holder)).toBeNull(); await expect(consent(page)).not.toBeChecked();
+      await expect(todayStatus(page)).toContainText("consent was removed");
+    } else {
+      expect(JSON.parse((await stored(holder))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
+      await expect(brush(page)).toBeChecked(); await expect(between(page)).toBeChecked();
+      await expect(todayStatus(page)).toContainText("Review the latest values");
+    }
+  });
+}
+
+for (const cause of ["cancel", "memory edit", "pagehide", "storage event", "midnight"] as const) {
+  test(`P01-01 obsolete queued enable cannot commit after ${cause}`, async ({ page, context }) => {
+    await page.goto("/routine/"); await settle(page); await brush(page).check();
+    const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+    await consent(page).check(); await waitQueued(holder);
+    await expect(todayStatus(page)).toContainText("not yet confirmed"); expect(await stored(holder)).toBeNull();
+    if (cause === "cancel") await page.getByRole("button", { name: "Cancel pending work and continue in memory" }).click();
+    if (cause === "memory edit") await between(page).check();
+    if (cause === "pagehide") await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pagehide")));
+    if (cause === "storage event") await page.evaluate(key => window.dispatchEvent(new StorageEvent("storage", { key })), key);
+    if (cause === "midnight") await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
+    await release(holder);
+    // A real lock barrier drains preceding requests; no arbitrary delay.
+    await holder.evaluate(lock => navigator.locks.request(lock, () => {}), routineLock);
+    await expect(consent(page)).not.toBeChecked(); expect(await stored(holder)).toBeNull();
+    if (cause === "midnight") {
+      await expect(brush(page)).not.toBeChecked(); await expect(todayStatus(page)).toContainText("date changed");
+    }
+  });
+}
+
+for (const failure of ["unavailable", "rejected"] as const) {
+  test(`P01-01 ${failure} coordination leaves bytes untouched and memory usable`, async ({ page }) => {
+    await page.addInitScript(({ key, sample, failure, lock }) => {
+      localStorage.setItem(key, JSON.stringify(sample));
+      if (failure === "unavailable") Object.defineProperty(navigator, "locks", { value: undefined });
+      else {
+        const original = navigator.locks.request.bind(navigator.locks);
+        Object.defineProperty(navigator.locks, "request", { value: (name: string, options: LockOptions | LockGrantedCallback<unknown>, callback?: LockGrantedCallback<unknown>) => {
+          if (name === lock) return Promise.reject(new Error("synthetic rejection"));
+          return typeof options === "function" ? original(name, options) : original(name, options, callback!);
+        } });
+      }
+    }, { key, sample, failure, lock: routineLock });
+    await page.goto("/routine/");
+    await expect(todayStatus(page)).toContainText("coordination is unavailable");
+    await expect(consent(page)).not.toBeChecked();
+    await brush(page).check(); await between(page).check();
+    await consent(page).click(); await expect(consent(page)).not.toBeChecked();
+    await eraseToday(page).click(); await expect(todayStatus(page)).toContainText("site-data controls");
+    expect(JSON.parse((await stored(page))!)).toEqual(sample);
+    await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(brush(page)).not.toBeChecked();
+    expect(JSON.parse((await stored(page))!)).toEqual(sample);
+    await between(page).check(); await expect(between(page)).toBeChecked();
+  });
+}
+
+test("P01-01 silent removal failure latches off despite surviving consent and notifications", async ({ page }) => {
+  await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
+  await page.evaluate(key => {
+    const original = Storage.prototype.removeItem;
+    Storage.prototype.removeItem = function(k) { if (k !== key) original.call(this, k); };
+  }, key);
+  await eraseToday(page).click();
+  await expect(todayStatus(page)).toContainText("could not be verified"); await expect(consent(page)).not.toBeChecked();
+  expect(JSON.parse((await stored(page))!)).toEqual(sample);
+  await page.evaluate(key => window.dispatchEvent(new StorageEvent("storage", { key })), key);
+  await page.clock.fastForward(61_000);
+  await expect(consent(page)).not.toBeChecked(); await between(page).check();
+  expect(JSON.parse((await stored(page))!)).toEqual(sample);
+});
+
+test("P01-01 erase-all releases history lock before requesting R01 and reports partial progress honestly", async ({ page, context }) => {
+  await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
+  await page.getByRole("checkbox", { name: "Enable seven-day history in this browser" }).check();
+  const holder = await context.newPage(); await holder.goto("/");
+  await hold(holder, "smile-track:routine-history");
+  await page.getByRole("button", { name: "Erase all routine data and turn off both saving options" }).click();
+  await waitQueued(holder, 1, "smile-track:routine-history");
+  const initial = await holder.evaluate(async () => navigator.locks.query());
+  expect(initial.held?.some(l => l.name === routineLock)).toBe(false);
+  expect(initial.pending?.some(l => l.name === routineLock)).toBe(false);
+  const holderR = await context.newPage(); await holderR.goto("/"); await hold(holderR);
+  await release(holder); await waitQueued(holderR);
+  expect(await holder.evaluate(() => localStorage.getItem("smile-track:routine-history:1"))).toBeNull();
+  expect(JSON.parse((await stored(holder))!)).toEqual(sample);
+  await expect(todayStatus(page)).not.toContainText("All routine data erased");
+  await release(holderR);
+  await expect(todayStatus(page)).toContainText("separately verified operations");
+  expect(await stored(holder)).toBeNull();
+});
