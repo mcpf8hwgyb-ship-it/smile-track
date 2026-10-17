@@ -665,3 +665,44 @@ Exact browser error: `browserType.launch: Executable doesn't exist at
 No attempt was made to provision it. Fresh required GitHub CI runs the existing
 suite on its normal provisioned runner; its exact-head results belong to the PR
 handoff and do not turn this local limitation into a local pass or reactivate V01.
+
+
+## P01-01 coordination design submission — 2026-10-17 America/New_York
+
+Baseline: `71ffae276131190d66e4809830cc6a060e7cc146`; G01 `24954073` verified
+active and matching the governance record; PR #11 merged; no open PRs at preflight.
+The design-only authorization accepts the prior correction's BLOCKED / INCONCLUSIVE
+outcome. P01-01 remains unfixed. See [coordination design](P01_01_COORDINATION_DESIGN.md).
+
+Exactly four documentation files are authorized. The original P01 report and all
+production/test/config/dependency/workflow blobs remain unchanged. Historical bodies,
+relative links and diff whitespace are checked before submission. Existing required
+validation is run unchanged; the handoff records fresh exact-head CI IDs and separates
+local limitations from CI results. No proposed future acceptance test is implemented.
+No browser provisioning or V01 reactivation occurs. No remediation/merge is authorized.
+
+### Local validation — 2026-10-17 America/New_York
+
+Ubuntu 24.04.3 LTS x86_64; Node 24.19.0; npm 11.9.0; pinned Playwright 1.64.0.
+`npm ci --fetch-retries=0 --fetch-timeout=20000` passed (186 packages).
+`NEXT_TELEMETRY_DISABLED=1 npm run validate` ran the existing pipeline unchanged.
+
+| Check | Observed local result |
+| --- | --- |
+| Lint and strict typecheck | PASS |
+| Education | 5 passed |
+| F02 | 4 passed; 1 restricted-data skip |
+| Static build / export boundary | PASS; 14 app files, 35 exported files, zero approved lessons |
+| Chromium regression | BLOCKED: 72 browser-launch failures; pinned executable absent; no application pass claimed |
+| Smoke sensitivity | BLOCKED: missing browser prevented required safety-content failure; negative-control command correctly exited nonzero |
+| Education sensitivity | PASS; deliberate leak rejected and normal export rebuilt |
+| Dependency audit | PASS; zero vulnerabilities reported |
+
+Missing executable: `/root/.cache/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell`.
+No browser install or provisioning was attempted. These local blocks are separate from
+fresh exact-head GitHub validation, whose run/job IDs and results are recorded in the
+PR handoff after completion. A passing existing suite does not validate this unimplemented
+design. Scope/history/link/whitespace checks passed; all 70 existing files outside the
+three modified status documents are byte-identical, including the original P01 report.
+The fourth changed file is the new design. All 41 relative links in these four documents
+resolve. Proposed T01–T25 remain a future plan, not newly executed tests.
