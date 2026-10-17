@@ -217,6 +217,8 @@ for (const pathway of ["refresh", "interaction"] as const) {
     await page.goto("/routine/");
     await brush(page).check();
     await consent(page).check();
+    await expect.poll(() => stored(page)).toBe(JSON.stringify(sample));
+    await settle(page);
     await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
     const other = await context.newPage();
     await other.clock.install({ time: new Date("2026-10-13T16:00:00Z") });
@@ -398,7 +400,8 @@ test("P01-01 silent removal failure latches off despite surviving consent and no
 
 test("P01-01 erase-all releases history lock before requesting R01 and reports partial progress honestly", async ({ page, context }) => {
   await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
-  await page.getByRole("checkbox", { name: "Enable seven-day history in this browser" }).check();
+  await page.getByRole("checkbox", { name: "Enable seven-day history in this browser" }).click();
+  await expect(page.getByRole("checkbox", { name: "Enable seven-day history in this browser" })).toBeChecked();
   const holder = await context.newPage(); await holder.goto("/");
   await hold(holder, "smile-track:routine-history");
   await page.getByRole("button", { name: "Erase all routine data and turn off both saving options" }).click();
@@ -414,4 +417,39 @@ test("P01-01 erase-all releases history lock before requesting R01 and reports p
   await release(holderR);
   await expect(todayStatus(page)).toContainText("separately verified operations");
   expect(await stored(holder)).toBeNull();
+});
+
+for (const failure of ["throw", "silent"] as const) {
+  test(`P01-01 failed-write cleanup cannot erase the next cooperating save: ${failure}`, async ({ page, context }) => {
+    await suppressStorageEvents(page);
+    await page.goto("/routine/"); await settle(page); await brush(page).check();
+    const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+    await other.goto("/routine/"); await settle(other); await between(other).check();
+    await page.evaluate(({ key, failure }) => {
+      const set = Storage.prototype.setItem;
+      Storage.prototype.setItem = function(k, value) {
+        if (k === key) { if (failure === "throw") throw new Error("synthetic write failure"); return; }
+        return set.call(this, k, value);
+      };
+    }, { key, failure });
+    const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+    await consent(page).check(); await waitQueued(holder);
+    await consent(other).check(); await waitQueued(holder, 2);
+    await release(holder); await settle(page); await settle(other);
+    await expect(todayStatus(page)).toContainText("could not be verified");
+    await expect(consent(page)).not.toBeChecked(); await expect(consent(other)).toBeChecked();
+    expect(JSON.parse((await stored(holder))!)).toEqual({ ...sample, brushedTeeth: false, cleanedBetweenTeeth: true });
+  });
+}
+
+test("P01-01 saved edit ordered before explicit erase cannot survive erasure", async ({ page, context }) => {
+  await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
+  const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+  await other.goto("/routine/"); await settle(other);
+  const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+  await between(page).check(); await waitQueued(holder);
+  await eraseToday(other).click(); await waitQueued(holder, 2);
+  await release(holder); await settle(page); await settle(other);
+  expect(await stored(holder)).toBeNull();
+  await expect(consent(page)).not.toBeChecked(); await expect(consent(other)).not.toBeChecked();
 });
