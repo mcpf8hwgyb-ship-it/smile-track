@@ -171,8 +171,8 @@ export default function CheckIn() {
     if (!alive.current) return;
     const next = current.current ?? freshState();
     publish({ ...next, saving: false, warning: todayRemoved && historyRemoved
-      ? "All routine data erased in separately verified operations. Both saving options are off here. Another tab may subsequently enable saving again."
-      : `Erasure of all routine data could not be verified. History erasure: ${historyRemoved ? "verified" : "unverified"}; today-only erasure: ${todayRemoved ? "verified" : "unverified"}. Saving is off here. Use your browser’s site-data controls to remove remaining records.` });
+      ? "All routine data erased in separately verified operations. Today-only saving is off here. Another tab may enable saving again between or after these operations; history shows its latest state below."
+      : `Erasure of all routine data could not be verified. History erasure: ${historyRemoved ? "verified" : "unverified"}; today-only erasure: ${todayRemoved ? "verified" : "unverified"}. Today-only saving is off here. Use your browser’s site-data controls to remove remaining records.` });
     allBusy.current = false;
     setErasingAll(false);
   }

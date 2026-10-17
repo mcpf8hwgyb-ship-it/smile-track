@@ -321,3 +321,34 @@ F01/F02/E01/G01/G01-DOC/R01/R02/R02-DOC remain complete; F02 internal-only;
 Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; E01 gate and empty registries
 unchanged; C01 professional review Owner-blocked/incomplete. No V02/R03 or
 compatibility fix is authorized. Return to Architect; do not merge this draft.
+
+
+## P01-01-COORD-IMPL — draft correction — 2026-10-17 UTC
+
+Baseline `8c7693438285fe74168e66b2fdde4e9f706cac74`; draft PR #13 on
+`p01-01-coordination-impl`. A bounded implementation now coordinates R01 operations
+under exclusive `smile-track:routine`, preserves current-day bytes at stale rollover,
+requires explicit reattachment, rejects differing-observation edits, cancels obsolete
+queued work, and fails closed without coordination. This supersedes design-only
+NOT_AUTHORIZED status solely for this authorized draft. Main has not been changed.
+
+**Acceptance INCONCLUSIVE / NOT MERGE-READY.** Original Chromium negative control
+(run `39043107930`, head `e052d0900807d10ded37d2e499074b9c7d39c3e5`) passed all
+72 old tests and failed both new preservation paths on both projects (4 failures,
+new-day bytes erased). Corrected run `39066242416` passed both preservation paths and
+95 cases overall, but failed 13. Existing synchronous R01 completion assumptions in
+R01 and protected R02 tests conflict with the new asynchronous policy; no existing
+assertion was changed or suppressed. New fixture corrections and additional matrix
+coverage are included in the draft. Final exact-head CI and per-test results belong
+to the PR handoff; pending or skipped gates are not passes.
+
+See [correction mechanism, evidence and case matrix](P01_01_COORDINATION_CORRECTION_REPORT.md).
+The original P01 report and accepted coordination-design report remain unchanged.
+Cooperating-tab guarantees exclude identical-byte ABA, older tabs/external scripts,
+incorrect clocks, browser durability, and unsupported engines. P01-02 remains
+unresolved; erase-all is H-release-then-R, sequential/non-nested/non-atomic.
+R02 implementation/tests, schemas, dependencies, workflows and governance remain
+unchanged. E01 publication controls/empty registries remain; C01 Owner-blocked and
+incomplete; F02 internal-only; Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`;
+V01 BLOCKED / INCONCLUSIVE and PARKED. No V02, R03, model integration or deployment.
+Return evidence to Architect for independent review; do not merge or start another task.

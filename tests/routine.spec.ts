@@ -444,7 +444,7 @@ for (const failure of ["throw", "silent"] as const) {
 
 test("P01-01 saved edit ordered before explicit erase cannot survive erasure", async ({ page, context }) => {
   await page.goto("/routine/"); await brush(page).check(); await consent(page).check(); await settle(page);
-  const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+  const other = await context.newPage(); await suppressStorageEvents(other); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
   await other.goto("/routine/"); await settle(other);
   const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
   await between(page).check(); await waitQueued(holder);
@@ -452,4 +452,67 @@ test("P01-01 saved edit ordered before explicit erase cannot survive erasure", a
   await release(holder); await settle(page); await settle(other);
   expect(await stored(holder)).toBeNull();
   await expect(consent(page)).not.toBeChecked(); await expect(consent(other)).not.toBeChecked();
+});
+
+for (const order of ["rollover first", "erase first"] as const) {
+  test(`P01-01 rollover and explicit erase create no consent: ${order}`, async ({ page, context }) => {
+    await suppressStorageEvents(page);
+    await page.goto("/routine/"); await settle(page); await brush(page).check();
+    const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T16:00:00Z") });
+    await other.goto("/routine/"); await settle(other); await between(other).check(); await consent(other).check(); await settle(other);
+    await page.clock.setSystemTime(new Date("2026-10-13T16:00:00Z"));
+    const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+    const wake = () => page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    if (order === "rollover first") { await wake(); await waitQueued(holder); await eraseToday(other).click(); }
+    else { await eraseToday(other).click(); await waitQueued(holder); await wake(); }
+    await waitQueued(holder, 2); await release(holder); await settle(page); await settle(other);
+    expect(await stored(holder)).toBeNull();
+    await expect(consent(page)).not.toBeChecked(); await expect(brush(page)).not.toBeChecked();
+    await expect(consent(other)).not.toBeChecked();
+  });
+}
+
+test("P01-01 combined failed write and failed cleanup retain honest off-here latch", async ({ page }) => {
+  await page.goto("/routine/"); await settle(page); await brush(page).check(); await consent(page).check(); await settle(page);
+  await page.evaluate(key => {
+    const set = Storage.prototype.setItem, remove = Storage.prototype.removeItem;
+    Storage.prototype.setItem = function(k, value) { if (k !== key) set.call(this, k, value); };
+    Storage.prototype.removeItem = function(k) { if (k !== key) remove.call(this, k); };
+  }, key);
+  await between(page).check(); await settle(page);
+  await expect(todayStatus(page)).toContainText("previous saved record may remain");
+  expect(JSON.parse((await stored(page))!)).toEqual(sample);
+  await page.evaluate(key => window.dispatchEvent(new StorageEvent("storage", { key })), key);
+  await page.clock.fastForward(61_000);
+  await expect(consent(page)).not.toBeChecked();
+  expect(JSON.parse((await stored(page))!)).toEqual(sample);
+});
+
+test("P01-01 erase-all permits later independent history enable and qualifies its result", async ({ page, context }) => {
+  await page.goto("/routine/"); await settle(page); await brush(page).check(); await consent(page).check(); await settle(page);
+  const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+  await other.goto("/routine/"); await settle(other);
+  const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
+  await page.getByRole("button", { name: "Erase all routine data and turn off both saving options" }).click();
+  await waitQueued(holder);
+  await other.getByRole("checkbox", { name: "Enable seven-day history in this browser" }).click();
+  await expect(other.getByRole("checkbox", { name: "Enable seven-day history in this browser" })).toBeChecked();
+  const historyBytes = await holder.evaluate(() => localStorage.getItem("smile-track:routine-history:1"));
+  expect(historyBytes).not.toBeNull();
+  await release(holder); await expect(todayStatus(page)).toContainText("separately verified operations");
+  expect(await stored(holder)).toBeNull();
+  expect(await holder.evaluate(() => localStorage.getItem("smile-track:routine-history:1"))).toBe(historyBytes);
+});
+
+test("P01-01 identical-byte re-enable remains indistinguishable under observed-value contract", async ({ page, context }) => {
+  await suppressStorageEvents(page);
+  await page.goto("/routine/"); await settle(page); await brush(page).check(); await consent(page).check(); await settle(page);
+  const other = await context.newPage(); await other.clock.install({ time: new Date("2026-10-13T03:59:50Z") });
+  await other.goto("/routine/"); await settle(other);
+  await eraseToday(other).click(); await settle(other); expect(await stored(other)).toBeNull();
+  await brush(other).check(); await consent(other).check(); await settle(other);
+  expect(JSON.parse((await stored(other))!)).toEqual(sample);
+  await between(page).evaluate(element => (element as HTMLInputElement).click()); await settle(page);
+  expect(JSON.parse((await stored(other))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
+  // This is deliberately evidence of the ABA limitation, not durable-epoch revocation.
 });
