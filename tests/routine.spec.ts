@@ -56,6 +56,8 @@ test("memory default, independent undo, explicit saving, restoration and erase",
   await expect(between(page)).not.toBeChecked();
   await expect(consent(page)).toBeChecked();
   await between(page).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect.poll(async () => JSON.parse((await stored(page)) ?? "null")).toEqual({ ...sample, cleanedBetweenTeeth: true });
   expect(JSON.parse((await stored(page))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
   await page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" }).click();
   await expect(brush(page)).not.toBeChecked();
