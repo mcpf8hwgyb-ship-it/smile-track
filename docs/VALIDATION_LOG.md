@@ -929,3 +929,49 @@ BLOCKED / INCONCLUSIVE / PARKED; E01 gates and empty registries unchanged;
 C01 Owner-blocked/incomplete; F02 internal-only; Stage 09C CLOSED/frozen
 OUTWARD_PROVISIONAL_V1. V02, R03, deployment and dental-model integration remain
 not authorized. Return evidence for independent Architect re-review.
+
+## P01-01 post-merge closure — 2026-10-18 America/New_York
+
+Architect disposition: **VERIFIED — ACCEPTED; CLOSE P01-01-COORD-IMPL**.
+PR #13 is closed and merged; the accepted engineering implementation is on main.
+
+| Merge evidence | Exact value |
+| --- | --- |
+| Resulting main | `7f925d7c2166c4eee5a327bef2e53331b3e7b4a0` |
+| First parent | `8c7693438285fe74168e66b2fdde4e9f706cac74` |
+| Second parent / approved head | `0750e85f7875f431e9c5da37ca7327b21c5dbdf2` |
+| Merged tree | `f9c19d42ec6e9d0df433c5eaa3c6f18377a359e6` |
+| Post-merge workflow | [39103606363](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39103606363) — SUCCESS |
+| Validate job | [117604724612](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39103606363/job/117604724612) — SUCCESS |
+
+Fresh post-merge CI was inspected on the actual resulting main SHA, not inferred
+from the PR run. Verified results:
+
+| Gate | Result |
+| --- | --- |
+| Chromium desktop/mobile | 118/118 PASS |
+| Existing R01 | 24/24 PASS |
+| Existing R02 | 44/44 PASS |
+| Coordination | 46/46 PASS |
+| Education | 5/5 PASS |
+| F02 | 4 PASS / 1 expected restricted-data skip |
+| Lint / strict typecheck / build | PASS |
+| Export boundary | PASS — 35 exported files, zero approved lessons |
+| Smoke sensitivity | PASS — 58 passes and exactly 1 intended foundation safety-content failure |
+| Education sensitivity | PASS |
+| Dependency audit | PASS — zero vulnerabilities reported |
+
+No downstream skipped gate is reported as a pass. Original defect negative-control
+evidence and failed intermediate runs remain historical evidence and are not erased
+by closure. G01 24954073 remained active and unchanged; the repository remained public
+and both production education registries remained exactly empty.
+
+Acceptance is bounded engineering acceptance for current-version cooperating contexts
+with working coordination and accessible/truthful storage, not privacy, security,
+cross-browser, universal-concurrency, accessibility or clinical certification.
+All exclusions and unresolved findings remain in force, including identical-byte ABA,
+older/uncoordinated contexts and sequential non-atomic erase-all. P01-02/P01-07 remain
+UNRESOLVED; P01-03 through P01-06 VERIFIED LIMITATIONS; P01-08 NOT_REVIEWED.
+The authoritative current boundaries appear above the historical sections in
+[CURRENT_STATE](CURRENT_STATE.md) and [ROADMAP](ROADMAP.md). This documentation-only
+reconciliation does not authorize further implementation or deployment.

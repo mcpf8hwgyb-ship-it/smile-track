@@ -1,5 +1,37 @@
 # SMILE TRACK — ROADMAP
 
+## P01-01 COMPLETE — ACCEPTED ON MAIN — 2026-10-18 America/New_York
+
+**Authoritative current status:** P01-01-COORD-IMPL is **COMPLETE — ACCEPTED ON MAIN**.
+This section supersedes older current-status wording below; those sections remain
+verbatim as historical evidence of the stages they described.
+
+[PR #13](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/13) is closed and merged.
+Current accepted main is `7f925d7c2166c4eee5a327bef2e53331b3e7b4a0`.
+Independent Architect post-merge verification accepted and closed the implementation.
+The accepted implementation uses the dedicated exclusive `smile-track:routine`
+coordination contract. P01-01 is corrected for current-version cooperating tabs
+within the tested contract, with working coordination and accessible/truthful storage.
+
+This is engineering acceptance only: **not privacy, security, cross-browser,
+universal-concurrency, accessibility or clinical certification**. The guarantee does
+not extend to older or uncoordinated tabs. Coordination-unavailable persistence remains
+fail-closed, and saved bytes may remain. Identical-byte consent ABA remains unresolved.
+R01/R02 erase-all remains sequential and non-atomic.
+
+P01-02 and P01-07 remain **UNRESOLVED**; P01-03 through P01-06 remain
+**VERIFIED LIMITATIONS**; P01-08 remains **NOT_REVIEWED**.
+V01 remains **BLOCKED / INCONCLUSIVE / PARKED**. E01 publication gates remain preserved
+and both production education registries remain empty. C01 remains Owner-blocked and
+incomplete. F02 remains internal-only / **NOT_CERTIFIED**. Stage 09C remains
+**CLOSED/frozen `OUTWARD_PROVISIONAL_V1`**.
+
+V02, R03, deployment and dental-model integration remain **NOT AUTHORIZED**.
+**Broader application feature development is paused pending a separate Architect
+authorization.** This documentation reconciliation does not reopen or alter implementation.
+See the appended closure evidence in [VALIDATION_LOG](VALIDATION_LOG.md) and the
+[correction report](P01_01_COORDINATION_CORRECTION_REPORT.md).
+
 ## P01-01 implementation under review — 2026-10-18 UTC
 
 PR #13 is **implementation-under-review, draft and unmerged — NOT MERGE-AUTHORIZED**.
