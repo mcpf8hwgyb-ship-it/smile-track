@@ -47,6 +47,16 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await expect(record(page)).toBeDisabled();
   await brush(page).check();
   await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect.poll(async () => {
+    const raw = await page.evaluate(k => localStorage.getItem(k), todayKey);
+    return JSON.parse(raw ?? "null");
+  }).toEqual({
+    version: 1,
+    date: "2026-10-12",
+    brushedTeeth: true,
+    cleanedBetweenTeeth: false
+  });
   await page.reload();
   await expect(brush(page)).toBeChecked();
   await expect(consent(page)).not.toBeChecked();
