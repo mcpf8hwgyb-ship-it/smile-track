@@ -524,3 +524,14 @@ test("P01-01 identical-byte re-enable remains indistinguishable under observed-v
   expect(JSON.parse((await stored(other))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
   // This is deliberately evidence of the ABA limitation, not durable-epoch revocation.
 });
+
+test("P01-07 today-only privacy copy is scoped and retains local-storage warnings", async ({ page }) => {
+  await page.goto("/routine/");
+  await expect(page.getByText(/entries are not sent anywhere/i)).toHaveCount(0);
+  const details = page.locator("#saving-details");
+  await expect(details.getByText("This version of Smile Track has no in-app feature for uploading or sharing routine entries.", { exact: false })).toBeVisible();
+  await expect(details.getByText("By default, selections stay in this page’s memory and disappear when you leave or reload it.", { exact: false })).toBeVisible();
+  await expect(details.getByText("Other people using this profile may see it. Browser backups or synchronization are outside Smile Track’s control.", { exact: false })).toBeVisible();
+  await expect(details.getByText("Saving and in-app deletion require browser tab coordination.", { exact: false })).toBeVisible();
+  await expect(details.getByText("This option does not keep history.", { exact: false })).toBeVisible();
+});
