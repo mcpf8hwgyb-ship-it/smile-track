@@ -104,6 +104,6 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
         </li>;
       })}
     </ol>}
-    <p className={styles.notice}>Browser-local storage is not encrypted private storage. Other users of this profile may see records. Browser backups, extensions and synchronization are outside Smile Track’s control. Device dates and timezones may be incorrect. This version of Smile Track has no in-app feature for uploading or sharing routine entries. Entries are not sent anywhere.</p>
+    <p className={styles.notice}>Browser-local storage is not encrypted private storage. Other users of this profile may see records. Browser backups, extensions and synchronization are outside Smile Track’s control. Device dates and timezones may be incorrect. This version of Smile Track has no in-app feature for uploading or sharing routine entries.</p>
   </section>;
 }
