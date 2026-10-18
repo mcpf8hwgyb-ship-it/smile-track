@@ -446,3 +446,14 @@ test("stale-enable preserves another tab's recorded history under the Web Lock",
     expect(await tab.evaluate(k => localStorage.getItem(k), todayKey)).toBe(todayBefore);
   }
 });
+
+test("P01-07 history privacy copy is scoped and retains independent consent and exposure warnings", async ({ page }) => {
+  await page.goto("/routine/");
+  await expect(page.getByText(/entries are not sent anywhere/i)).toHaveCount(0);
+  const historyRegion = page.getByRole("region", { name: "Optional seven-day history" });
+  await expect(historyRegion.getByText("This version of Smile Track has no in-app feature for uploading or sharing routine entries.", { exact: false })).toBeVisible();
+  await expect(historyRegion.getByText("History is a separate choice from saving today’s check-in. Enabling it does not copy any existing check-in.", { exact: true })).toBeVisible();
+  await expect(historyRegion.getByText("Browser-local storage is not encrypted private storage. Other users of this profile may see records.", { exact: false })).toBeVisible();
+  await expect(historyRegion.getByText("Browser backups, extensions and synchronization are outside Smile Track’s control.", { exact: false })).toBeVisible();
+  await expect(historyRegion.getByText("A closed or suspended browser cannot guarantee immediate expiry.", { exact: false })).toBeVisible();
+});

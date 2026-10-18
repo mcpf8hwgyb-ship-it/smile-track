@@ -559,3 +559,37 @@ main is unchanged. No deployment, model integration or additional feature work.
 P01-02 and P01-07 remain unresolved; V01 remains PARKED; F02 internal-only;
 Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. Return evidence for Architect re-review;
 merge is not authorized. Preserve all earlier scientific/compatibility limitations.
+
+## P01-07-COPY-CORR — scoped privacy wording — 2026-10-18 America/New_York
+
+Architect authorized one bounded copy correction from accepted main
+`fc91f876792749666c2341f137b00d920a56ef04`. Implementation is submitted in
+draft PR #15 for independent review; it is not merged or accepted by this entry.
+P01-01 engineering and its documentation reconciliation remain accepted and closed.
+
+The two routine privacy-copy locations replace the absolute claim that entries are
+not sent anywhere with: **“This version of Smile Track has no in-app feature for
+uploading or sharing routine entries.”** Today-only copy retains “This option does
+not keep history.” All adjacent memory-only, independent-consent, shared-profile,
+storage/expiry, backup, synchronization and extension warnings remain unchanged.
+
+Evidence basis: [P01_REPORT](P01_REPORT.md), especially its exposure model and P01-07,
+and review of current R01/R02 handlers, storage operations and reachable application
+source found no authored routine-value upload/sharing path. This supports the scoped
+feature statement, not comprehensive transmission assurance. Dependencies, arbitrary
+same-origin scripts, future hosting, extensions, backups and browser synchronization
+remain outside that assurance. No privacy, security, cross-browser, accessibility,
+clinical or universal-concurrency certification is claimed.
+
+Two appended browser tests (desktop/mobile) check each applicable UI location,
+retained warnings and page-wide absence of the prohibited statement. Existing request,
+cookie, storage, consent, erasure and coordination assertions remain verbatim.
+A reversible prohibited-copy negative control and final exact-head results are recorded
+in [VALIDATION_LOG](VALIDATION_LOG.md) and the PR handoff.
+
+This addresses P01-07 wording only, pending Architect acceptance; broader assurance
+remains unresolved. P01-02 remains UNRESOLVED; P01-03–06 VERIFIED LIMITATIONS;
+P01-08 NOT_REVIEWED. V01 remains BLOCKED / INCONCLUSIVE / PARKED. E01 gates and
+empty registries are preserved; C01 Owner-blocked/incomplete; F02 internal-only /
+NOT_CERTIFIED; Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. V02, R03, deployment
+and model integration remain NOT AUTHORIZED. Broader feature work remains paused.

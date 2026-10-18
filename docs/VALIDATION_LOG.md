@@ -975,3 +975,56 @@ UNRESOLVED; P01-03 through P01-06 VERIFIED LIMITATIONS; P01-08 NOT_REVIEWED.
 The authoritative current boundaries appear above the historical sections in
 [CURRENT_STATE](CURRENT_STATE.md) and [ROADMAP](ROADMAP.md). This documentation-only
 reconciliation does not authorize further implementation or deployment.
+
+## P01-07-COPY-CORR — copy contract and negative control — 2026-10-18 America/New_York
+
+Authorized baseline: `fc91f876792749666c2341f137b00d920a56ef04`.
+Preflight verified exact main, accepted P01-01 coordination, successful required
+validate, and active G01 24954073 (strict validate, no bypass actors, user bypass never).
+Reviewed P01_REPORT exposure-model/P01-07 findings, current-state/roadmap/decisions,
+current R01/R02 components/storage and tests, and reachable application source.
+No authored routine-data upload/sharing path was found; no claim about all possible
+runtime, dependency, host, extension or browser-level transmission channels follows.
+
+Only two production text locations change:
+- CheckIn: “This option does not keep history, and entries are not sent anywhere.”
+  becomes “This option does not keep history. This version of Smile Track has no
+  in-app feature for uploading or sharing routine entries.”
+- History: “Entries are not sent anywhere.” becomes the same scoped feature sentence.
+All adjoining privacy/storage/consent warnings remain verbatim. Runtime handlers,
+storage, schemas, consent, locks, retention and deletion are unchanged.
+
+One focused test is appended to each existing routine/history test file. On desktop
+and mobile, each checks the scoped wording in its applicable UI location and retained
+warnings; a case-insensitive page-wide locator requires zero occurrences of the old
+statement. Existing tests remain verbatim, including request/cookie/storage assertions
+and all 46 coordination executions. These are bounded copy/regression checks, not
+proof against every transmission channel or comprehensive privacy/security assurance.
+
+### Reversible prohibited-wording negative control
+
+Temporary head: `53e8cc6935694f088b5d2762aaee08506f58892b`.
+Temporary tree: `98d3e8b980a4b6abe745e799278ac69e5195e267`.
+The scoped sentence was present, but “Entries are not sent anywhere.” was deliberately
+appended in both existing privacy locations. Tests were identical to the final tests.
+[Run 39138550348](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39138550348),
+validate `117708002361`: expected FAILURE, **118 passed / 4 failed**.
+Only the two new P01-07 cases failed in desktop/mobile, at the prohibited-copy
+`toHaveCount(0)` assertion: expected 0, received 2. Existing R01 24, R02 44,
+coordination 46 and foundation/Learn 4 all passed. This directly demonstrates
+sensitivity to reintroducing the prohibited wording, even alongside the correct copy.
+Lint, types, education, F02, build and export passed. Downstream smoke sensitivity,
+education sensitivity and audit were skipped after the intentional browser failures,
+not counted as passes.
+
+The deliberate sentence is removed before final validation, without changing tests
+or runtime logic. Final exact-head full-CI results and scope/governance evidence are
+recorded in draft PR #15's handoff. The temporary negative-control commit is retained
+as evidence, not proposed final UI behavior. No retry-to-green or test weakening.
+
+The correction is pending independent Architect review. P01-07 wording remediation
+is separate from unresolved comprehensive transmission assurance. P01-01 stays closed;
+P01-02 remains unresolved; P01-03–06 limitations and P01-08 NOT_REVIEWED remain.
+V01 stays parked; E01 gates/empty registries, C01 Owner-blocked/incomplete, F02
+internal-only/NOT_CERTIFIED and Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1
+remain preserved. No deployment, model integration, V02/R03 or other feature work.
