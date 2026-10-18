@@ -47,6 +47,16 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await expect(record(page)).toBeDisabled();
   await brush(page).check();
   await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect.poll(async () => {
+    const raw = await page.evaluate(k => localStorage.getItem(k), todayKey);
+    return JSON.parse(raw ?? "null");
+  }).toEqual({
+    version: 1,
+    date: "2026-10-12",
+    brushedTeeth: true,
+    cleanedBetweenTeeth: false
+  });
   await page.reload();
   await expect(brush(page)).toBeChecked();
   await expect(consent(page)).not.toBeChecked();
@@ -192,6 +202,10 @@ for (const failure of ["read", "write", "silent-write", "remove", "silent-remove
     if (failure.includes("remove")) await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Erasure of all routine data could not be verified");
     await brush(page).check();
     await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+    await expect.poll(async () => {
+      const raw = await page.evaluate(k => localStorage.getItem(k), todayKey);
+      return raw === null ? null : JSON.parse(raw).brushedTeeth;
+    }).toBe(true);
     expect(JSON.parse((await page.evaluate(k => localStorage.getItem(k), todayKey))!).brushedTeeth).toBe(true);
   });
 }
@@ -386,6 +400,10 @@ test("stale-enable preserves another tab's recorded history under the Web Lock",
   await page.clock.pauseAt(new Date("2026-10-12T16:01:00Z"));
   await brush(page).check();
   await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  await expect.poll(async () => {
+    const raw = await page.evaluate(k => localStorage.getItem(k), todayKey);
+    return raw === null ? null : JSON.parse(raw).brushedTeeth;
+  }).toBe(true);
   const todayBefore = await page.evaluate(k => localStorage.getItem(k), todayKey);
   const other = await context.newPage();
   await other.clock.install({ time: new Date("2026-10-12T16:01:00Z") });

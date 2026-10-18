@@ -1,5 +1,31 @@
 # SMILE TRACK — ROADMAP
 
+## P01-01 implementation under review — 2026-10-18 UTC
+
+PR #13 is **implementation-under-review, draft and unmerged — NOT MERGE-AUTHORIZED**.
+Baseline main remains `8c7693438285fe74168e66b2fdde4e9f706cac74`.
+The dedicated exclusive `smile-track:routine` coordination implementation is present
+only in PR #13, not on main. The original P01-01 defect has verified source and
+negative-control evidence; the coordination design is accepted. All 46 new coordination
+executions and the previously accepted synchronization corrections have passing evidence.
+
+Exact head `4fe9350b5d17dbffa642630a8ce36a3f7a1bab84` had green normal/full CI
+(run 39100410502, validate 117595351311). Earlier smoke-sensitivity run 39100240503
+exposed an unresolved history reload completion ambiguity, classified as provisional
+test-synchronization behavior rather than a verified production defect.
+Architect authorized a single save-before-reload barrier in `tests/history.spec.ts`:
+confirmed Today-only saved status, then exact complete R01 record equality for
+2026-10-12 (brushed true, between-teeth false), before the unchanged reload and
+restoration/history assertions. This bounded correction remains under independent review.
+Validation evidence is appended to [the correction report](P01_01_COORDINATION_CORRECTION_REPORT.md);
+PR #13's handoff records the final exact-head CI. No implementation acceptance is claimed.
+
+P01-02 and P01-07 remain unresolved. V01 remains **BLOCKED / INCONCLUSIVE / PARKED**.
+E01 publication gates and both empty registries remain unchanged. C01 remains
+Owner-blocked and incomplete. F02 remains internal-only. Stage 09C remains
+**CLOSED/frozen `OUTWARD_PROVISIONAL_V1`**. V02, R03, deployment and dental-model
+integration remain not authorized. No production change is part of this correction.
+
 ## P01-01 coordination design — current status — 2026-10-17 America/New_York
 
 P01 evidence is accepted and merged in PR #11 at
@@ -321,3 +347,183 @@ F01/F02/E01/G01/G01-DOC/R01/R02/R02-DOC remain complete; F02 internal-only;
 Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`; E01 gate and empty registries
 unchanged; C01 professional review Owner-blocked/incomplete. No V02/R03 or
 compatibility fix is authorized. Return to Architect; do not merge this draft.
+
+
+## P01-01-COORD-IMPL — draft correction — 2026-10-17 UTC
+
+Baseline `8c7693438285fe74168e66b2fdde4e9f706cac74`; draft PR #13 on
+`p01-01-coordination-impl`. A bounded implementation now coordinates R01 operations
+under exclusive `smile-track:routine`, preserves current-day bytes at stale rollover,
+requires explicit reattachment, rejects differing-observation edits, cancels obsolete
+queued work, and fails closed without coordination. This supersedes design-only
+NOT_AUTHORIZED status solely for this authorized draft. Main has not been changed.
+
+**Acceptance INCONCLUSIVE / NOT MERGE-READY.** Original Chromium negative control
+(run `39043107930`, head `e052d0900807d10ded37d2e499074b9c7d39c3e5`) passed all
+72 old tests and failed both new preservation paths on both projects (4 failures,
+new-day bytes erased). Corrected run `39066242416` passed both preservation paths and
+95 cases overall, but failed 13. Existing synchronous R01 completion assumptions in
+R01 and protected R02 tests conflict with the new asynchronous policy; no existing
+assertion was changed or suppressed. New fixture corrections and additional matrix
+coverage are included in the draft. Final exact-head CI and per-test results belong
+to the PR handoff; pending or skipped gates are not passes.
+
+See [correction mechanism, evidence and case matrix](P01_01_COORDINATION_CORRECTION_REPORT.md).
+The original P01 report and accepted coordination-design report remain unchanged.
+Cooperating-tab guarantees exclude identical-byte ABA, older tabs/external scripts,
+incorrect clocks, browser durability, and unsupported engines. P01-02 remains
+unresolved; erase-all is H-release-then-R, sequential/non-nested/non-atomic.
+R02 implementation/tests, schemas, dependencies, workflows and governance remain
+unchanged. E01 publication controls/empty registries remain; C01 Owner-blocked and
+incomplete; F02 internal-only; Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`;
+V01 BLOCKED / INCONCLUSIVE and PARKED. No V02, R03, model integration or deployment.
+Return evidence to Architect for independent review; do not merge or start another task.
+
+
+## Authorized history-test synchronization correction — 2026-10-17 America/New_York
+
+Architect authorized a narrow exception for `tests/history.spec.ts` only, plus
+these additive documentation records. Starting rejected head:
+`85274a710a147dd45e8b37ac6a970e268254cf30`; main remains
+`8c7693438285fe74168e66b2fdde4e9f706cac74`.
+Correction commit: `b24c8150a354184df9168363150e95fef7156150`.
+
+Exactly eight lines were inserted in history tests: two `expect.poll` waits read
+`smile-track:routine:1`, return null while absent, otherwise parse and require
+`brushedTeeth === true`. One precedes the original failure-handling field assertion;
+the other precedes capturing actual `todayBefore` bytes in the stale-enable fixture.
+The original field assertion and final exact-byte equality remain verbatim. Removing
+only the two inserted waits reproduces the starting history test byte-for-byte.
+No arbitrary sleep, test retry, skipped case or weakened assertion was introduced.
+No production source or coordination-test expectation changed.
+
+**Correction verified; overall acceptance BLOCKED / INCONCLUSIVE.**
+[Run 39069960202](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39069960202),
+validate job `117505334082`, exact correction commit above: **FAILURE**.
+Chromium: **116 passed / 2 failed**. All nine previously failing cases passed:
+desktop write, silent-write, silent-remove, stale-enable; mobile write, silent-write,
+remove, silent-remove, stale-enable. Entire R02 suite: **44/44 passed**.
+New coordination cases: **46/46 passed**. Existing R01: **22 passed / 2 failed**;
+foundation/education-browser cases: **4/4 passed**.
+
+The two failures are unchanged mobile R01 assertions: `routine.spec.ts:51` expected
+the complete saved sample immediately after consent `.check()` but received null;
+`routine.spec.ts:142` expected null immediately after `.uncheck()` but received
+`{"version":1,"date":"2026-10-12","brushedTeeth":true,"cleanedBetweenTeeth":false}`.
+These match the synchronous-completion hazards already documented in the rejected
+handoff. Neither authorized history completion wait timed out or returned a wrong
+final value. This run does not establish a permanent persistence/deletion failure,
+but it fails the required all-green acceptance condition. No additional test/source
+fix is made; Architect disposition is required for any further change.
+
+Lint, strict types, education (5), F02 (4 passed / 1 restricted-data skip), build and
+export boundaries passed. Smoke sensitivity, education sensitivity and dependency
+audit were **SKIPPED** after browser failure, not counted as passes. Original
+negative-control evidence remains unchanged. This documentation-only follow-up will
+also receive exact-head CI; its outcome is recorded in PR #13, without erasing this
+failed run or treating a scheduling-dependent later pass as resolution of these tests.
+
+Scope after this exception is exactly eight PR paths: the prior seven plus
+`tests/history.spec.ts`. Rejected-head delta is only that test and four additive
+documentation files. R01/R02 production, `tests/routine.spec.ts`, schemas,
+dependencies/lockfile, workflows, registries, governance and scientific assets remain
+unchanged from the rejected head. P01-02 and all previous exclusions remain unresolved.
+PR #13 remains draft/unmerged; no deployment or unrelated work. Return evidence to
+00 — ARCHITECT — CTO / Next Step; stop without broadening the correction.
+
+
+## Second R01 completion-synchronization correction — 2026-10-17 America/New_York
+
+Architect authorized only two R01 test-completion points and additive evidence.
+Starting head `b7de1b49934be26eefa910e575677d754124a6ee`; correction commit
+`bddbcb568079dd5bfb9a75fbde80c66b79cc7afd`. No production or history-test change.
+
+Six inserted lines in `tests/routine.spec.ts` establish observable completion:
+
+- Before the original exact `toEqual(sample)`, wait for Today-only status to contain
+  `Saved in this browser for today.`, then poll parsed storage for full sample equality.
+- Before disabling saving in the deletion test, establish those same two conditions.
+  This prevents a false deletion pass caused by saving never having completed.
+- After unchecking consent, wait for `Check-in erased. Saving is off.`, then poll raw
+  storage to be exactly null before the original `toBeNull()` assertion.
+
+All original assertions, memory checks and later null assertion remain verbatim.
+Removing the six inserted lines reproduces the starting routine test exactly. No
+arbitrary sleeps, test retry loops, skips or weakened expected values were introduced.
+The accepted history synchronization and all 46 coordination expectations are unchanged.
+
+**Overall acceptance remains BLOCKED / INCONCLUSIVE.** Exact correction run
+[39074533031](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39074533031),
+validate job `117518841953`: **FAILURE; 117 passed / 1 failed**.
+Both new save checkpoints and the verified deletion checks completed on desktop/mobile.
+The full default-flow test passed desktop but failed mobile later, at current line 59
+(starting line 57): immediately after `between(page).check()`, the unchanged exact
+assertion expected `{ ...sample, cleanedBetweenTeeth: true }`, but received the same
+record with `cleanedBetweenTeeth: false`. Date, version and brushedTeeth matched.
+No authorized completion wait timed out. The observed later-edit assertion is outside
+this authorization; it is not changed. The run does not establish whether the edit
+completed later, and no permanent storage-failure or corrected-behavior claim is made.
+The deletion test passed both desktop/mobile in full.
+
+Counts: existing R01 23 passed / 1 failed; R02 44/44; coordination 46/46; foundation/
+Learn 4/4. Lint, strict types, education 5, F02 4 with 1 expected restricted-data skip,
+build and export passed. Smoke sensitivity, education sensitivity and dependency audit
+were SKIPPED after browser failure, not passes. Original negative-control evidence is
+unchanged. No additional functional correction is attempted. This additive evidence
+commit will receive exact-head CI, recorded in PR #13; a later scheduling-dependent
+pass must not erase the reproduced failure above.
+
+The complete PR remains confined to eight authorized paths. Starting-head delta is
+only routine-test insertions and four additive documents. Main remains the baseline;
+PR #13 stays draft/unmerged. R01/R02 production, history tests, schemas, dependencies,
+lockfile, workflows, registries, governance and scientific assets are unchanged from
+the starting head. P01-02 remains unresolved; prior compatibility/scientific limits
+remain intact. Return reproduction evidence to Architect; do not broaden scope or merge.
+
+
+## Post-edit completion synchronization — 2026-10-18 America/New_York
+
+Architect authorized one additional test-only completion point after
+`between(page).check()` in the existing default/restoration flow. Preflight matched
+main `8c7693438285fe74168e66b2fdde4e9f706cac74`, head
+`ff19b69c2de98060645070cf0cc119a60ce5de76`, tree
+`76325137047f8fafce135cc35c565554c556fc87`, eight paths, open/draft/unmerged PR,
+active unchanged G01 and zero unresolved review threads.
+
+Correction commit `4e0b3b34e989f8c5b043ddb1eefd06cc952d5c18` adds exactly two lines to
+`tests/routine.spec.ts`: wait for Today-only status to contain
+`Saved in this browser for today.`, then poll the complete parsed record for exact
+`{ ...sample, cleanedBetweenTeeth: true }` equality. Storage equality is the decisive
+edit-completion condition. The original exact assertion immediately follows unchanged.
+Removing the two inserted lines recovers the starting file exactly; accepted save/
+delete waits, history tests and all 46 coordination expectations remain untouched.
+No sleeps, skips, retries-to-green, relaxed values or production changes were added.
+
+Correction-commit [CI run 39100240503](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39100240503),
+validate `117594853991`: **SUCCESS**. Normal desktop/mobile Chromium:
+**118 passed / 0 failed** (R01 24, R02 44, coordination 46, foundation/Learn 4).
+The complete formerly failing flow passed both desktop and mobile. This supports the
+post-edit completion explanation for the recorded failure; it is bounded executable
+evidence, not a guarantee about arbitrary schedules or excluded concurrency cases.
+Lint, strict types, education 5/5, F02 4 with 1 expected restricted-data skip, build,
+export, smoke sensitivity, education sensitivity and audit all executed and passed.
+Audit reported zero vulnerabilities. No skipped downstream gate is called a pass.
+
+**Additional observation for independent review:** in that run's deliberately mutated
+smoke-sensitivity phase, the expected foundation safety-content assertion failed and
+an unrelated unchanged desktop history test also failed at `history.spec.ts:51`:
+after R01 consent check and immediate reload, brushedTeeth was unchecked instead of
+checked. The sensitivity script returned PASS because its required safety-content
+negative control was satisfied. Normal full-suite R02 executions were 44/44. The
+additional failure is not erased by that green gate; its cause is unproven here and
+no history-test or production correction is authorized or attempted. Architect must
+assess this residual observation; no universal regression-stability claim is made.
+
+This evidence-only follow-up receives its own exact-head CI, reported in PR #13.
+Historical failed runs and original negative-control evidence remain unchanged.
+All other tracked files remain byte-identical to the starting head; the only further
+updates are these additive records. The PR remains eight paths, draft and unmerged;
+main is unchanged. No deployment, model integration or additional feature work.
+P01-02 and P01-07 remain unresolved; V01 remains PARKED; F02 internal-only;
+Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. Return evidence for Architect re-review;
+merge is not authorized. Preserve all earlier scientific/compatibility limitations.
