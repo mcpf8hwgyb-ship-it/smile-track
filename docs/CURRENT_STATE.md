@@ -522,3 +522,51 @@ PR #13 stays draft/unmerged. R01/R02 production, history tests, schemas, depende
 lockfile, workflows, registries, governance and scientific assets are unchanged from
 the starting head. P01-02 remains unresolved; prior compatibility/scientific limits
 remain intact. Return reproduction evidence to Architect; do not broaden scope or merge.
+
+
+## Post-edit completion synchronization — 2026-10-18 America/New_York
+
+Architect authorized one additional test-only completion point after
+`between(page).check()` in the existing default/restoration flow. Preflight matched
+main `8c7693438285fe74168e66b2fdde4e9f706cac74`, head
+`ff19b69c2de98060645070cf0cc119a60ce5de76`, tree
+`76325137047f8fafce135cc35c565554c556fc87`, eight paths, open/draft/unmerged PR,
+active unchanged G01 and zero unresolved review threads.
+
+Correction commit `4e0b3b34e989f8c5b043ddb1eefd06cc952d5c18` adds exactly two lines to
+`tests/routine.spec.ts`: wait for Today-only status to contain
+`Saved in this browser for today.`, then poll the complete parsed record for exact
+`{ ...sample, cleanedBetweenTeeth: true }` equality. Storage equality is the decisive
+edit-completion condition. The original exact assertion immediately follows unchanged.
+Removing the two inserted lines recovers the starting file exactly; accepted save/
+delete waits, history tests and all 46 coordination expectations remain untouched.
+No sleeps, skips, retries-to-green, relaxed values or production changes were added.
+
+Correction-commit [CI run 39100240503](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39100240503),
+validate `117594853991`: **SUCCESS**. Normal desktop/mobile Chromium:
+**118 passed / 0 failed** (R01 24, R02 44, coordination 46, foundation/Learn 4).
+The complete formerly failing flow passed both desktop and mobile. This supports the
+post-edit completion explanation for the recorded failure; it is bounded executable
+evidence, not a guarantee about arbitrary schedules or excluded concurrency cases.
+Lint, strict types, education 5/5, F02 4 with 1 expected restricted-data skip, build,
+export, smoke sensitivity, education sensitivity and audit all executed and passed.
+Audit reported zero vulnerabilities. No skipped downstream gate is called a pass.
+
+**Additional observation for independent review:** in that run's deliberately mutated
+smoke-sensitivity phase, the expected foundation safety-content assertion failed and
+an unrelated unchanged desktop history test also failed at `history.spec.ts:51`:
+after R01 consent check and immediate reload, brushedTeeth was unchecked instead of
+checked. The sensitivity script returned PASS because its required safety-content
+negative control was satisfied. Normal full-suite R02 executions were 44/44. The
+additional failure is not erased by that green gate; its cause is unproven here and
+no history-test or production correction is authorized or attempted. Architect must
+assess this residual observation; no universal regression-stability claim is made.
+
+This evidence-only follow-up receives its own exact-head CI, reported in PR #13.
+Historical failed runs and original negative-control evidence remain unchanged.
+All other tracked files remain byte-identical to the starting head; the only further
+updates are these additive records. The PR remains eight paths, draft and unmerged;
+main is unchanged. No deployment, model integration or additional feature work.
+P01-02 and P01-07 remain unresolved; V01 remains PARKED; F02 internal-only;
+Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. Return evidence for Architect re-review;
+merge is not authorized. Preserve all earlier scientific/compatibility limitations.
