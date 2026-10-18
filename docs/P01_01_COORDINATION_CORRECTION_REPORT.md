@@ -413,3 +413,46 @@ main is unchanged. No deployment, model integration or additional feature work.
 P01-02 and P01-07 remain unresolved; V01 remains PARKED; F02 internal-only;
 Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. Return evidence for Architect re-review;
 merge is not authorized. Preserve all earlier scientific/compatibility limitations.
+
+## Final history reload synchronization — 2026-10-18 UTC
+
+Architect authorized one persistence-completion barrier at the first history test's
+R01 save-before-reload boundary. Preflight matched head
+`4fe9350b5d17dbffa642630a8ce36a3f7a1bab84`, tree
+`d2e87b0ab109762638d076e25457444ec4780cbc`, unchanged main
+`8c7693438285fe74168e66b2fdde4e9f706cac74`, open/draft/unmerged PR #13,
+eight paths, active unchanged G01 and zero unresolved review threads.
+
+Correction commit `c4ada77679134994e9d81d9ac8b1aeae5b25afb1` inserts ten lines:
+Today-only status must contain `Saved in this browser for today.`, then
+`expect.poll()` must observe the entire parsed `todayKey` record exactly equal to
+`{ version: 1, date: "2026-10-12", brushedTeeth: true, cleanedBetweenTeeth: false }`.
+Only then does the original reload execute. Removing that insertion recovers the
+starting history file exactly: reload, restored-brush, independent R02 consent,
+null-history, history-write and later history assertions are unchanged.
+No sleeps, retries-to-green, skips, weakened values or production changes were added.
+Routine tests and all previously accepted synchronization/coordination cases are unchanged.
+
+Correction-commit [CI run 39101726857](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39101726857),
+validate job `117599202693`: **PASS**. Normal Chromium **118/118**:
+existing R01 24, R02 44, coordination 46, foundation/Learn 4.
+The affected history test passed desktop and mobile after confirmed persistence.
+Smoke sensitivity: **58 passed / 1 expected failure**, exclusively the deliberately
+removed foundation safety-content assertion; no unrelated history reload failure.
+The affected history test also passed in that sensitivity execution.
+Lint, strict typecheck, education 5/5, F02 4 pass plus 1 expected restricted-data skip,
+build, export boundary, smoke sensitivity, education sensitivity and dependency audit
+all executed successfully; audit found zero vulnerabilities. No skipped downstream
+step is counted as a pass. Original P01-01 negative-control evidence remains unchanged.
+
+CURRENT_STATE and ROADMAP now place an authoritative implementation-under-review
+section directly below their titles, above the unchanged historical coordination-design
+sections. This additive evidence commit receives fresh exact-head CI; its SHA/run/job
+and final checks are recorded in the PR #13 handoff, without claiming future results here.
+
+PR #13 remains draft, unmerged and NOT MERGE-AUTHORIZED. Production implementation
+remains only in PR #13, not main. P01-02/P01-07 remain unresolved; V01 remains
+BLOCKED / INCONCLUSIVE / PARKED; E01 gates and empty registries unchanged;
+C01 Owner-blocked/incomplete; F02 internal-only; Stage 09C CLOSED/frozen
+OUTWARD_PROVISIONAL_V1. V02, R03, deployment and dental-model integration remain
+not authorized. Return evidence for independent Architect re-review.

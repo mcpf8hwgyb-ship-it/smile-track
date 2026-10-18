@@ -1,5 +1,31 @@
 # SMILE TRACK — ROADMAP
 
+## P01-01 implementation under review — 2026-10-18 UTC
+
+PR #13 is **implementation-under-review, draft and unmerged — NOT MERGE-AUTHORIZED**.
+Baseline main remains `8c7693438285fe74168e66b2fdde4e9f706cac74`.
+The dedicated exclusive `smile-track:routine` coordination implementation is present
+only in PR #13, not on main. The original P01-01 defect has verified source and
+negative-control evidence; the coordination design is accepted. All 46 new coordination
+executions and the previously accepted synchronization corrections have passing evidence.
+
+Exact head `4fe9350b5d17dbffa642630a8ce36a3f7a1bab84` had green normal/full CI
+(run 39100410502, validate 117595351311). Earlier smoke-sensitivity run 39100240503
+exposed an unresolved history reload completion ambiguity, classified as provisional
+test-synchronization behavior rather than a verified production defect.
+Architect authorized a single save-before-reload barrier in `tests/history.spec.ts`:
+confirmed Today-only saved status, then exact complete R01 record equality for
+2026-10-12 (brushed true, between-teeth false), before the unchanged reload and
+restoration/history assertions. This bounded correction remains under independent review.
+Validation evidence is appended to [the correction report](P01_01_COORDINATION_CORRECTION_REPORT.md);
+PR #13's handoff records the final exact-head CI. No implementation acceptance is claimed.
+
+P01-02 and P01-07 remain unresolved. V01 remains **BLOCKED / INCONCLUSIVE / PARKED**.
+E01 publication gates and both empty registries remain unchanged. C01 remains
+Owner-blocked and incomplete. F02 remains internal-only. Stage 09C remains
+**CLOSED/frozen `OUTWARD_PROVISIONAL_V1`**. V02, R03, deployment and dental-model
+integration remain not authorized. No production change is part of this correction.
+
 ## P01-01 coordination design — current status — 2026-10-17 America/New_York
 
 P01 evidence is accepted and merged in PR #11 at
