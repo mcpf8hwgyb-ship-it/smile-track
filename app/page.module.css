@@ -34,3 +34,10 @@
 .header { flex-wrap: wrap; }
 .nav { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
 .nav [aria-current] { text-decoration-thickness: 3px; }
+
+.actions { display: flex; align-items: center; flex-wrap: wrap; column-gap: 28px; row-gap: 12px; margin-top: 28px; }
+.primaryAction { display: inline-flex; align-items: center; justify-content: center; gap: 16px; min-height: 48px; padding: 12px 20px; border-radius: 8px; background: var(--ink); color: white; font-weight: 700; text-decoration: none; }
+.primaryAction:hover { background: var(--accent); }
+.primaryAction:focus-visible { outline: 3px solid #97521b; outline-offset: 4px; }
+.actions .link { margin-top: 0; }
+.actionNote { color: var(--muted); max-width: 600px; margin-top: 16px; font-size: 15px; }

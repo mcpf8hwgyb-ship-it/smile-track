@@ -15,7 +15,11 @@ export default function Home() {
           <h1 id="page-title">Oral health,<br /><span>understood.</span></h1>
           <p className={styles.intro}>Smile Track is being built to make oral-health education and personal tracking easier to understand.</p>
           <p className={styles.status}>This is an early preview. A private daily routine check-in is available. Educational lessons and capture features are not available yet.</p>
-          <a className={styles.link} href="#about">About this preview <span aria-hidden="true">↘</span></a>
+          <div className={styles.actions}>
+            <a className={styles.primaryAction} href="/routine/">Open daily check-in <span aria-hidden="true">→</span></a>
+            <a className={styles.link} href="#about">About this preview <span aria-hidden="true">↘</span></a>
+          </div>
+          <p className={styles.actionNote}>Optional, self-reported activity tracking. Not a clinical assessment. Saving is off by default.</p>
         </section>
         <section id="about" tabIndex={-1} className={styles.about} aria-labelledby="about-title">
           <div>
