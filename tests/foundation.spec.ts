@@ -25,6 +25,15 @@ test("static landing page communicates identity, limits, and supports keyboard n
   await page.keyboard.press("Enter");
   await expect(page.getByRole("main")).toBeFocused();
   await page.keyboard.press("Tab");
+  const daily = page.getByRole("link", { name: "Open daily check-in" });
+  await expect(daily).toBeFocused();
+  await expect(daily).toBeInViewport();
+  await expect(daily).toHaveCSS("outline-style", "solid");
+  const dailyTarget = await daily.boundingBox();
+  expect(dailyTarget?.height).toBeGreaterThanOrEqual(44);
+  expect(dailyTarget?.width).toBeGreaterThanOrEqual(44);
+  await expect(daily).toHaveAttribute("href", "/routine/");
+  await page.keyboard.press("Tab");
   const about = page.getByRole("link", { name: "About this preview" });
   await expect(about).toBeFocused();
   await expect(about).toBeInViewport();
@@ -39,4 +48,33 @@ test("static landing page communicates identity, limits, and supports keyboard n
   expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
   expect(errors).toEqual([]);
   expect(externalRequests).toEqual([]);
+});
+
+test("Home primary action opens Routine without enabling persistence or collecting data", async ({ page, context }) => {
+  const errors: string[] = [];
+  const externalRequests: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  page.on("request", request => {
+    if (new URL(request.url()).origin !== "http://127.0.0.1:4173") externalRequests.push(request.url());
+  });
+  await page.goto("/");
+  const primary = page.getByRole("link", { name: "Open daily check-in" });
+  await expect(primary).toHaveAttribute("href", "/routine/");
+  await expect(page.getByText("Optional, self-reported activity tracking. Not a clinical assessment. Saving is off by default.")).toBeVisible();
+  expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
+  await primary.click();
+  await expect(page).toHaveURL(/\/routine\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("My daily routine");
+  await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).not.toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Enable seven-day history in this browser" })).not.toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Brushed teeth" })).not.toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Cleaned between teeth" })).not.toBeChecked();
+  expect(await page.evaluate(() => ({
+    today: localStorage.getItem("smile-track:routine:1"),
+    history: localStorage.getItem("smile-track:routine-history:1"),
+    session: sessionStorage.length,
+  }))).toEqual({ today: null, history: null, session: 0 });
+  expect(await context.cookies()).toEqual([]);
+  expect(externalRequests).toEqual([]);
+  expect(errors).toEqual([]);
 });
