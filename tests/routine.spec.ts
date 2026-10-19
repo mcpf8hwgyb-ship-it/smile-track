@@ -59,13 +59,6 @@ test("memory default, independent undo, explicit saving, restoration and erase",
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
   await expect.poll(async () => JSON.parse((await stored(page)) ?? "null")).toEqual({ ...sample, cleanedBetweenTeeth: true });
   expect(JSON.parse((await stored(page))!)).toEqual({ ...sample, cleanedBetweenTeeth: true });
-  // Temporary negative control: silently refuse removal of the owned today key.
-  await page.evaluate(key => {
-    const remove = Storage.prototype.removeItem;
-    Storage.prototype.removeItem = function(k) {
-      if (k !== key) remove.call(this, k);
-    };
-  }, key);
   await page.getByRole("button", { name: "Erase today-only record and turn off today-only saving" }).click();
   await expect(brush(page)).not.toBeChecked();
   await expect(between(page)).not.toBeChecked();
