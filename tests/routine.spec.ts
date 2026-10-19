@@ -63,6 +63,8 @@ test("memory default, independent undo, explicit saving, restoration and erase",
   await expect(brush(page)).not.toBeChecked();
   await expect(between(page)).not.toBeChecked();
   await expect(consent(page)).not.toBeChecked();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Check-in erased. Saving is off.");
+  await expect.poll(() => stored(page)).toBeNull();
   expect(await stored(page)).toBeNull();
   await brush(page).check();
   expect(await stored(page)).toBeNull();

@@ -593,3 +593,17 @@ P01-08 NOT_REVIEWED. V01 remains BLOCKED / INCONCLUSIVE / PARKED. E01 gates and
 empty registries are preserved; C01 Owner-blocked/incomplete; F02 internal-only /
 NOT_CERTIFIED; Stage 09C CLOSED/frozen OUTWARD_PROVISIONAL_V1. V02, R03, deployment
 and model integration remain NOT AUTHORIZED. Broader feature work remains paused.
+
+## 2026-10-19 — P01-07 post-merge R01 erase test synchronization (under review)
+
+Architect authorized P01-07-POSTMERGE-R01-ERASE-TEST-CORR as one bounded test-only correction. PR #15 is verified merged at `1406ba76e13186747148409ca0951209d995f6fb`; this does not establish successful post-merge validation or final Architect closure of P01-07. Its post-merge run `39142935490`, validate job `117720891943`, reported 121 passed / 1 failed: the mobile default-flow test read the saved record immediately after unchecked controls appeared.
+
+The complete affected test and production sources were reviewed. The reset publishes unchecked controls before asynchronous, exclusive `smile-track:routine` erasure completes. The success notice follows verified removal inside the lock. This supports a provisional test-completion explanation, rather than establishing permanent deletion failure.
+
+Draft PR #16 adds only two completion assertions to the existing default-flow test after erase and unchecked-control assertions: Today-only status must contain `Check-in erased. Saving is off.`, then `expect.poll(() => stored(page)).toBeNull()` must confirm absence of `smile-track:routine:1`. The original `expect(await stored(page)).toBeNull();` remains verbatim. Earlier complete saved-record assertions and subsequent memory-only, reload, cookie, storage and network assertions remain unchanged. No production behavior, schema, consent, retention, erasure or lock is changed.
+
+Controlled negative evidence: commit `7d79431cb5c665a5ff1e27bc18fa92b32c418059`, tree `1bfc20862c223ce82c2dcf6fe47812acef719059`, run `39193372636`, validate job `117870772891`. A temporary test-local override silently refused only the owned today-key removeItem. Chromium reported 120 passes and exactly two intended failures (desktop and mobile default flow). Both timed out at the new status assertion after 5000 ms, receiving “Browser storage could not be verified. Saving is off. A previous saved record may remain; use your browser’s site-data controls to remove it.” The poll and original null assertion were not reached. Smoke sensitivity, education sensitivity and dependency audit were skipped in that intentionally failing run, not passed. F02 retained its expected restricted-data skip.
+
+The injection is removed from the submitted correction. Fresh exact-head full validation and its run/job evidence are reported in PR #16; the negative run is not a substitute for those gates. No arbitrary scheduling delay or retry-to-green is added. Historical failed runs and negative controls remain evidence.
+
+P01-07 broader transmission assurance remains UNRESOLVED and final Architect closure is not claimed. P01-01 engineering remains accepted and closed within its bounded cooperating-context contract; P01-02 remains unresolved. E01 publication gates and empty registries are preserved; F02 remains internal-only / NOT_CERTIFIED, V01 parked, C01 Owner-blocked, and Stage 09C CLOSED/frozen `OUTWARD_PROVISIONAL_V1`. No deployment, model integration, V02, R03 or feature work is authorized. This correction is not privacy, security, universal-concurrency, cross-browser, accessibility or clinical certification.
