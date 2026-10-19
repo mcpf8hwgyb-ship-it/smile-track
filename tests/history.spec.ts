@@ -9,6 +9,12 @@ const consent = (page: Page) => page.getByRole("checkbox", { name: "Enable seven
 const brush = (page: Page) => page.getByRole("checkbox", { name: "Brushed teeth", exact: true });
 const record = (page: Page) => page.getByRole("button", { name: "Record today’s check-in in history" });
 const eraseAll = (page: Page) => page.getByRole("button", { name: "Erase all routine data and turn off both saving options" });
+const confirmEraseAll = (page: Page) => page.getByRole("button", { name: "Confirm — erase all routine data", exact: true });
+const cancelEraseAll = (page: Page) => page.getByRole("button", { name: "Cancel — keep routine data", exact: true });
+async function eraseAllWithConfirmation(page: Page) {
+  await eraseAll(page).click();
+  await confirmEraseAll(page).click();
+}
 const status = (page: Page) => page.getByRole("status", { name: "History status" });
 const stored = (page: Page) => page.evaluate(k => localStorage.getItem(k), key);
 async function enable(page: Page) {
@@ -84,7 +90,7 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await page.reload();
   await expect(consent(page)).toBeChecked();
   await expect(today).toContainText("Brushed teeth: Not marked");
-  await eraseAll(page).click();
+  await eraseAllWithConfirmation(page);
   await expect(consent(page)).not.toBeChecked();
   expect(await stored(page)).toBeNull();
   expect(await context.cookies()).toEqual([]);
@@ -172,7 +178,7 @@ test("erase scopes are separate; erase-all removes both keys and leaves unrelate
   await enable(page);
   await record(page).click();
   await page.evaluate(() => localStorage.setItem("unrelated", "synthetic"));
-  await eraseAll(page).click();
+  await eraseAllWithConfirmation(page);
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("All routine data erased");
   await expect(consent(page)).not.toBeChecked();
   await expect(todayConsent).not.toBeChecked();
@@ -193,7 +199,7 @@ for (const failure of ["read", "write", "silent-write", "remove", "silent-remove
       Storage.prototype.setItem = function(k,v) { if(k===key && failure==="write") throw new Error("synthetic quota"); if(k===key && failure==="silent-write") return; return set.call(this,k,v); };
       Storage.prototype.removeItem = function(k) { if(k===key && failure==="remove") throw new Error("synthetic denied remove"); if(k===key && failure==="silent-remove") return; return remove.call(this,k); };
     }, { failure, key });
-    if (failure.includes("remove")) await eraseAll(page).click();
+    if (failure.includes("remove")) await eraseAllWithConfirmation(page);
     else await consent(page).click();
     await expect(status(page)).toContainText("could not be verified");
     await expect(consent(page)).not.toBeChecked();
@@ -275,6 +281,10 @@ test("keyboard, focus, mobile layout and accessible announcements", async ({ pag
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("history.png"), fullPage: true });
   await page.keyboard.press("Enter");
+  await expect(cancelEraseAll(page)).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(confirmEraseAll(page)).toBeFocused();
+  await page.keyboard.press("Enter");
   await expect(consent(page)).not.toBeChecked();
 });
 
@@ -349,7 +359,7 @@ test("erase-all reports a failed today-only deletion even when history was erase
     const remove = Storage.prototype.removeItem;
     Storage.prototype.removeItem = function(k) { if(k===todayKey) throw new Error("synthetic today removal failure"); return remove.call(this,k); };
   }, todayKey);
-  await eraseAll(page).click();
+  await eraseAllWithConfirmation(page);
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Erasure of all routine data could not be verified");
   await expect(consent(page)).not.toBeChecked();
   await expect(todayConsent).not.toBeChecked();
@@ -456,4 +466,110 @@ test("P01-07 history privacy copy is scoped and retains independent consent and 
   await expect(historyRegion.getByText("Browser-local storage is not encrypted private storage. Other users of this profile may see records.", { exact: false })).toBeVisible();
   await expect(historyRegion.getByText("Browser backups, extensions and synchronization are outside Smile Track’s control.", { exact: false })).toBeVisible();
   await expect(historyRegion.getByText("A closed or suspended browser cannot guarantee immediate expiry.", { exact: false })).toBeVisible();
+});
+
+
+async function prepareEraseConfirmation(page: Page) {
+  await page.goto("/routine/");
+  await brush(page).check();
+  await page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true }).check();
+  await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await enable(page);
+  await record(page).click();
+  await expect(status(page)).toContainText("Today’s check-in recorded");
+  await page.evaluate(() => localStorage.setItem("unrelated", "synthetic"));
+}
+const storageSnapshot = (page: Page) => page.evaluate(() => ({
+  local: Object.fromEntries(Object.entries(localStorage)),
+  session: Object.fromEntries(Object.entries(sessionStorage)),
+}));
+
+test("UX02 opening and cancelling confirmation preserve saved bytes, selections and consent", async ({ page, context }, testInfo) => {
+  await prepareEraseConfirmation(page);
+  const before = await storageSnapshot(page);
+  expect(Object.keys(before.local).sort()).toEqual([todayKey, key, "unrelated"].sort());
+  expect(before.session).toEqual({});
+  const requests: string[] = [], errors: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  page.on("pageerror", error => errors.push(error.message));
+  await page.evaluate(() => {
+    const mutations: string[] = [];
+    Object.defineProperty(window, "ux02Mutations", { value: mutations });
+    for (const method of ["setItem", "removeItem", "clear"] as const) {
+      const original = Storage.prototype[method];
+      // Observe both storage areas, including even same-byte writes.
+      Storage.prototype[method] = function(...args: string[]) {
+        mutations.push(method);
+        return Reflect.apply(original, this, args);
+      };
+    }
+  });
+  const unchanged = async () => {
+    await expect(brush(page)).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).toBeChecked();
+    await expect(consent(page)).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).toBeChecked();
+    expect(await storageSnapshot(page)).toEqual(before);
+    expect(await page.evaluate(() => (window as unknown as { ux02Mutations: string[] }).ux02Mutations)).toEqual([]);
+  };
+  await eraseAll(page).focus();
+  await page.keyboard.press("Enter");
+  const group = page.getByRole("group", { name: "Erase all routine data?", exact: true });
+  await expect(group).toBeVisible();
+  await expect(group).toHaveAccessibleDescription(/not one transaction/);
+  await expect(eraseAll(page)).toHaveAttribute("aria-expanded", "true");
+  await expect(cancelEraseAll(page)).toBeFocused();
+  await unchanged();
+  for (const [index, button] of [cancelEraseAll(page), confirmEraseAll(page)].entries()) {
+    await expect(button).toBeFocused();
+    await expect(button).toHaveCSS("outline-style", "solid");
+    await expect(button).toBeInViewport();
+    const bounds = (await button.boundingBox())!;
+    expect(bounds.height).toBeGreaterThanOrEqual(44);
+    expect(bounds.width).toBeGreaterThanOrEqual(44);
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+    if (index === 0) await page.keyboard.press("Tab");
+  }
+  await page.keyboard.press("Shift+Tab");
+  await expect(cancelEraseAll(page)).toBeFocused();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("ux02-confirmation.png"), fullPage: true });
+  await page.keyboard.press("Enter");
+  await expect(group).toHaveCount(0);
+  await expect(eraseAll(page)).toBeFocused();
+  await expect(eraseAll(page)).toHaveAttribute("aria-expanded", "false");
+  await unchanged();
+  // Pointer cancellation follows the same protected path after reopening.
+  await eraseAll(page).click();
+  await cancelEraseAll(page).click();
+  await expect(eraseAll(page)).toBeFocused();
+  await unchanged();
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test("UX02 affirmative confirmation erases both records and restores keyboard focus", async ({ page, context }) => {
+  await prepareEraseConfirmation(page);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  await eraseAll(page).focus();
+  await page.keyboard.press("Space");
+  await expect(cancelEraseAll(page)).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(confirmEraseAll(page)).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("All routine data erased in separately verified operations");
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Another tab may enable saving again");
+  await expect(consent(page)).not.toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).not.toBeChecked();
+  await expect(brush(page)).not.toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).not.toBeChecked();
+  await expect(page.getByRole("group", { name: "Erase all routine data?", exact: true })).toHaveCount(0);
+  await expect(eraseAll(page)).toBeFocused();
+  expect(await storageSnapshot(page)).toEqual({ local: { unrelated: "synthetic" }, session: {} });
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
 });

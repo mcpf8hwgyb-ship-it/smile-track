@@ -415,6 +415,7 @@ test("P01-01 erase-all releases history lock before requesting R01 and reports p
   const holder = await context.newPage(); await holder.goto("/");
   await hold(holder, "smile-track:routine-history");
   await page.getByRole("button", { name: "Erase all routine data and turn off both saving options" }).click();
+  await page.getByRole("button", { name: "Confirm — erase all routine data", exact: true }).click();
   await waitQueued(holder, 1, "smile-track:routine-history");
   const initial = await holder.evaluate(async () => navigator.locks.query());
   expect(initial.held?.some(l => l.name === routineLock)).toBe(false);
@@ -504,6 +505,7 @@ test("P01-01 erase-all permits later independent history enable and qualifies it
   await other.goto("/routine/"); await settle(other);
   const holder = await context.newPage(); await holder.goto("/"); await hold(holder);
   await page.getByRole("button", { name: "Erase all routine data and turn off both saving options" }).click();
+  await page.getByRole("button", { name: "Confirm — erase all routine data", exact: true }).click();
   await waitQueued(holder);
   await other.getByRole("checkbox", { name: "Enable seven-day history in this browser" }).click();
   await expect(other.getByRole("checkbox", { name: "Enable seven-day history in this browser" })).toBeChecked();
