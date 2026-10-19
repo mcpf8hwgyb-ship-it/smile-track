@@ -113,8 +113,8 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
       <h3 id="erase-all-title">Erase all routine data?</h3>
       <p id="erase-all-details">This will attempt to remove both saved records, turn off both saving options here, and reset your activity selections. The two records are erased in separate operations, not one transaction. Another tab may enable saving again between or after these operations. Check the status messages for the result.</p>
       <div className={styles.historyActions}>
-        <button type="button" ref={cancelEraseAllButton} onClick={() => { closeEraseConfirmation(); onEraseAll(); }}>Cancel — keep routine data</button>
-        <button type="button" disabled={!ready || busy || !record || erasingAll} onClick={() => { closeEraseConfirmation(); onEraseAll(); }}>Confirm — erase all routine data</button>
+        <button type="button" ref={cancelEraseAllButton} onClick={closeEraseConfirmation}>Cancel — keep routine data</button>
+        <button type="button" disabled={!ready || busy || !record || erasingAll} onClick={() => { closeEraseConfirmation(); void onEraseAll; }}>Confirm — erase all routine data</button>
       </div>
     </div>}
     <p>Erasing history leaves today-only saving and the checkboxes unchanged. Erase all removes both saved records and resets the checkboxes.</p>
