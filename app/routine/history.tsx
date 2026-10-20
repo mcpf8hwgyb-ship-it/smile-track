@@ -11,6 +11,23 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
   const [days, setDays] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmingEraseAll, setConfirmingEraseAll] = useState(false);
+  const eraseAllButton = useRef<HTMLButtonElement>(null);
+  const cancelEraseAllButton = useRef<HTMLButtonElement>(null);
+  const restoreEraseFocus = useRef(false);
+  useEffect(() => {
+    if (confirmingEraseAll) cancelEraseAllButton.current?.focus();
+  }, [confirmingEraseAll]);
+  useEffect(() => {
+    if (!confirmingEraseAll && restoreEraseFocus.current && ready && !busy && record && !erasingAll) {
+      eraseAllButton.current?.focus();
+      restoreEraseFocus.current = false;
+    }
+  }, [confirmingEraseAll, ready, busy, record, erasingAll]);
+  function closeEraseConfirmation() {
+    restoreEraseFocus.current = true;
+    setConfirmingEraseAll(false);
+  }
   const alive = useRef(false);
   const blocked = useRef(false);
   const enabled = useRef(false);
@@ -90,8 +107,16 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
     <div className={styles.historyActions}>
       <button type="button" disabled={!ready || busy || !result.history || !record} onClick={() => void recordToday()}>Record today’s check-in in history</button>
       <button type="button" disabled={!ready || busy} onClick={() => void eraseHistory()}>Erase history and turn it off</button>
-      <button type="button" disabled={!ready || busy || !record || erasingAll} onClick={onEraseAll}>Erase all routine data and turn off both saving options</button>
+      <button type="button" disabled={!ready || busy || !record || erasingAll} ref={eraseAllButton} aria-expanded={confirmingEraseAll} aria-controls="erase-all-confirmation" onClick={() => setConfirmingEraseAll(true)}>Erase all routine data and turn off both saving options</button>
     </div>
+    {confirmingEraseAll && <div id="erase-all-confirmation" role="group" aria-labelledby="erase-all-title" aria-describedby="erase-all-details" className={styles.eraseConfirmation}>
+      <h3 id="erase-all-title">Erase all routine data?</h3>
+      <p id="erase-all-details">This will attempt to remove both saved records, turn off both saving options here, and reset your activity selections. The two records are erased in separate operations, not one transaction. Another tab may enable saving again between or after these operations. Check the status messages for the result. Smile Track has no undo or recovery feature for records that have been successfully erased.</p>
+      <div className={styles.historyActions}>
+        <button type="button" ref={cancelEraseAllButton} onClick={closeEraseConfirmation}>Cancel — keep routine data</button>
+        <button type="button" disabled={!ready || busy || !record || erasingAll} onClick={() => { closeEraseConfirmation(); onEraseAll(); }}>Confirm — erase all routine data</button>
+      </div>
+    </div>}
     <p>Erasing history leaves today-only saving and the checkboxes unchanged. Erase all removes both saved records and resets the checkboxes.</p>
     <p role="status" aria-label="History status" className={styles.status}>{result.notice} {differs ? "Current selections differ from today’s recorded history. Record again to update history." : ""}</p>
     <p>No recorded check-in means no entry was saved. “Not marked” means the checkbox was unchecked in a saved entry. Neither tells us whether oral care was performed.</p>
