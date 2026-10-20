@@ -518,6 +518,7 @@ test("UX02 opening and cancelling confirmation preserve saved bytes, selections 
   const group = page.getByRole("group", { name: "Erase all routine data?", exact: true });
   await expect(group).toBeVisible();
   await expect(group).toHaveAccessibleDescription(/not one transaction/);
+  await expect(group.getByText("Smile Track has no undo or recovery feature for records that have been successfully erased.", { exact: false })).toBeVisible();
   await expect(eraseAll(page)).toHaveAttribute("aria-expanded", "true");
   await expect(cancelEraseAll(page)).toBeFocused();
   await unchanged();
