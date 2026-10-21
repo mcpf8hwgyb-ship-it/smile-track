@@ -16,6 +16,9 @@ async function eraseAllWithConfirmation(page: Page) {
   await confirmEraseAll(page).click();
 }
 const status = (page: Page) => page.getByRole("status", { name: "History status" });
+const overview = (page: Page) => page.getByTestId("history-overview");
+const overviewDates = (page: Page) => overview(page).locator("tbody time");
+const overviewRow = (page: Page, date: string) => overview(page).locator("tbody tr").filter({ has: page.locator(`time[datetime="${date}"]`) });
 const stored = (page: Page) => page.evaluate(k => localStorage.getItem(k), key);
 async function enable(page: Page) {
   await consent(page).click();
@@ -50,6 +53,7 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await page.goto("/routine/");
   await expect(consent(page)).toBeEnabled();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(record(page)).toBeDisabled();
   await brush(page).check();
   await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
@@ -66,6 +70,7 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await page.reload();
   await expect(brush(page)).toBeChecked();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   expect(await page.evaluate(() => (window as unknown as { historyWrites: string[] }).historyWrites)).toEqual([]);
   await enable(page);
@@ -92,6 +97,7 @@ test("separate consent, no automatic copying, explicit snapshots and neutral mis
   await expect(today).toContainText("Brushed teeth: Not marked");
   await eraseAllWithConfirmation(page);
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   expect(await context.cookies()).toEqual([]);
   expect(await page.evaluate(() => sessionStorage.length)).toBe(0);
@@ -108,6 +114,9 @@ test("local midnight prunes the rolling window without fabricating a new check-i
   await page.clock.fastForward(11_000);
   await expect(page.getByRole("listitem", { name: "2026-10-13", exact: true })).toContainText("No recorded check-in");
   await expect(page.getByRole("listitem", { name: "2026-10-06", exact: true })).toHaveCount(0);
+  await expect(overviewDates(page)).toHaveText(["2026-10-13", "2026-10-12", "2026-10-11", "2026-10-10", "2026-10-09", "2026-10-08", "2026-10-07"]);
+  await expect(overviewRow(page, "2026-10-13")).toContainText("No recorded check-in");
+  await expect(overviewRow(page, "2026-10-12").locator("td")).toHaveText(["✓ Marked", "○ Not marked"]);
   await expect.poll(async () => JSON.parse((await stored(page))!).entries.length).toBe(6);
   await page.clock.setSystemTime(new Date("2026-11-01T17:00:00Z"));
   await page.evaluate(() => window.dispatchEvent(new Event("focus")));
@@ -125,6 +134,8 @@ for (const scenario of [
     await enable(page);
     await expect(page.getByRole("listitem")).toHaveCount(7);
     expect(await page.getByRole("listitem").evaluateAll(items => items.map(i => i.getAttribute("aria-label")))).toEqual(scenario.dates);
+    await expect(overviewDates(page)).toHaveText(scenario.dates);
+    await expect(overview(page).locator("tbody td")).toHaveText(Array(7).fill("— No recorded check-in"));
   });
 }
 
@@ -140,6 +151,7 @@ test("a timezone change rejects now-future dates and recalculates the local wind
   await cdp.send("Emulation.setTimezoneOverride", { timezoneId: "America/Los_Angeles" });
   await page.evaluate(() => window.dispatchEvent(new Event("focus")));
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   await enable(page);
   await expect(page.getByRole("listitem").first()).toHaveAttribute("aria-label", "2026-10-11");
@@ -151,6 +163,7 @@ test("strict schema rejects malformed, duplicate, future, unsupported and extra 
   for (const value of ["{broken", "null", "[]", { ...history(), enabled: false }, { ...history(), version: 2 }, { ...history(), notes: "synthetic" }, history([entry("2026-10-12"), entry("2026-10-12")]), history([entry("2026-10-13")]), history([entry("2026-02-30")]), history([{ ...entry("2026-10-12"), brushedTeeth: "yes" }]), history([{ ...entry("2026-10-12"), notes: "synthetic" }]), history(Array.from({ length: 8 }, (_, i) => entry(`2026-10-${String(12-i).padStart(2,"0")}`)))]) {
     await seed(page, value);
     await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
     expect(await stored(page)).toBeNull();
   }
   await seed(page, history([entry("2026-10-05"), entry("2026-10-06"), entry("2026-10-12")]));
@@ -173,6 +186,7 @@ test("erase scopes are separate; erase-all removes both keys and leaves unrelate
   await todayConsent.check();
   await consent(page).click();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   await expect(todayConsent).toBeChecked();
   await enable(page);
@@ -181,12 +195,14 @@ test("erase scopes are separate; erase-all removes both keys and leaves unrelate
   await eraseAllWithConfirmation(page);
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("All routine data erased");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(todayConsent).not.toBeChecked();
   expect(await page.evaluate(({ key, todayKey }) => [localStorage.getItem(key), localStorage.getItem(todayKey), localStorage.getItem("unrelated")], { key, todayKey })).toEqual([null, null, "synthetic"]);
   await brush(page).check();
   await page.reload();
   await expect(brush(page)).not.toBeChecked();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
 });
 
 for (const failure of ["read", "write", "silent-write", "remove", "silent-remove"] as const) {
@@ -203,8 +219,10 @@ for (const failure of ["read", "write", "silent-write", "remove", "silent-remove
     else await consent(page).click();
     await expect(status(page)).toContainText("could not be verified");
     await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
     await page.clock.fastForward(61_000);
     await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
     if (failure.includes("remove")) await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Erasure of all routine data could not be verified");
     await brush(page).check();
     await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
@@ -222,6 +240,7 @@ test("missing tab coordination disables history without disabling R01", async ({
   await expect(status(page)).toContainText("cannot coordinate tabs");
   await consent(page).click();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   await brush(page).check();
   await expect(brush(page)).toBeChecked();
@@ -248,6 +267,7 @@ test("cross-tab erasure wins over a queued stale recording operation", async ({ 
   await expect.poll(() => page.evaluate(async lock => (await navigator.locks.query()).pending?.filter(item => item.name === lock).length, lock)).toBeGreaterThanOrEqual(2);
   await page.evaluate(() => (window as unknown as { releaseHistory: () => void }).releaseHistory());
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(consent(other)).not.toBeChecked();
   expect(await stored(page)).toBeNull();
   await brush(page).check();
@@ -286,6 +306,7 @@ test("keyboard, focus, mobile layout and accessible announcements", async ({ pag
   await expect(confirmEraseAll(page)).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
 });
 
 
@@ -323,6 +344,7 @@ test("unavailable storage at startup never enables history or throws", async ({ 
   await page.goto("/routine/");
   await expect(status(page)).toContainText("could not be verified");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await brush(page).check();
   await expect(brush(page)).toBeChecked();
   expect(errors).toEqual([]);
@@ -344,6 +366,7 @@ test("a failed history update disables history and does not alter today-only sav
   await record(page).click();
   await expect(status(page)).toContainText("could not be verified");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   await expect(todayConsent).toBeChecked();
   expect(JSON.parse((await page.evaluate(k => localStorage.getItem(k), todayKey))!).brushedTeeth).toBe(false);
@@ -362,6 +385,7 @@ test("erase-all reports a failed today-only deletion even when history was erase
   await eraseAllWithConfirmation(page);
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Erasure of all routine data could not be verified");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(todayConsent).not.toBeChecked();
   expect(await stored(page)).toBeNull();
   expect(await page.evaluate(k => localStorage.getItem(k), todayKey)).not.toBeNull();
@@ -380,6 +404,7 @@ test("explicit re-enable preserves valid history after an earlier failed deletio
   }, key);
   await page.getByRole("button", { name: "Erase history and turn it off" }).click();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(status(page)).toContainText("could not be verified");
   expect(JSON.parse((await stored(page))!)).toEqual(history([entry("2026-10-12", true)]));
   await page.evaluate(() => (window as unknown as { restoreRemove: () => void }).restoreRemove());
@@ -389,6 +414,7 @@ test("explicit re-enable preserves valid history after an earlier failed deletio
   // Once erasure actually succeeds, a new enable still starts empty.
   await page.getByRole("button", { name: "Erase history and turn it off" }).click();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
   await enable(page);
   expect(JSON.parse((await stored(page))!)).toEqual(history([]));
@@ -407,6 +433,7 @@ test("stale-enable preserves another tab's recorded history under the Web Lock",
   await page.goto("/routine/");
   await expect(consent(page)).toBeEnabled();
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await page.clock.pauseAt(new Date("2026-10-12T16:01:00Z"));
   await brush(page).check();
   await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
@@ -425,6 +452,7 @@ test("stale-enable preserves another tab's recorded history under the Web Lock",
   const expected = history([entry("2026-10-12", true)]);
   expect(JSON.parse((await stored(other))!)).toEqual(expected);
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(record(page)).toBeDisabled();
 
   // B holds the real lock. A's stale Enable must queue, not write around it.
@@ -565,12 +593,99 @@ test("UX02 affirmative confirmation erases both records and restores keyboard fo
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("All routine data erased in separately verified operations");
   await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Another tab may enable saving again");
   await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
   await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).not.toBeChecked();
   await expect(brush(page)).not.toBeChecked();
   await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).not.toBeChecked();
   await expect(page.getByRole("group", { name: "Erase all routine data?", exact: true })).toHaveCount(0);
   await expect(eraseAll(page)).toBeFocused();
   expect(await storageSnapshot(page)).toEqual({ local: { unrelated: "synthetic" }, session: {} });
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
+});
+
+
+test("UX03 overview maps only seven saved dates and distinguishes missing, unchecked and checked", async ({ page, context }, testInfo) => {
+  await page.goto("/routine/");
+  await expect(consent(page)).toBeEnabled();
+  await expect(overview(page)).toHaveCount(0);
+  await enable(page);
+  await expect(overview(page).locator("tbody td")).toHaveText(Array(7).fill("— No recorded check-in"));
+  const saved = [entry("2026-10-12", true, false), entry("2026-10-10", false, true), entry("2026-10-06", false, false)];
+  await seed(page, history(saved));
+  await expect(consent(page)).toBeChecked();
+  await page.evaluate(() => localStorage.setItem("unrelated", "synthetic"));
+  const before = await storageSnapshot(page);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  const dates = ["2026-10-12", "2026-10-11", "2026-10-10", "2026-10-09", "2026-10-08", "2026-10-07", "2026-10-06"];
+  await expect(overviewDates(page)).toHaveText(dates);
+  for (const date of dates) {
+    const row = overviewRow(page, date);
+    const snapshot = saved.find(item => item.date === date);
+    const accessible = page.getByRole("listitem", { name: date, exact: true });
+    if (snapshot) {
+      await expect(row.locator("td")).toHaveText([snapshot.brushedTeeth ? "✓ Marked" : "○ Not marked", snapshot.cleanedBetweenTeeth ? "✓ Marked" : "○ Not marked"]);
+      await expect(accessible).toContainText(`Brushed teeth: ${snapshot.brushedTeeth ? "Marked" : "Not marked"}`);
+      await expect(accessible).toContainText(`Cleaned between teeth: ${snapshot.cleanedBetweenTeeth ? "Marked" : "Not marked"}`);
+    } else {
+      await expect(row.locator("td")).toHaveText(["— No recorded check-in"]);
+      await expect(accessible).toContainText("No recorded check-in");
+    }
+  }
+  // Visual duplicate is excluded; the existing named list remains the accessible equivalent.
+  await expect(overview(page)).toHaveAttribute("aria-hidden", "true");
+  await expect(page.getByRole("table")).toHaveCount(0);
+  await expect(page.getByRole("list", { name: "Seven local calendar days" }).getByRole("listitem")).toHaveCount(7);
+  await expect(overview(page).locator("a, button, input, select, textarea, [tabindex]")).toHaveCount(0);
+  await eraseAll(page).focus();
+  await page.keyboard.press("Shift+Tab");
+  await expect(page.getByRole("button", { name: "Erase history and turn it off", exact: true })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(eraseAll(page)).toBeFocused();
+  for (const cell of await overview(page).locator("th, td").all()) {
+    const bounds = (await cell.boundingBox())!;
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+    expect(await cell.evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+    expect(await cell.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await overview(page).screenshot({ path: testInfo.outputPath("ux03-overview.png") });
+  expect(await storageSnapshot(page)).toEqual(before);
+  expect(Object.keys(before.local).sort()).toEqual([key, "unrelated"].sort());
+  expect(before.session).toEqual({});
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
+});
+
+test("UX03 overview ignores unsaved selections and updates only after explicit history recording", async ({ page, context }) => {
+  await page.goto("/routine/");
+  await seed(page, history([entry("2026-10-12", false, true)]));
+  await expect(consent(page)).toBeChecked();
+  const row = overviewRow(page, "2026-10-12");
+  await expect(row.locator("td")).toHaveText(["○ Not marked", "✓ Marked"]);
+  const before = await storageSnapshot(page);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  await brush(page).check();
+  await expect(row.locator("td")).toHaveText(["○ Not marked", "✓ Marked"]);
+  expect(await storageSnapshot(page)).toEqual(before);
+  await page.getByRole("checkbox", { name: "Save today’s check-in in this browser" }).check();
+  await expect(page.getByRole("status", { name: "Today-only status" })).toContainText("Saved in this browser for today.");
+  await expect(row.locator("td")).toHaveText(["○ Not marked", "✓ Marked"]);
+  expect(await stored(page)).toBe(before.local[key]);
+  await record(page).click();
+  await expect(status(page)).toContainText("Today’s check-in recorded");
+  await expect(row.locator("td")).toHaveText(["✓ Marked", "○ Not marked"]);
+  expect(JSON.parse((await stored(page))!)).toEqual(history([entry("2026-10-12", true, false)]));
+  const todayBeforeErase = await page.evaluate(k => localStorage.getItem(k), todayKey);
+  await page.getByRole("button", { name: "Erase history and turn it off", exact: true }).click();
+  await expect(consent(page)).not.toBeChecked();
+  await expect(overview(page)).toHaveCount(0);
+  await expect(brush(page)).toBeChecked();
+  expect(await page.evaluate(k => localStorage.getItem(k), todayKey)).toBe(todayBeforeErase);
+  expect(Object.keys((await storageSnapshot(page)).local)).toEqual([todayKey]);
   expect(await context.cookies()).toEqual([]);
   expect(requests).toEqual([]);
 });

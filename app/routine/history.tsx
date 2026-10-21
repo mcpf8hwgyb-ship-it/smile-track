@@ -120,6 +120,22 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
     <p>Erasing history leaves today-only saving and the checkboxes unchanged. Erase all removes both saved records and resets the checkboxes.</p>
     <p role="status" aria-label="History status" className={styles.status}>{result.notice} {differs ? "Current selections differ from today’s recorded history. Record again to update history." : ""}</p>
     <p>No recorded check-in means no entry was saved. “Not marked” means the checkbox was unchecked in a saved entry. Neither tells us whether oral care was performed.</p>
+    {/* The unchanged semantic list below provides the same dates and values to assistive technology. */}
+    {result.history && !result.error && <div className={styles.historyOverview} aria-hidden="true" data-testid="history-overview">
+      <table>
+        <caption>Seven-day overview · saved snapshots</caption>
+        <thead><tr><th scope="col">Local date</th><th scope="col">Brushed teeth</th><th scope="col">Cleaned between teeth</th></tr></thead>
+        <tbody>{days.map(date => {
+          const entry = result.history?.entries.find(item => item.date === date);
+          return <tr key={date}>
+            <th scope="row"><time dateTime={date}>{date}</time></th>
+            {entry ? [entry.brushedTeeth, entry.cleanedBetweenTeeth].map((marked, index) =>
+              <td key={index} className={marked ? styles.snapshotMarked : undefined}>{marked ? "✓ Marked" : "○ Not marked"}</td>
+            ) : <td colSpan={2}>— No recorded check-in</td>}
+          </tr>;
+        })}</tbody>
+      </table>
+    </div>}
     {result.history && <ol className={styles.historyList} aria-label="Seven local calendar days">
       {days.map(date => {
         const entry = result.history?.entries.find(item => item.date === date);
