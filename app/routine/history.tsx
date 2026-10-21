@@ -129,9 +129,9 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
           const entry = result.history?.entries.find(item => item.date === date);
           return <tr key={date}>
             <th scope="row"><time dateTime={date}>{date}</time></th>
-            {entry ? [entry.brushedTeeth, entry.cleanedBetweenTeeth].map((marked, index) =>
+            {entry ? [!entry.brushedTeeth, entry.cleanedBetweenTeeth].map((marked, index) =>
               <td key={index} className={marked ? styles.snapshotMarked : undefined}>{marked ? "✓ Marked" : "○ Not marked"}</td>
-            ) : <td colSpan={2}>○ Not marked</td>}
+            ) : <td colSpan={2}>— No recorded check-in</td>}
           </tr>;
         })}</tbody>
       </table>
