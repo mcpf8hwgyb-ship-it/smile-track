@@ -28,3 +28,14 @@
 
 .eraseConfirmation { margin-top: 20px; padding: 20px; border: 2px solid #216854; border-radius: 8px; background: white; }
 .eraseConfirmation button { max-width: 100%; overflow-wrap: anywhere; }
+
+.historyOverview { margin: 20px 0; }
+.historyOverview table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 1rem; }
+.historyOverview caption { text-align: left; font-weight: 700; margin-bottom: 12px; }
+.historyOverview th, .historyOverview td { border: 1px solid #a7b7c0; padding: 10px 8px; text-align: left; overflow-wrap: anywhere; }
+.historyOverview th { background: #edf3f5; }
+.historyOverview tbody th { font-weight: 400; }
+.snapshotMarked { background: #e4f1eb; font-weight: 700; }
+@media (max-width: 640px) {
+  .historyOverview th, .historyOverview td { padding: 8px 5px; }
+}
