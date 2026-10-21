@@ -75,7 +75,7 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
   function confirmHistoryOptOut() {
     if (!historyOptOutOpen.current || busy || !enabled.current || blocked.current) return;
     closeHistoryOptOut();
-    // Negative control: affirmative action deliberately does not erase.
+    void eraseHistory();
   }
   useImperativeHandle(ref, () => ({ erase: eraseHistory }), [eraseHistory]);
   useEffect(() => {
