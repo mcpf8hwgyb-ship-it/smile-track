@@ -11,6 +11,25 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
   const [days, setDays] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [confirmingHistoryOptOut, setConfirmingHistoryOptOut] = useState(false);
+  const historyConsent = useRef<HTMLInputElement>(null);
+  const cancelHistoryOptOut = useRef<HTMLButtonElement>(null);
+  const historyOptOutOpen = useRef(false);
+  const restoreHistoryFocus = useRef(false);
+  useEffect(() => {
+    if (confirmingHistoryOptOut) cancelHistoryOptOut.current?.focus();
+  }, [confirmingHistoryOptOut]);
+  useEffect(() => {
+    if (!confirmingHistoryOptOut && restoreHistoryFocus.current && ready && !busy) {
+      historyConsent.current?.focus();
+      restoreHistoryFocus.current = false;
+    }
+  }, [confirmingHistoryOptOut, ready, busy]);
+  function closeHistoryOptOut() {
+    historyOptOutOpen.current = false;
+    restoreHistoryFocus.current = true;
+    setConfirmingHistoryOptOut(false);
+  }
   const [confirmingEraseAll, setConfirmingEraseAll] = useState(false);
   const eraseAllButton = useRef<HTMLButtonElement>(null);
   const cancelEraseAllButton = useRef<HTMLButtonElement>(null);
@@ -53,6 +72,11 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
     if (alive.current) setBusy(false);
     return ok;
   }, [run]);
+  function confirmHistoryOptOut() {
+    if (!historyOptOutOpen.current || busy || !enabled.current || blocked.current) return;
+    closeHistoryOptOut();
+    void eraseHistory();
+  }
   useImperativeHandle(ref, () => ({ erase: eraseHistory }), [eraseHistory]);
   useEffect(() => {
     alive.current = true;
@@ -103,7 +127,20 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
       <p>When enabled, choose “Record today’s check-in in history” to save the date and the two current activity selections. Editing the checkboxes or saving today alone does not update history. Recording again replaces only today’s history entry.</p>
       <p>Only the current and preceding six local calendar days are kept. Older entries are removed when the app next runs. A closed or suspended browser cannot guarantee immediate expiry. No past days are reconstructed.</p>
     </div>
-    <label className={styles.consent}><input type="checkbox" disabled={!ready || busy} checked={result.history !== null} onChange={() => { if (result.history) void eraseHistory(); else void enable(); }} aria-describedby="history-details" />Enable seven-day history in this browser</label>
+    <label className={styles.consent}><input type="checkbox" disabled={!ready || busy} checked={result.history !== null} ref={historyConsent} onChange={() => {
+      // A stale pending confirmation must never become a request to enable saving.
+      if (historyOptOutOpen.current) { cancelHistoryOptOut.current?.focus(); return; }
+      if (result.history) { historyOptOutOpen.current = true; setConfirmingHistoryOptOut(true); }
+      else void enable();
+    }} aria-describedby="history-details" />Enable seven-day history in this browser</label>
+    {confirmingHistoryOptOut && <div role="group" aria-labelledby="history-opt-out-title" aria-describedby="history-opt-out-details" className={styles.eraseConfirmation}>
+      <h3 id="history-opt-out-title">Erase saved seven-day history and turn history off?</h3>
+      <p id="history-opt-out-details">This will attempt to erase saved seven-day history and turn history off. Today’s separate check-in, activity selections and saving option are unaffected. Smile Track cannot recover history that has been successfully erased. Browser or storage failures can prevent verified deletion; saved history may remain. Check the history status for the result. Another tab may enable history again.</p>
+      <div className={styles.historyActions}>
+        <button type="button" ref={cancelHistoryOptOut} onClick={closeHistoryOptOut}>Cancel — keep history</button>
+        <button type="button" disabled={!ready || busy || !result.history || result.error} onClick={confirmHistoryOptOut}>Confirm — erase history and turn it off</button>
+      </div>
+    </div>}
     <div className={styles.historyActions}>
       <button type="button" disabled={!ready || busy || !result.history || !record} onClick={() => void recordToday()}>Record today’s check-in in history</button>
       <button type="button" disabled={!ready || busy} onClick={() => void eraseHistory()}>Erase history and turn it off</button>
