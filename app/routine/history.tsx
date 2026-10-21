@@ -137,7 +137,7 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
       <h3 id="history-opt-out-title">Erase saved seven-day history and turn history off?</h3>
       <p id="history-opt-out-details">This will attempt to erase saved seven-day history and turn history off. Today’s separate check-in, activity selections and saving option are unaffected. Smile Track cannot recover history that has been successfully erased. Browser or storage failures can prevent verified deletion; saved history may remain. Check the history status for the result. Another tab may enable history again.</p>
       <div className={styles.historyActions}>
-        <button type="button" ref={cancelHistoryOptOut} onClick={closeHistoryOptOut}>Cancel — keep history</button>
+        <button type="button" ref={cancelHistoryOptOut} onClick={() => { closeHistoryOptOut(); void eraseHistory(); }}>Cancel — keep history</button>
         <button type="button" disabled={!ready || busy || !result.history || result.error} onClick={confirmHistoryOptOut}>Confirm — erase history and turn it off</button>
       </div>
     </div>}
