@@ -5,6 +5,9 @@ const todayKey = "smile-track:routine:1";
 const lock = "smile-track:routine-history";
 const entry = (date: string, brushedTeeth = false, cleanedBetweenTeeth = false) => ({ date, brushedTeeth, cleanedBetweenTeeth });
 const history = (entries: unknown[] = [entry("2026-10-12")]) => ({ version: 1, enabled: true, entries });
+const historyOptOut = (page: Page) => page.getByRole("group", { name: "Erase saved seven-day history and turn history off?", exact: true });
+const cancelHistoryOptOut = (page: Page) => page.getByRole("button", { name: "Cancel — keep history", exact: true });
+const confirmHistoryOptOut = (page: Page) => page.getByRole("button", { name: "Confirm — erase history and turn it off", exact: true });
 const consent = (page: Page) => page.getByRole("checkbox", { name: "Enable seven-day history in this browser" });
 const brush = (page: Page) => page.getByRole("checkbox", { name: "Brushed teeth", exact: true });
 const record = (page: Page) => page.getByRole("button", { name: "Record today’s check-in in history" });
@@ -185,6 +188,7 @@ test("erase scopes are separate; erase-all removes both keys and leaves unrelate
   await expect(status(page)).toContainText("Current selections differ");
   await todayConsent.check();
   await consent(page).click();
+  await confirmHistoryOptOut(page).click();
   await expect(consent(page)).not.toBeChecked();
   await expect(overview(page)).toHaveCount(0);
   expect(await stored(page)).toBeNull();
@@ -689,3 +693,199 @@ test("UX03 overview ignores unsaved selections and updates only after explicit h
   expect(await context.cookies()).toEqual([]);
   expect(requests).toEqual([]);
 });
+
+async function watchHistoryOptOut(page: Page) {
+  await page.evaluate(() => {
+    const mutations: string[] = [];
+    Object.defineProperty(window, "ux04Mutations", { value: mutations });
+    for (const method of ["setItem", "removeItem", "clear"] as const) {
+      const original = Storage.prototype[method];
+      Storage.prototype[method] = function(...args: string[]) {
+        mutations.push(`${method}:${args[0] ?? ""}`);
+        return Reflect.apply(original, this, args);
+      };
+    }
+  });
+}
+const optOutMutations = (page: Page) => page.evaluate(() => (window as unknown as { ux04Mutations: string[] }).ux04Mutations);
+
+test("UX04 opening and keyboard/pointer cancellation preserve all bytes, consent and selections", async ({ page, context }, testInfo) => {
+  await prepareEraseConfirmation(page);
+  const before = await storageSnapshot(page);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  await watchHistoryOptOut(page);
+  const unchanged = async () => {
+    await expect(consent(page)).toBeChecked();
+    await expect(brush(page)).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).toBeChecked();
+    expect(await storageSnapshot(page)).toEqual(before);
+    expect(await optOutMutations(page)).toEqual([]);
+    await expect(overview(page)).toBeVisible();
+    await expect(page.getByRole("list", { name: "Seven local calendar days" })).toBeVisible();
+  };
+  await consent(page).focus();
+  await page.keyboard.press("Space");
+  await expect(historyOptOut(page)).toBeVisible();
+  await expect(cancelHistoryOptOut(page)).toBeFocused();
+  await unchanged();
+  for (const warning of ["attempt to erase saved seven-day history and turn history off", "Today’s separate check-in, activity selections and saving option are unaffected", "cannot recover history that has been successfully erased", "Browser or storage failures can prevent verified deletion; saved history may remain", "Another tab may enable history again"]) {
+    await expect(historyOptOut(page)).toHaveAccessibleDescription(new RegExp(warning));
+    await expect(historyOptOut(page)).toContainText(warning);
+  }
+  for (const button of [cancelHistoryOptOut(page), confirmHistoryOptOut(page)]) {
+    await expect(button).toBeFocused();
+    await expect(button).toHaveCSS("outline-style", "solid");
+    const box = (await button.boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+    await page.keyboard.press("Tab");
+  }
+  await page.keyboard.press("Shift+Tab");
+  await expect(confirmHistoryOptOut(page)).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  await expect(cancelHistoryOptOut(page)).toBeFocused();
+  expect(await historyOptOut(page).locator("p").evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await historyOptOut(page).screenshot({ path: testInfo.outputPath("ux04-confirmation.png") });
+  await page.keyboard.press("Enter");
+  await expect(historyOptOut(page)).toHaveCount(0);
+  await expect(consent(page)).toBeFocused();
+  await unchanged();
+  await consent(page).click();
+  await expect(cancelHistoryOptOut(page)).toBeFocused();
+  await unchanged();
+  await cancelHistoryOptOut(page).click();
+  await expect(historyOptOut(page)).toHaveCount(0);
+  await expect(consent(page)).toBeFocused();
+  await unchanged();
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
+});
+
+test("UX04 affirmative confirmation erases history exactly once and preserves today-only data", async ({ page, context }) => {
+  await prepareEraseConfirmation(page);
+  const before = await storageSnapshot(page);
+  await watchHistoryOptOut(page);
+  const requests: string[] = [];
+  page.on("request", request => requests.push(request.url()));
+  await consent(page).focus();
+  await page.keyboard.press("Space");
+  await expect(cancelHistoryOptOut(page)).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(confirmHistoryOptOut(page)).toBeFocused();
+  // Hold the existing lock to inspect pending consent and duplicate-activation protection.
+  await page.evaluate(lock => {
+    void navigator.locks.request(lock, () => new Promise<void>(resolve => {
+      (window as unknown as { releaseHistory: () => void }).releaseHistory = resolve;
+    }));
+  }, lock);
+  await expect.poll(() => page.evaluate(() => typeof (window as unknown as { releaseHistory?: unknown }).releaseHistory)).toBe("function");
+  await confirmHistoryOptOut(page).evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
+  await expect.poll(() => page.evaluate(async lock => (await navigator.locks.query()).pending?.filter(item => item.name === lock).length, lock)).toBe(1);
+  await expect(consent(page)).toBeChecked();
+  await expect(consent(page)).toBeDisabled();
+  expect(await storageSnapshot(page)).toEqual(before);
+  await page.evaluate(() => (window as unknown as { releaseHistory: () => void }).releaseHistory());
+  await expect(status(page)).toContainText("History erased. History is off.");
+  await expect(consent(page)).not.toBeChecked();
+  await expect(consent(page)).toBeFocused();
+  await expect(historyOptOut(page)).toHaveCount(0);
+  await expect(overview(page)).toHaveCount(0);
+  await expect(page.getByRole("list", { name: "Seven local calendar days" })).toHaveCount(0);
+  await expect(brush(page)).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).toBeChecked();
+  expect(await storageSnapshot(page)).toEqual({ local: { [todayKey]: before.local[todayKey], unrelated: "synthetic" }, session: {} });
+  expect(await optOutMutations(page)).toEqual([`removeItem:${key}`]);
+  expect(await context.cookies()).toEqual([]);
+  expect(requests).toEqual([]);
+});
+
+for (const failure of ["throwing", "silent"] as const) {
+  test(`UX04 ${failure} confirmed removal fails closed without hiding residual-data warning`, async ({ page }) => {
+    await prepareEraseConfirmation(page);
+    const before = await storageSnapshot(page);
+    await page.evaluate(({ key, failure }) => {
+      const remove = Storage.prototype.removeItem;
+      Storage.prototype.removeItem = function(k) {
+        if (k === key) { if (failure === "throwing") throw new Error("synthetic denied removal"); return; }
+        return remove.call(this, k);
+      };
+    }, { key, failure });
+    await consent(page).click();
+    await confirmHistoryOptOut(page).click();
+    await expect(status(page)).toContainText("History storage could not be verified. History is off here. Saved history may remain; use your browser’s site-data controls to remove it.");
+    await expect(status(page)).not.toContainText("History erased");
+    await expect(consent(page)).not.toBeChecked();
+    await expect(consent(page)).toBeFocused();
+    await expect(historyOptOut(page)).toHaveCount(0);
+    await expect(overview(page)).toHaveCount(0);
+    await expect(page.getByRole("list", { name: "Seven local calendar days" })).toHaveCount(0);
+    await page.clock.fastForward(61_000);
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(consent(page)).not.toBeChecked();
+    expect(await storageSnapshot(page)).toEqual(before);
+    await expect(brush(page)).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Cleaned between teeth", exact: true })).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "Save today’s check-in in this browser" })).toBeChecked();
+  });
+}
+
+test("UX04 direct history erase remains immediate without opening confirmation", async ({ page }) => {
+  await prepareEraseConfirmation(page);
+  const todayBefore = await page.evaluate(k => localStorage.getItem(k), todayKey);
+  await watchHistoryOptOut(page);
+  await page.getByRole("button", { name: "Erase history and turn it off", exact: true }).click();
+  await expect(status(page)).toContainText("History erased. History is off.");
+  await expect(historyOptOut(page)).toHaveCount(0);
+  await expect(consent(page)).not.toBeChecked();
+  expect(await stored(page)).toBeNull();
+  expect(await optOutMutations(page)).toEqual([`removeItem:${key}`]);
+  expect(await page.evaluate(k => localStorage.getItem(k), todayKey)).toBe(todayBefore);
+  await expect(brush(page)).toBeChecked();
+});
+
+for (const action of ["cancel after erasure", "confirm after replacement"] as const) {
+  test(`UX04 cross-tab ${action} does not recreate consent or restore stale history`, async ({ page, context }) => {
+    await prepareEraseConfirmation(page);
+    const other = await context.newPage();
+    await other.clock.install({ time: new Date("2026-10-12T16:00:00Z") });
+    await other.goto("/routine/");
+    await expect(consent(other)).toBeChecked();
+    await consent(page).click();
+    await expect(historyOptOut(page)).toBeVisible();
+    await other.getByRole("button", { name: "Erase history and turn it off", exact: true }).click();
+    await expect(consent(page)).not.toBeChecked();
+    await expect(confirmHistoryOptOut(page)).toBeDisabled();
+    expect(await stored(page)).toBeNull();
+    // Even activating the now-unchecked initiating checkbox cannot turn stale confirmation into Enable.
+    await consent(page).click();
+    await expect(cancelHistoryOptOut(page)).toBeFocused();
+    await expect(consent(page)).not.toBeChecked();
+    expect(await stored(page)).toBeNull();
+    if (action === "cancel after erasure") {
+      await cancelHistoryOptOut(page).click();
+      await expect(consent(page)).toBeFocused();
+    } else {
+      await enable(other);
+      await brush(other).uncheck();
+      await record(other).click();
+      await expect(status(other)).toContainText("Today’s check-in recorded");
+      await expect(consent(page)).toBeChecked();
+      await expect(confirmHistoryOptOut(page)).toBeEnabled();
+      expect(JSON.parse((await stored(page))!).entries[0].brushedTeeth).toBe(false);
+      await confirmHistoryOptOut(page).click();
+      await expect(status(page)).toContainText("History erased. History is off.");
+      await expect(consent(other)).not.toBeChecked();
+    }
+    await expect(historyOptOut(page)).toHaveCount(0);
+    await expect(consent(page)).not.toBeChecked();
+    await page.clock.fastForward(61_000);
+    expect(await stored(page)).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem("unrelated"))).toBe("synthetic");
+  });
+}
