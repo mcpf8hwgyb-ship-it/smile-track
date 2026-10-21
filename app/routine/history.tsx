@@ -131,7 +131,7 @@ export default function History({ record, ref, onEraseAll, erasingAll }: { recor
             <th scope="row"><time dateTime={date}>{date}</time></th>
             {entry ? [entry.brushedTeeth, entry.cleanedBetweenTeeth].map((marked, index) =>
               <td key={index} className={marked ? styles.snapshotMarked : undefined}>{marked ? "✓ Marked" : "○ Not marked"}</td>
-            ) : <td colSpan={2}>— No recorded check-in</td>}
+            ) : <td colSpan={2}>○ Not marked</td>}
           </tr>;
         })}</tbody>
       </table>
