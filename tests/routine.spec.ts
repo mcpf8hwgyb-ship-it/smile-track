@@ -624,6 +624,9 @@ for (const ordering of ["before", "after"] as const) {
     await expect(all).toBeEnabled();
     await snapshot("A-erasure-returned");
     // Control A injection point: deliberately violate the cooperating lock boundary.
+    await holderR.evaluate(({ key, sample }) => localStorage.setItem(key, JSON.stringify(sample)), { key, sample });
+    await snapshot("CONTROL-A-uncoordinated-stale-restoration");
+
     expect(await stored(page)).toBeNull();
     await expect(todayStatus(page)).toContainText("All routine data erased in separately verified operations.");
     await expect(todayStatus(page)).toContainText("Another tab may enable saving again between or after these operations");
