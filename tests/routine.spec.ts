@@ -539,3 +539,115 @@ test("P01-07 today-only privacy copy is scoped and retains local-storage warning
   await expect(details.getByText("Saving and in-app deletion require browser tab coordination.", { exact: false })).toBeVisible();
   await expect(details.getByText("This option does not keep history.", { exact: false })).toBeVisible();
 });
+
+for (const ordering of ["before", "after"] as const) {
+  test(`P01-02A fresh R01 consent ${ordering} combined R01 erasure`, async ({ page, context }, testInfo) => {
+    const historyKey = "smile-track:routine-history:1";
+    const historyLock = "smile-track:routine-history";
+    const unrelated = "p01-02a:unrelated";
+    const fresh = { ...sample, brushedTeeth: false, cleanedBetweenTeeth: true };
+    const history = { version: 1, enabled: true, entries: [{ date: today, brushedTeeth: true, cleanedBetweenTeeth: false }] };
+    const historyConsent = (tab: Page) => tab.getByRole("checkbox", { name: "Enable seven-day history in this browser" });
+    const all = page.getByRole("button", { name: "Erase all routine data and turn off both saving options", exact: true });
+    const requests: string[] = [];
+    const errors: string[] = [];
+    const trace: unknown[] = [];
+    const other = await context.newPage();
+    await page.clock.setSystemTime(new Date("2026-10-12T16:00:00Z"));
+    await other.clock.install({ time: new Date("2026-10-12T16:00:00Z") });
+    for (const tab of [page, other]) {
+      tab.on("pageerror", error => errors.push(error.message));
+      tab.on("request", request => requests.push(`${request.method()} ${request.url()} ${request.postData() ?? ""}`));
+    }
+    await page.goto("/routine/");
+    await brush(page).check(); await consent(page).check();
+    await expect(todayStatus(page)).toContainText("Saved in this browser for today.");
+    await historyConsent(page).check();
+    await page.getByRole("button", { name: "Record today’s check-in in history" }).click();
+    await expect.poll(() => page.evaluate(k => localStorage.getItem(k), historyKey)).toBe(JSON.stringify(history));
+    await page.evaluate(k => localStorage.setItem(k, "synthetic-preserve"), unrelated);
+    await other.goto("/routine/");
+    await expect(consent(other)).toBeChecked(); await expect(brush(other)).toBeChecked();
+    await expect(historyConsent(other)).toBeChecked();
+    const holderH = await context.newPage(); await holderH.goto("/");
+    const holderR = await context.newPage(); await holderR.goto("/");
+    const requestCount = requests.length;
+    async function snapshot(phase: string) {
+      const state = { phase, locks: await holderH.evaluate(() => navigator.locks.query()),
+        storage: await page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)]))),
+        tabs: await Promise.all([page, other].map(async tab => ({
+          consent: await consent(tab).isChecked(), brush: await brush(tab).isChecked(), between: await between(tab).isChecked(),
+          todayNotice: await todayStatus(tab).innerText(), historyConsent: await historyConsent(tab).isChecked(),
+          historyNotice: await tab.getByRole("status", { name: "History status" }).innerText(),
+        }))) };
+      trace.push(state); console.log("P01-02A", ordering, JSON.stringify(state));
+    }
+    async function saveFresh() {
+      await brush(other).uncheck(); await between(other).check(); await consent(other).check();
+      await expect(todayStatus(other)).toContainText("Saved in this browser for today.");
+      expect(await stored(other)).toBe(JSON.stringify(fresh));
+      await expect(consent(other)).toBeChecked(); await expect(between(other)).toBeChecked();
+      await expect(brush(other)).not.toBeChecked();
+    }
+    await snapshot("initial-saved");
+    expect(await stored(page)).toBe(JSON.stringify(sample));
+    // Control B injection point: silent rejection is test-scoped to Tab A.
+    await hold(holderH, historyLock);
+    await all.click(); await page.getByRole("button", { name: "Confirm — erase all routine data", exact: true }).click();
+    await waitQueued(holderH, 1, historyLock);
+    const waiting = await holderH.evaluate(() => navigator.locks.query());
+    expect(waiting.held?.some(lock => lock.name === historyLock)).toBe(true);
+    expect(waiting.held?.some(lock => lock.name === routineLock)).toBe(false);
+    expect(waiting.pending?.some(lock => lock.name === routineLock)).toBe(false);
+    await expect(all).toBeDisabled();
+    await expect(todayStatus(page)).not.toContainText("All routine data erased");
+    await snapshot("A-waits-for-history");
+    if (ordering === "before") {
+      await consent(other).uncheck();
+      await expect(todayStatus(other)).toContainText("Check-in erased");
+      expect(await stored(other)).toBeNull();
+      await expect(brush(other)).toBeChecked(); await expect(consent(other)).not.toBeChecked();
+      await snapshot("B-explicit-revocation");
+      await saveFresh();
+      expect(await other.evaluate(k => localStorage.getItem(k), historyKey)).toBe(JSON.stringify(history));
+      await snapshot("B-fresh-saved-before-history-release");
+    }
+    await hold(holderR);
+    await release(holderH); await waitQueued(holderR);
+    expect(await page.evaluate(k => localStorage.getItem(k), historyKey)).toBeNull();
+    expect(await stored(page)).toBe(JSON.stringify(ordering === "before" ? fresh : sample));
+    expect((await holderR.evaluate(() => navigator.locks.query())).held?.some(lock => lock.name === historyLock)).toBe(false);
+    await expect(todayStatus(page)).toContainText("Waiting for coordinated browser storage");
+    await snapshot("history-erased-A-queued-for-R01");
+    await release(holderR);
+    await expect(all).toBeEnabled();
+    await snapshot("A-erasure-returned");
+    // Control A injection point: deliberately violate the cooperating lock boundary.
+    expect(await stored(page)).toBeNull();
+    await expect(todayStatus(page)).toContainText("All routine data erased in separately verified operations.");
+    await expect(todayStatus(page)).toContainText("Another tab may enable saving again between or after these operations");
+    for (const tab of [page, other]) {
+      await expect(consent(tab)).not.toBeChecked(); await expect(historyConsent(tab)).not.toBeChecked();
+      await expect(brush(tab)).not.toBeChecked(); await expect(between(tab)).not.toBeChecked();
+    }
+    await snapshot("both-tabs-observe-erasure");
+    if (ordering === "after") {
+      await saveFresh();
+      await expect(todayStatus(page)).toContainText("A saved current-day record exists but is not attached here.");
+      await expect(consent(page)).not.toBeChecked(); await expect(brush(page)).not.toBeChecked();
+      await expect(between(page)).not.toBeChecked();
+      await snapshot("B-fresh-saved-after-completed-erasure");
+    }
+    // A real lock acquisition barrier drains earlier cooperating R01 work.
+    await holderR.evaluate(lock => navigator.locks.request(lock, () => undefined), routineLock);
+    expect(await stored(page)).toBe(ordering === "after" ? JSON.stringify(fresh) : null);
+    expect(await page.evaluate(k => localStorage.getItem(k), historyKey)).toBeNull();
+    expect(await page.evaluate(k => localStorage.getItem(k), unrelated)).toBe("synthetic-preserve");
+    expect(await page.evaluate(() => Object.keys(localStorage).sort())).toEqual(
+      (ordering === "after" ? [unrelated, key] : [unrelated]).sort());
+    for (const tab of [page, other]) expect(await tab.evaluate(() => sessionStorage.length)).toBe(0);
+    expect(await context.cookies()).toEqual([]); expect(requests.slice(requestCount)).toEqual([]); expect(errors).toEqual([]);
+    await snapshot("final-after-lock-barrier");
+    await testInfo.attach(`p01-02a-${ordering}.json`, { body: JSON.stringify(trace, null, 2), contentType: "application/json" });
+  });
+}
