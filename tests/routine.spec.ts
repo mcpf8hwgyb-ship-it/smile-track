@@ -562,7 +562,8 @@ for (const ordering of ["before", "after"] as const) {
     await page.goto("/routine/");
     await brush(page).check(); await consent(page).check();
     await expect(todayStatus(page)).toContainText("Saved in this browser for today.");
-    await historyConsent(page).check();
+    await historyConsent(page).click();
+    await expect(historyConsent(page)).toBeChecked();
     await page.getByRole("button", { name: "Record today’s check-in in history" }).click();
     await expect.poll(() => page.evaluate(k => localStorage.getItem(k), historyKey)).toBe(JSON.stringify(history));
     await page.evaluate(k => localStorage.setItem(k, "synthetic-preserve"), unrelated);
