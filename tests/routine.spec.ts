@@ -593,6 +593,13 @@ for (const ordering of ["before", "after"] as const) {
     await snapshot("initial-saved");
     expect(await stored(page)).toBe(JSON.stringify(sample));
     // Control B injection point: silent rejection is test-scoped to Tab A.
+    await page.evaluate(key => {
+      const remove = Storage.prototype.removeItem;
+      Storage.prototype.removeItem = function(k) {
+        if (this === localStorage && k === key) return;
+        return remove.call(this, k);
+      };
+    }, key);
     await hold(holderH, historyLock);
     await all.click(); await page.getByRole("button", { name: "Confirm — erase all routine data", exact: true }).click();
     await waitQueued(holderH, 1, historyLock);
@@ -624,6 +631,12 @@ for (const ordering of ["before", "after"] as const) {
     await expect(all).toBeEnabled();
     await snapshot("A-erasure-returned");
     // Control A injection point: deliberately violate the cooperating lock boundary.
+    await expect(todayStatus(page)).toContainText("Erasure of all routine data could not be verified.");
+    await expect(todayStatus(page)).toContainText("History erasure: verified; today-only erasure: unverified.");
+    await expect(todayStatus(page)).not.toContainText("All routine data erased in separately verified operations.");
+    await expect(consent(page)).not.toBeChecked();
+    expect(await page.evaluate(k => localStorage.getItem(k), unrelated)).toBe("synthetic-preserve");
+    await snapshot("CONTROL-B-unverified-removal-warning-confirmed");
     expect(await stored(page)).toBeNull();
     await expect(todayStatus(page)).toContainText("All routine data erased in separately verified operations.");
     await expect(todayStatus(page)).toContainText("Another tab may enable saving again between or after these operations");
