@@ -274,3 +274,61 @@ malformed metadata stops the build. Static exports need a later authorized rebui
 redeployment to reflect changes. Metadata checks rely on human Git review for the
 truth of appointments and review evidence; they do not certify facts or credentials.
 F02 scientific implementation and all scientific limitations remain unchanged.
+
+## P01-02B — Policy A: Execution-Time Erasure — Owner Ratified — 2026-10-22
+
+**RATIFIED PRODUCT POLICY:** The Project Owner explicitly ratified Policy A —
+Execution-Time Erasure — for the current MVP. Authority: the Owner-approved
+P01-02B-DOC handoff dated 2026-10-22, conveyed by 00 — ARCHITECT — CTO / Next Step — 02.
+This entry records that product-policy decision; it does not change application behavior
+or establish implementation acceptance, merge acceptance, or validation on all browsers.
+
+A confirmed Erase All operation may delete the record present when the relevant
+deletion executes. A genuinely fresh saving grant completed after Erase All initiation
+but before that deletion does not protect the record from the pending deletion.
+A fresh consent grant completed after the relevant deletion may create a new saved
+record. Successful Erase All therefore does not prohibit later saving or guarantee
+durable global absence.
+
+R01 today-only saving and R02 seven-day history retain independent consent and
+recording semantics. Erase All remains sequential: the R02 history erasure operation
+completes before the R01 today-only erasure operation begins. The history operation
+may report failure; successful history removal is not required before attempting R01 erasure.
+The two removals are not one globally atomic transaction. Each successful deletion
+is verified for its owned key within the existing application boundary. Partial
+deletion, unavailable storage and unverified removal must be reported truthfully;
+remaining bytes must not be represented as successfully deleted.
+
+**VERIFIED ENGINEERING:** Existing execution-time per-key behavior is established
+within accepted bounded cooperating-tab evidence. P01-02A observed a fresh R01 record
+saved before the pending R01 deletion being removed, and a fresh record saved after
+completed R01 deletion persisting. These results describe the existing implementation;
+Owner ratification supplies the product-policy authority, not a stronger technical guarantee.
+
+**UNRESOLVED TECHNICAL GUARANTEES:** No globally atomic R01/R02 erasure, durable consent
+identity, persisted consent generation, consent-epoch migration, or snapshot-specific
+deletion protection has been introduced. Identical saved bytes do not establish identical
+consent generations; the ABA limitation remains. Policy A does not eliminate all
+concurrency races. Web Locks coordinate participating current-version contexts, not
+legacy or noncooperating writers, same-origin scripts or extensions. Browser/storage
+availability and truthfulness, synchronization, backups and physical-deletion limitations
+remain. Separately verified key removal does not establish physical erasure or protection
+against restoration outside the application boundary. Chromium evidence does not establish
+universal privacy, security, cross-browser, accessibility or clinical certification.
+P01-02 overall remains unresolved regarding these technical limitations.
+
+Evidence and provenance:
+
+- [P01-01 coordination design](P01_01_COORDINATION_DESIGN.md), including T05/T19/T20/T21/T23.
+- [P01-01 correction and accepted limits](P01_01_COORDINATION_CORRECTION_REPORT.md).
+- [P01-02A R01 erase-window investigation](P01_02_R01_ERASE_WINDOW_REPORT.md).
+- Accepted [PR #21](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/21), merged at
+  `22dd973d59368c6b7ed1f1a73562dcd1145587be`.
+- Accepted post-merge [CI 39718838697](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39718838697),
+  attempt 1, validate job `119627333737`, successful on that merge SHA.
+
+Earlier decisions and evidence remain intact as historical records. Their earlier
+policy-undecided wording records the state before this ratification. P01-02B-DOC remains
+Owner-authorized documentation implementation pending independent Architect acceptance;
+ratification is not completion or merge acceptance of this documentation task.
+No subsequent engineering, deployment or public scientific integration is authorized.

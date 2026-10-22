@@ -696,3 +696,57 @@ PR #18 initial implementation `e928eb9073e35310a79a13a5f8abe1ae8c69667a`, tree `
 Cancellation negative control: `ff9b65b3f273f066f53ee27a47446ccd167c51a7`, tree `b84ea04960ab3059558ae84192e537fcc96ffd18`; [run 39344318968](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39344318968), job `118373140934`: 126 passes, exactly 2 expected failures in the cancellation-protection test (desktop/mobile; checked activity became unchecked). Cancellation was then restored. Affirmative no-op negative control: `cde3b04617ef4a621d43c18a997e96824e38e136`, tree `fb8a1d4e944be51c1e2cc3327271e7ae01a474ef`; [run 39344565285](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39344565285), job `118373934726`: 110 passes/18 expected erase-all failures, including the new affirmative test on both projects. Both negative runs passed pre-browser gates; downstream sensitivity controls/audit were skipped. Tests were not weakened or changed between these runs. Both mutations are removed from the submitted implementation; original failed runs remain evidence. Final exact-head full CI is reported in PR #18 separately, not inferred from the initial or negative runs.
 
 No merge, deployment, broader UX/privacy work, education publication or scientific integration is authorized. P01-02 and broader P01-07 remain UNRESOLVED; P01-08 NOT_REVIEWED; V01 parked; C01 incomplete; F02 internal-only/NOT_CERTIFIED; Stage 09C provisional development convention without physical millimeter calibration or anatomical certification. These tests are bounded Chromium evidence, not comprehensive accessibility, privacy, security, cross-browser or clinical certification. Await independent Architect review.
+
+## P01-02B Policy A Ratified — Documentation Record Pending Acceptance — 2026-10-22
+
+This is an authoritative dated record of the Project Owner's current-MVP ratification
+of Policy A, conveyed in the Owner-approved P01-02B-DOC handoff by the Architect.
+It supersedes older status summaries **only regarding P01-02B ratification and the
+current documentation-task state**. All older entries remain untouched as historical
+records; this entry does not perform a documentation-wide reconciliation.
+
+- P01-02B Policy A — Execution-Time Erasure: **RATIFIED**.
+- P01-02B-DOC: **OWNER-AUTHORIZED — IMPLEMENTATION PENDING ARCHITECT ACCEPTANCE**.
+- P01-02A: **COMPLETE — ACCEPTED ON MAIN**.
+- P01-02 overall: **UNRESOLVED technical limitations**.
+- Existing sequential R02-then-R01 deletion behavior: **VERIFIED within bounded evidence**.
+
+See the dated Policy A entry in [DECISIONS.md](DECISIONS.md). Confirmed Erase All may
+delete the record present when its relevant deletion executes, including a freshly
+saved record whose grant completed after initiation but before that deletion. Fresh
+consent completed after the relevant deletion may create a new saved record.
+R01/R02 consent and recording remain independent; successful per-key deletion is
+verified within the existing application boundary, and partial failures or unverified
+removal must be reported truthfully.
+
+There is no atomic R01/R02 erasure guarantee, durable consent-generation mechanism
+or migration, or snapshot-specific deletion protection. No new consent, storage,
+retention, lock or UI behavior is introduced. Ratification does not prevent later
+saving, establish durable global absence or physical erasure, identify consent
+generations from identical bytes, or constrain legacy/noncooperating writers.
+Browser/storage failures, ABA, extensions, synchronization and backups retain their
+existing limitations. Bounded Chromium evidence is not universal certification.
+
+P01-02A provenance: accepted [PR #21](https://github.com/mcpf8hwgyb-ship-it/smile-track/pull/21),
+main `22dd973d59368c6b7ed1f1a73562dcd1145587be`,
+tree `6fb80fc184658820c53a9a71edad4197117e08de`; accepted post-merge
+[CI 39718838697](https://github.com/mcpf8hwgyb-ship-it/smile-track/actions/runs/39718838697),
+attempt 1, validate job `119627333737`. Historical P01-01/P01-02A reports and all
+failure evidence, including the interim audit timeout, remain unchanged.
+
+Preserved classifications and restrictions:
+
+- Comprehensive P01-07 transmission assurance: **UNRESOLVED**.
+- P01-08: **NOT_REVIEWED**.
+- V01: **BLOCKED / INCONCLUSIVE / PARKED**.
+- E01: **Evidence-gated; zero approved lessons**.
+- C01: **Owner-blocked**.
+- F02: **Internal-only / NOT_CERTIFIED**.
+- Dundee Stage 09C: **Frozen `OUTWARD_PROVISIONAL_V1`**.
+- Physical millimeter calibration: **UNRESOLVED**.
+- Anatomical certification: **NOT_CERTIFIED**.
+- Deployment and public scientific integration: **NOT AUTHORIZED**.
+
+P01-02B-DOC is not COMPLETE — ACCEPTED ON MAIN. Architect implementation acceptance
+and merge authorization remain separate later decisions. This task records the ratified
+policy without implementing or improving it; no subsequent task is automatically authorized.
