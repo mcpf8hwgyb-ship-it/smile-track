@@ -204,3 +204,34 @@ identifiers or execution results are asserted in this committed report. The
 original STOP section describes the previous attempt, not an E1 CI outcome.
 Any mandatory CI failure requires another stop without correction or retry.
 All classifications and restrictions above remain in force.
+
+## E2 recovery — R02 consent test-synchronization correction
+
+Owner/Architect authorization dated 2026-10-23 permits one two-site testing-only
+correction within existing draft PR #24. E1 workflow `40036511509`, attempt 1,
+required validate job `120697204643`, concluded FAILURE. Both new workflow
+executions (desktop/mobile) failed at initial R02 consent with
+`locator.check: Clicking the checkbox did not change its state`. All existing
+150 regression executions and both new detector-control executions passed:
+152 passes / 2 failures. Smoke sensitivity, education-export negative controls
+and the dedicated dependency audit were skipped, not passed. The original local
+Chromium-installation failure and all E1 evidence above remain historical facts.
+
+An asynchronous test-synchronization mismatch is PROVISIONAL, not an established
+production defect or root cause. Exactly two occurrences of
+`await consent(page).check();` are replaced with `await consent(page).click();`
+followed by `await expect(consent(page)).toBeChecked();`. The pre-existing
+checked-state assertion after the first site is deliberately retained. No
+other test content changes. HTTP/WebSocket instrumentation, detector controls,
+static-request policy, synthetic records, exact storage assertions, independent
+consent boundaries and subsequent workflow assertions remain unchanged.
+
+Fresh E2 exact-head CI is required and its result is pending when this section
+is committed. Final commit/tree, run/attempt/job/check identifiers and decoded
+execution evidence belong in the Builder handoff; no future identity or outcome
+is asserted here. No local Chromium install or launch, workflow rerun, production
+change or further speculative correction is authorized. Comprehensive P01-07
+assurance remains UNRESOLVED, and all existing policy/scientific restrictions
+remain unchanged. Any required validation failure requires STOP for Architect
+review; continued consent failure warrants a separately authorized investigation
+of the actual R02 transition rather than another speculative harness adjustment.

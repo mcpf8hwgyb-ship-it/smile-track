@@ -139,7 +139,8 @@ test("P01-07A: bounded R01/R02 workflow transmission observations", async ({ pag
     await expectStorage(page, sample, null);
     await expect(consent(page)).not.toBeChecked();
     await capture("explicit R01 saving");
-    await consent(page).check();
+    await consent(page).click();
+    await expect(consent(page)).toBeChecked();
     await expect(consent(page)).toBeChecked();
     await expect(record(page)).toBeEnabled();
     await expectStorage(page, sample, { version: 1, enabled: true, entries: [] });
@@ -177,7 +178,8 @@ test("P01-07A: bounded R01/R02 workflow transmission observations", async ({ pag
     await expect(brush(page)).toBeChecked();
     await expectStorage(page, sample, null);
     await capture("independent R02 erasure");
-    await consent(page).check();
+    await consent(page).click();
+    await expect(consent(page)).toBeChecked();
     await expect(record(page)).toBeEnabled();
     await record(page).click();
     await expectStorage(page, sample, history);
